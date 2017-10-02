@@ -1,6 +1,6 @@
 #' @import tensorflow
 #' @export
-tfserve_train_mnist <- function(model_path = "models/mnist") {
+tfserve_train_mnist <- function(model_path = "models/mnist", overwrite = FALSE) {
   library(tensorflow)
 
   datasets <- tf$contrib$learn$datasets
@@ -37,5 +37,6 @@ tfserve_train_mnist <- function(model_path = "models/mnist") {
 
   sess$run(accuracy, feed_dict=dict(x = mnist$test$images, y_ = mnist$test$labels))
 
+  if (overwrite && dir.exists(model_path)) unlink(model_path, recursive = TRUE)
   builder <- tf$saved_model$builder$SavedModelBuilder(model_path)
 }

@@ -2,8 +2,6 @@
 
 #' @export
 tfserve_mnist_train <- function() {
-  library(tensorflow)
-
   datasets <- tf$contrib$learn$datasets
   mnist <- datasets$mnist$read_data_sets("MNIST-data", one_hot = TRUE)
 
@@ -55,7 +53,9 @@ tfserve_mnist_signature <- function() {
 
   y <- tf$nn$softmax(tf$matmul(x, W) + b)
 
-  indices <- tf$nn$top_k(y, 10L)
+  values_indices <- tf$nn$top_k(y, 10L)
+  values <- tf$nn$top_k(y, 10L)$values
+  indices <- tf$nn$top_k(y, 10L)$indices
 
   table <- tf$contrib$lookup$index_to_string_table_from_tensor(
     tf$constant(as.character(1:10)))
@@ -65,7 +65,7 @@ tfserve_mnist_signature <- function() {
   classification_outputs_classes <- tf$saved_model$utils$build_tensor_info(
     prediction_classes)
 
-  classification_outputs_scores <- tf.saved_model.utils.build_tensor_info(values)
+  classification_outputs_scores <- tf$saved_model$utils$build_tensor_info(values)
 
   classification_signature_inputs <- list()
   classification_signature_inputs[[tf$saved_model$signature_constants$CLASSIFY_INPUTS]] <- classification_inputs
@@ -75,23 +75,22 @@ tfserve_mnist_signature <- function() {
   classification_signature_otputs[[tf$saved_model$signature_constants$CLASSIFY_OUTPUT_SCORES]] <- classification_outputs_scores
 
   classification_signature <- (
-    tf.saved_model.signature_def_utils.build_signature_def(
+    tf$saved_model$signature_def_utils$build_signature_def(
       inputs = classification_signature_inputs,
       outputs = classification_signature_otputs,
       method_name= tf$saved_model$signature_constants$CLASSIFY_METHOD_NAME
     )
   )
 
-  tensor_info_x = tf$saved_model$utils$build_tensor_info(x)
-  tensor_info_y = tf$saved_model$utils$build_tensor_info(y)
+  tensor_info_x <- tf$saved_model$utils$build_tensor_info(x)
+  tensor_info_y <- tf$saved_model$utils$build_tensor_info(y)
 
-  prediction_signature = (
-    tf$saved_model$signature_def_utils$build_signature_def(
+  prediction_signature <- tf$saved_model$signature_def_utils$build_signature_def(
       inputs=list(images = tensor_info_x),
       outputs=list(scores = tensor_info_y),
-      method_name=tf$saved_model$signature_constants$PREDICT_METHOD_NAME))
+      method_name=tf$saved_model$signature_constants$PREDICT_METHOD_NAME)
 
-  legacy_init_op = tf$group(tf$tables_initializer(), name = 'legacy_init_op')
+  legacy_init_op <- tf$group(tf$tables_initializer(), name = 'legacy_init_op')
 
   signature_def_map_class_dig <- tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY
   signature_def_map <- list()

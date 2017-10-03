@@ -9,13 +9,15 @@ tfserve_save <- function(
   builder <- tf$saved_model$builder$SavedModelBuilder(path)
 
   if (!is.null(signature)) {
+    legacy_init_op <- tf$group(tf$tables_initializer(), name = "legacy_init_op")
+
     builder$add_meta_graph_and_variables(
       tf$Session(),
-      list(
+      c(
         tf$python$saved_model$tag_constants$SERVING
       ),
       signature_def_map = signature,
-      legacy_init_op = "legacy_init_op"
+      legacy_init_op = legacy_init_op
     )
   }
 

@@ -14,7 +14,7 @@ tfserve_save <- function(
 
     builder$add_meta_graph_and_variables(
       sess,
-      c(
+      list(
         tf$python$saved_model$tag_constants$SERVING
       ),
       signature_def_map = signature,

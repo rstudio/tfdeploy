@@ -1,5 +1,6 @@
 #' @export
 tfserve_save <- function(
+  sess,
   path = "models/mnist",
   signature = NULL,
   overwrite = FALSE)
@@ -12,7 +13,7 @@ tfserve_save <- function(
     legacy_init_op <- tf$group(tf$tables_initializer(), name = "legacy_init_op")
 
     builder$add_meta_graph_and_variables(
-      tf$Session(),
+      sess,
       c(
         tf$python$saved_model$tag_constants$SERVING
       ),

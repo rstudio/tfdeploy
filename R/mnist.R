@@ -1,7 +1,7 @@
 #' @import tensorflow
 
 #' @export
-tfserve_mnist_train <- function() {
+tfserve_mnist_train <- function(sess) {
   datasets <- tf$contrib$learn$datasets
   mnist <- datasets$mnist$read_data_sets("MNIST-data", one_hot = TRUE)
 
@@ -20,7 +20,6 @@ tfserve_mnist_train <- function() {
 
   init <- tf$global_variables_initializer()
 
-  sess <- tf$Session()
   sess$run(init)
 
   for (i in 1:1000) {
@@ -35,27 +34,23 @@ tfserve_mnist_train <- function() {
   accuracy <- tf$reduce_mean(tf$cast(correct_prediction, tf$float32))
 
   sess$run(accuracy, feed_dict=dict(x = mnist$test$images, y_ = mnist$test$labels))
+
+  list(
+    input = x,
+    output = y
+  )
 }
 
 #' @export
-tfserve_mnist_signature <- function() {
+tfserve_mnist_signature <- function(x, y) {
   serialized_tf_example <- tf$placeholder(tf$string, name = 'tf_example')
-  feature_configs <- list(x = tf$FixedLenFeature(shape(784), dtype = tf$float32))
-  tf$parse_example(serialized_tf_example, feature_configs)
 
   classification_inputs <- tf$saved_model$utils$build_tensor_info(
     serialized_tf_example)
 
-  x <- tf$placeholder(tf$float32, shape(NULL, 784L))
-
-  W <- tf$Variable(tf$zeros(shape(784L, 10L)))
-  b <- tf$Variable(tf$zeros(shape(10L)))
-
-  y <- tf$nn$softmax(tf$matmul(x, W) + b)
-
   values_indices <- tf$nn$top_k(y, 10L)
-  values <- tf$nn$top_k(y, 10L)$values
-  indices <- tf$nn$top_k(y, 10L)$indices
+  values <- values_indices$values
+  indices <- values_indices$indices
 
   table <- tf$contrib$lookup$index_to_string_table_from_tensor(
     tf$constant(as.character(1:10)))

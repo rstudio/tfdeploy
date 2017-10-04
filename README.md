@@ -1,12 +1,23 @@
 tfserve: Tensorflow Serve Examples
 ================
 
-This repo provides tools and examples to serve Tensorflow models from R.
+-   [Overview](#overview)
+-   [Saving a Tensorflow model](#saving-a-tensorflow-model)
+-   [Saving an TF Estimators model](#saving-an-tf-estimators-model)
+-   [Serving a Model](#serving-a-model)
 
-Tensorflow Serving
-------------------
+Overview
+--------
 
-### Saving a Model
+This repo provides tools and examples to serve Tensorflow models from R. The process has two stages:
+
+-   Save the model
+-   Deploy (serve) the model
+
+The way the model is saved varies based on the package that was used to create it.
+
+Saving a Tensorflow model
+-------------------------
 
 One can train MNIST as described by [MNIST For ML Beginners](https://tensorflow.rstudio.com/tensorflow/articles/tutorial_mnist_beginners.html) and track the model's inputs and outputs named `x` and `y` under that particular article. For convinience, we can run instead:
 
@@ -28,7 +39,7 @@ builder <- tf$saved_model$builder$SavedModelBuilder(model_path)
 builder$save()
 ```
 
-    ## [1] "trained/tensorflow-mnst/1/saved_model.pb"
+    ## b'trained/tensorflow-mnst/1\\saved_model.pb'
 
 ``` r
 dir(model_path, recursive = TRUE)
@@ -62,7 +73,7 @@ This signature can be used in combination with `SavedModelBuilder.add_meta_graph
 tfserve_save(sess, model_path, signature, overwrite = TRUE)
 ```
 
-    ## [1] "trained/tensorflow-mnst/1/saved_model.pb"
+    ## b'trained/tensorflow-mnst/1\\saved_model.pb'
 
 ``` r
 dir(model_path, recursive = TRUE)
@@ -72,7 +83,57 @@ dir(model_path, recursive = TRUE)
     ## [2] "variables/variables.data-00000-of-00001"
     ## [3] "variables/variables.index"
 
-### Serving a Model
+Saving an TF Estimators model
+-----------------------------
+
+A sample model using the `mtcars` data frame is trained using `tfestimators`. The resulting model is the one that will be saved to disk.
+
+``` r
+library(tfestimators)
+
+mtcars_input_fn <- function(data) {
+  input_fn(data, 
+           features = c("disp", "cyl"), 
+           response = "mpg")}
+
+cols <- feature_columns(
+  column_numeric("disp"),
+  column_numeric("cyl"))
+
+model <- linear_regressor(feature_columns = cols)
+
+indices <- sample(1:nrow(mtcars), size = 0.80 * nrow(mtcars))
+train <- mtcars[indices, ]
+test  <- mtcars[-indices, ]
+
+train(model, mtcars_input_fn(train))
+```
+
+The `export_savemodel()` will create the **pb** file and the **variables** folder
+
+``` r
+#Create an input spec
+input_spec <- regressor_parse_example_spec(feature_columns = cols,
+                                           label_key = "input",
+                                           label_dtype = tf$string)
+
+# Parse the spec as an input receiver 
+input_receiver <- tf$estimator$export$build_parsing_serving_input_receiver_fn(input_spec)
+
+export_savedmodel(model, 
+                  export_dir_base = getwd(),
+                  serving_input_receiver_fn = input_receiver)
+
+model_folder <- list.files()[1]
+dir(model_path, recursive = TRUE)
+```
+
+    ## [1] "saved_model.pb"                         
+    ## [2] "variables/variables.data-00000-of-00001"
+    ## [3] "variables/variables.index"
+
+Serving a Model
+---------------
 
 See [Tensorflow Serving Setup](https://www.tensorflow.org/serving/setup#installing_using_apt-get), but in general, from Linux, first install prereqs:
 

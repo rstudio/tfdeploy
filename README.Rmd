@@ -4,13 +4,26 @@ output:
   github_document:
     fig_width: 9
     fig_height: 5
+    toc: true
+    toc_depth: 3
 ---
 
-This repo provides tools and examples to serve Tensorflow models from R.
 
-## Tensorflow Serving
+```{r setup, include=FALSE}
+library(tensorflow)
+knitr::opts_chunk$set(eval = TRUE)
+```
 
-### Saving a Model
+## Overview
+
+This repo provides tools and examples to serve Tensorflow models from R. The process has two stages:
+
+- Save the model
+- Deploy (serve) the model
+
+The way the model is saved varies based on the package that was used to create it.  
+
+## Saving a Tensorflow model
 
 One can train MNIST as described by [MNIST For ML Beginners](https://tensorflow.rstudio.com/tensorflow/articles/tutorial_mnist_beginners.html) and track
 the model's inputs and outputs named `x` and `y` under that particular article. For convinience, we can
@@ -60,7 +73,51 @@ tfserve_save(sess, model_path, signature, overwrite = TRUE)
 dir(model_path, recursive = TRUE)
 ```
 
-### Serving a Model
+## Saving an TF Estimators model
+
+A sample model using the `mtcars` data frame is trained using `tfestimators`.  The resulting model is the one that will be saved to disk.
+
+```{r}
+library(tfestimators)
+
+mtcars_input_fn <- function(data) {
+  input_fn(data, 
+           features = c("disp", "cyl"), 
+           response = "mpg")}
+
+cols <- feature_columns(
+  column_numeric("disp"),
+  column_numeric("cyl"))
+
+model <- linear_regressor(feature_columns = cols)
+
+indices <- sample(1:nrow(mtcars), size = 0.80 * nrow(mtcars))
+train <- mtcars[indices, ]
+test  <- mtcars[-indices, ]
+
+train(model, mtcars_input_fn(train))
+```
+
+The `export_savemodel()` will create the **pb** file and the **variables** folder
+
+```{r}
+#Create an input spec
+input_spec <- regressor_parse_example_spec(feature_columns = cols,
+                                           label_key = "input",
+                                           label_dtype = tf$string)
+
+# Parse the spec as an input receiver 
+input_receiver <- tf$estimator$export$build_parsing_serving_input_receiver_fn(input_spec)
+
+export_savedmodel(model, 
+                  export_dir_base = getwd(),
+                  serving_input_receiver_fn = input_receiver)
+
+model_folder <- list.files()[1]
+dir(model_path, recursive = TRUE)
+```
+
+## Serving a Model
 
 See [Tensorflow Serving Setup](https://www.tensorflow.org/serving/setup#installing_using_apt-get), but in general, from Linux, first install prereqs:
 

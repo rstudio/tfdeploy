@@ -21,14 +21,14 @@ mnist_model <- tfserve_mnist_train(sess)
 Once trained, the model can be saved with [SavedModelBuilder](https://www.tensorflow.org/api_docs/python/tf/saved_model/builder/SavedModelBuilder).
 
 ``` r
-model_path <- file.path("tf/1")
+model_path <- file.path("trained/tensorflow-mnst/1")
 if (dir.exists(model_path)) unlink(model_path, recursive = TRUE)
 
 builder <- tf$saved_model$builder$SavedModelBuilder(model_path)
 builder$save()
 ```
 
-    ## [1] "tf/1/saved_model.pb"
+    ## [1] "trained/tensorflow-mnst/1/saved_model.pb"
 
 ``` r
 dir(model_path, recursive = TRUE)
@@ -62,7 +62,7 @@ This signature can be used in combination with `SavedModelBuilder.add_meta_graph
 tfserve_save(sess, model_path, signature, overwrite = TRUE)
 ```
 
-    ## [1] "tf/1/saved_model.pb"
+    ## [1] "trained/tensorflow-mnst/1/saved_model.pb"
 
 ``` r
 dir(model_path, recursive = TRUE)
@@ -99,7 +99,7 @@ sudo pip install tensorflow-serving-api --no-cache-dir
 Then serve the model using:
 
 ``` bash
-tensorflow_model_server --port=9000 --model_name=mnist --model_base_path=/mnt/hgfs/tfserve/tf/
+tensorflow_model_server --port=9000 --model_name=mnist --model_base_path=/mnt/hgfs/tfserve/trained/tensorflow-mnst/1
 ```
 
     2017-10-04 14:32:43.250698: I external/org_tensorflow/tensorflow/cc/saved_model/loader.cc:284] Loading SavedModel: success. Took 106015 microseconds.
@@ -109,5 +109,5 @@ tensorflow_model_server --port=9000 --model_name=mnist --model_base_path=/mnt/hg
 One can use `saved_model_cli` to inspect model contents, as in:
 
 ``` bash
-saved_model_cli show --dir /mnt/hgfs/tfserve/tf/1
+saved_model_cli show --dir /mnt/hgfs/tfserve/trained/tensorflow-mnst/1
 ```

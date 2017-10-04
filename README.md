@@ -21,14 +21,14 @@ mnist_model <- tfserve_mnist_train(sess)
 Once trained, the model can be saved with [SavedModelBuilder](https://www.tensorflow.org/api_docs/python/tf/saved_model/builder/SavedModelBuilder).
 
 ``` r
-model_path <- file.path("tf")
+model_path <- file.path("tf/1")
 if (dir.exists(model_path)) unlink(model_path, recursive = TRUE)
 
 builder <- tf$saved_model$builder$SavedModelBuilder(model_path)
 builder$save()
 ```
 
-    ## [1] "tf/saved_model.pb"
+    ## [1] "tf/1/saved_model.pb"
 
 ``` r
 dir(model_path, recursive = TRUE)
@@ -62,7 +62,7 @@ This signature can be used in combination with `SavedModelBuilder.add_meta_graph
 tfserve_save(sess, model_path, signature, overwrite = TRUE)
 ```
 
-    ## [1] "tf/saved_model.pb"
+    ## [1] "tf/1/saved_model.pb"
 
 ``` r
 dir(model_path, recursive = TRUE)
@@ -74,4 +74,30 @@ dir(model_path, recursive = TRUE)
 
 ### Serving a Model
 
-**TODO**
+See [Tensorflow Serving Setup](https://www.tensorflow.org/serving/setup#installing_using_apt-get), but in general, from Linux, first install prereqs:
+
+``` bash
+sudo apt-get update && sudo apt-get install -y build-essential curl libcurl3-dev git libfreetype6-dev libpng12-dev libzmq3-dev pkg-config python-dev python-numpy python-pip software-properties-common swig zip zlib1g-dev
+```
+
+Then install Tensorflow Serving:
+
+``` bash
+echo "deb [arch=amd64] http://storage.googleapis.com/tensorflow-serving-apt stable tensorflow-model-server tensorflow-model-server-universal" | sudo tee /etc/apt/sources.list.d/tensorflow-serving.list
+
+curl https://storage.googleapis.com/tensorflow-serving-apt/tensorflow-serving.release.pub.gpg | sudo apt-key add -
+
+sudo apt-get update && sudo apt-get install tensorflow-model-server
+```
+
+Optionally, install the api client:
+
+``` bash
+sudo pip install tensorflow-serving-api --no-cache-dir
+```
+
+Then serve the model using:
+
+``` bash
+tensorflow_model_server --port=9000 --model_name=mnist --model_base_path=/mnt/hgfs/tfserve/tf/
+```

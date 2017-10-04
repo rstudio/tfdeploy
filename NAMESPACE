@@ -2,5 +2,7 @@
 
 export(tfserve_mnist_signature)
 export(tfserve_mnist_train)
+export(tfserve_mtcars_train)
 export(tfserve_save)
 import(tensorflow)
+import(tfestimators)

@@ -40,8 +40,9 @@ mnist_model <- tfserve_mnist_train(sess)
 Once trained, the model can be saved with [SavedModelBuilder](https://www.tensorflow.org/api_docs/python/tf/saved_model/builder/SavedModelBuilder).
 
 ```{r}
+if (dir.exists("trained")) unlink("trained", recursive = TRUE)
+
 model_path <- file.path("trained/tensorflow-mnst/1")
-if (dir.exists(model_path)) unlink(model_path, recursive = TRUE)
 
 builder <- tf$saved_model$builder$SavedModelBuilder(model_path)
 builder$save()
@@ -75,34 +76,21 @@ dir(model_path, recursive = TRUE)
 
 ## Saving an TF Estimators model
 
-A sample model using the `mtcars` data frame is trained using `tfestimators`.  The resulting model is the one that will be saved to disk.
+A sample model using the `mtcars` data frame is trained using `tfestimators`.  The resulting model is the one that will be saved to disk. To train, we can follow the TensorFlow estimators [Quick Start](https://tensorflow.rstudio.com/tfestimators/); or for convenienve, run:
 
 ```{r}
 library(tfestimators)
 
-mtcars_input_fn <- function(data) {
-  input_fn(data, 
-           features = c("disp", "cyl"), 
-           response = "mpg")}
-
-cols <- feature_columns(
-  column_numeric("disp"),
-  column_numeric("cyl"))
-
-model <- linear_regressor(feature_columns = cols)
-
-indices <- sample(1:nrow(mtcars), size = 0.80 * nrow(mtcars))
-train <- mtcars[indices, ]
-test  <- mtcars[-indices, ]
-
-train(model, mtcars_input_fn(train))
+model <- tfserve_mtcars_train()
 ```
 
 The `export_savemodel()` will create the **pb** file and the **variables** folder
 
 ```{r}
 #Create an input spec
-input_spec <- regressor_parse_example_spec(feature_columns = cols,
+input_spec <- regressor_parse_example_spec(feature_columns = feature_columns( 
+                                             column_numeric("disp", "cyl")
+                                           ),
                                            label_key = "input",
                                            label_dtype = tf$string)
 
@@ -110,7 +98,7 @@ input_spec <- regressor_parse_example_spec(feature_columns = cols,
 input_receiver <- tf$estimator$export$build_parsing_serving_input_receiver_fn(input_spec)
 
 export_savedmodel(model, 
-                  export_dir_base = getwd(),
+                  export_dir_base = "trained/tfestimators-mtcars",
                   serving_input_receiver_fn = input_receiver)
 
 model_folder <- list.files()[1]
@@ -141,7 +129,7 @@ Optionally, install the api client:
 sudo pip install tensorflow-serving-api --no-cache-dir
 ```
 
-Then serve the model using:
+Then serve the TensorFlow model using:
 
 ```{bash eval=F}
 tensorflow_model_server --port=9000 --model_name=mnist --model_base_path=/mnt/hgfs/tfserve/trained/tensorflow-mnst
@@ -151,6 +139,18 @@ tensorflow_model_server --port=9000 --model_name=mnist --model_base_path=/mnt/hg
 2017-10-04 14:53:15.291409: I external/org_tensorflow/tensorflow/cc/saved_model/loader.cc:284] Loading SavedModel: success. Took 113175 microseconds.
 2017-10-04 14:53:15.293200: I tensorflow_serving/core/loader_harness.cc:86] Successfully loaded servable version {name: mnist version: 1}
 2017-10-04 14:53:15.299338: I tensorflow_serving/model_servers/main.cc:288] Running ModelServer at 0.0.0.0:9000 ...
+```
+
+Or the `tfestimators` model using:
+
+```{bash eval=F}
+tensorflow_model_server --port=9000 --model_name=mnist --model_base_path=/mnt/hgfs/tfserve/trained/tfestimators-mtcars
+```
+
+```
+2017-10-04 15:33:21.279211: I external/org_tensorflow/tensorflow/cc/saved_model/loader.cc:284] Loading SavedModel: success. Took 43820 microseconds.
+2017-10-04 15:33:21.281129: I tensorflow_serving/core/loader_harness.cc:86] Successfully loaded servable version {name: mnist version: 1507156394}
+2017-10-04 15:33:21.284161: I tensorflow_serving/model_servers/main.cc:288] Running ModelServer at 0.0.0.0:9000 ...
 
 ```
 

@@ -27,13 +27,13 @@ mnist_model <- tfserve_mnist_train(sess)
 Once trained, the model can be saved with [SavedModelBuilder](https://www.tensorflow.org/api_docs/python/tf/saved_model/builder/SavedModelBuilder).
 
 ```{r}
-temp_path <- file.path(tempdir(), "tf")
-if (dir.exists(temp_path)) unlink(temp_path, recursive = TRUE)
+model_path <- file.path("tf")
+if (dir.exists(model_path)) unlink(model_path, recursive = TRUE)
 
-builder <- tf$saved_model$builder$SavedModelBuilder(temp_path)
+builder <- tf$saved_model$builder$SavedModelBuilder(model_path)
 builder$save()
 
-dir(temp_path, recursive = TRUE)
+dir(model_path, recursive = TRUE)
 ```
 
 However, saving the model is not sufficient when using Tensorflow Serving, see [Serving a Tensorflow Model](https://www.tensorflow.org/serving/serving_basic).
@@ -55,9 +55,9 @@ This signature can be used in combination with `SavedModelBuilder.add_meta_graph
 provide a model usable with Tensorflow Serving:
 
 ```{r}
-tfserve_save(sess, temp_path, signature, overwrite = TRUE)
+tfserve_save(sess, model_path, signature, overwrite = TRUE)
 
-dir(temp_path, recursive = TRUE)
+dir(model_path, recursive = TRUE)
 ```
 
 ### Serving a Model

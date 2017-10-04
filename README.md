@@ -21,17 +21,17 @@ mnist_model <- tfserve_mnist_train(sess)
 Once trained, the model can be saved with [SavedModelBuilder](https://www.tensorflow.org/api_docs/python/tf/saved_model/builder/SavedModelBuilder).
 
 ``` r
-temp_path <- file.path(tempdir(), "tf")
-if (dir.exists(temp_path)) unlink(temp_path, recursive = TRUE)
+model_path <- file.path("tf")
+if (dir.exists(model_path)) unlink(model_path, recursive = TRUE)
 
-builder <- tf$saved_model$builder$SavedModelBuilder(temp_path)
+builder <- tf$saved_model$builder$SavedModelBuilder(model_path)
 builder$save()
 ```
 
-    ## [1] "/var/folders/fz/v6wfsg2x1fb1rw4f6r0x4jwm0000gn/T//RtmprARMYx/tf/saved_model.pb"
+    ## [1] "tf/saved_model.pb"
 
 ``` r
-dir(temp_path, recursive = TRUE)
+dir(model_path, recursive = TRUE)
 ```
 
     ## [1] "saved_model.pb"
@@ -59,13 +59,13 @@ signature <- tfserve_mnist_signature(mnist_model$input, mnist_model$output)
 This signature can be used in combination with `SavedModelBuilder.add_meta_graph_and_variables` to provide a model usable with Tensorflow Serving:
 
 ``` r
-tfserve_save(sess, temp_path, signature, overwrite = TRUE)
+tfserve_save(sess, model_path, signature, overwrite = TRUE)
 ```
 
-    ## [1] "/var/folders/fz/v6wfsg2x1fb1rw4f6r0x4jwm0000gn/T//RtmprARMYx/tf/saved_model.pb"
+    ## [1] "tf/saved_model.pb"
 
 ``` r
-dir(temp_path, recursive = TRUE)
+dir(model_path, recursive = TRUE)
 ```
 
     ## [1] "saved_model.pb"                         

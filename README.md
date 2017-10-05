@@ -4,6 +4,7 @@ tfserve: Tensorflow Serve Examples
 -   [Overview](#overview)
 -   [Saving a Tensorflow model](#saving-a-tensorflow-model)
 -   [Saving an TF Estimators model](#saving-an-tf-estimators-model)
+-   [Saving a Keras Model](#saving-a-keras-model)
 -   [Serving a Model](#serving-a-model)
 
 Overview
@@ -24,7 +25,12 @@ One can train MNIST as described by [MNIST For ML Beginners](https://tensorflow.
 ``` r
 library(tensorflow)
 library(tfserve)
+```
 
+    ## Warning: replacing previous import 'keras::evaluate' by
+    ## 'tfestimators::evaluate' when loading 'tfserve'
+
+``` r
 sess <- tf$Session()
 mnist_model <- tfserve_mnist_train(sess)
 ```
@@ -34,13 +40,13 @@ Once trained, the model can be saved with [SavedModelBuilder](https://www.tensor
 ``` r
 if (dir.exists("trained")) unlink("trained", recursive = TRUE)
 
-model_path <- file.path("trained/tensorflow-mnst/1")
+model_path <- file.path("trained/tensorflow-mnist/1")
 
 builder <- tf$saved_model$builder$SavedModelBuilder(model_path)
 builder$save()
 ```
 
-    ## [1] "trained/tensorflow-mnst/1/saved_model.pb"
+    ## [1] "trained/tensorflow-mnist/1/saved_model.pb"
 
 ``` r
 dir(model_path, recursive = TRUE)
@@ -74,7 +80,7 @@ This signature can be used in combination with `SavedModelBuilder.add_meta_graph
 tfserve_save(sess, model_path, signature, overwrite = TRUE)
 ```
 
-    ## [1] "trained/tensorflow-mnst/1/saved_model.pb"
+    ## [1] "trained/tensorflow-mnist/1/saved_model.pb"
 
 ``` r
 dir(model_path, recursive = TRUE)
@@ -120,6 +126,43 @@ dir(model_path, recursive = TRUE)
     ## [2] "variables/variables.data-00000-of-00001"
     ## [3] "variables/variables.index"
 
+Saving a Keras Model
+--------------------
+
+First train a `keras` model as described under [R interface to Keras](https://tensorflow.rstudio.com/keras/), for convinience, run instead:
+
+``` r
+library(keras)
+```
+
+    ## Warning: package 'keras' was built under R version 3.4.2
+
+    ## 
+    ## Attaching package: 'keras'
+
+    ## The following object is masked from 'package:tfestimators':
+    ## 
+    ##     evaluate
+
+``` r
+install_keras()
+```
+
+    ## Using existing virtualenv at  ~/.virtualenvs/r-tensorflow 
+    ## Upgrading pip ...
+    ## Upgrading wheel ...
+    ## Upgrading setuptools ...
+    ## Installing TensorFlow ...
+    ## 
+    ## Installation of TensorFlow complete.
+    ## 
+    ## 
+    ## Installation of Keras complete.
+
+``` r
+model <- tfserve_mnist_keras_train(epochs = 3)
+```
+
 Serving a Model
 ---------------
 
@@ -148,7 +191,7 @@ sudo pip install tensorflow-serving-api --no-cache-dir
 Then serve the TensorFlow model using:
 
 ``` bash
-tensorflow_model_server --port=9000 --model_name=mnist --model_base_path=/mnt/hgfs/tfserve/trained/tensorflow-mnst
+tensorflow_model_server --port=9000 --model_name=mnist --model_base_path=/mnt/hgfs/tfserve/trained/tensorflow-mnist
 ```
 
     2017-10-04 14:53:15.291409: I external/org_tensorflow/tensorflow/cc/saved_model/loader.cc:284] Loading SavedModel: success. Took 113175 microseconds.
@@ -168,5 +211,5 @@ tensorflow_model_server --port=9000 --model_name=mnist --model_base_path=/mnt/hg
 One can use `saved_model_cli` to inspect model contents, as in:
 
 ``` bash
-saved_model_cli show --dir /mnt/hgfs/tfserve/trained/tensorflow-mnst/1
+saved_model_cli show --dir /mnt/hgfs/tfserve/trained/tensorflow-mnist/1
 ```

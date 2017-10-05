@@ -148,6 +148,27 @@ library(keras)
 model <- tfserve_mnist_keras_train(epochs = 3)
 ```
 
+Then use the TensorFlow backend to export the model (see also [/keras/issues/6212](https://github.com/fchollet/keras/issues/6212) and [Exporting a model with TF Serving from Keras blog](https://blog.keras.io/keras-as-a-simplified-interface-to-tensorflow-tutorial.html#exporting-a-model-with-tensorflow-serving)):
+
+``` r
+model_path <- "trained/keras-mnist/1"
+
+sess <- backend()$get_session()
+
+signature <- tfserve_mnist_signature(mnist_model$input, mnist_model$output)
+tfserve_save(sess, model_path, signature, overwrite = TRUE)
+```
+
+    ## [1] "trained/keras-mnist/1/saved_model.pb"
+
+``` r
+dir(model_path, recursive = TRUE)
+```
+
+    ## [1] "saved_model.pb"                         
+    ## [2] "variables/variables.data-00000-of-00001"
+    ## [3] "variables/variables.index"
+
 Serving Models
 --------------
 

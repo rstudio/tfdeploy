@@ -74,7 +74,7 @@ tfserve_save(sess, model_path, signature, overwrite = TRUE)
 dir(model_path, recursive = TRUE)
 ```
 
-## Saving an TF Estimators model
+## Saving a TFEstimators model
 
 A sample model using the `mtcars` data frame is trained using `tfestimators`.  The resulting model is the one that will be saved to disk. To train, we can follow the TensorFlow estimators [Quick Start](https://tensorflow.rstudio.com/tfestimators/); or for convenienve, run:
 
@@ -111,12 +111,10 @@ First train a `keras` model as described under [R interface to Keras](https://te
 
 ```{r}
 library(keras)
-install_keras()
-
 model <- tfserve_mnist_keras_train(epochs = 3)
 ```
 
-## Serving a Model
+## Serving Models
 
 See [Tensorflow Serving Setup](https://www.tensorflow.org/serving/setup#installing_using_apt-get), but in general, from Linux, first install prereqs:
 

@@ -3,9 +3,9 @@ tfserve: Tensorflow Serve Examples
 
 -   [Overview](#overview)
 -   [Saving a Tensorflow model](#saving-a-tensorflow-model)
--   [Saving an TF Estimators model](#saving-an-tf-estimators-model)
+-   [Saving a TFEstimators model](#saving-a-tfestimators-model)
 -   [Saving a Keras Model](#saving-a-keras-model)
--   [Serving a Model](#serving-a-model)
+-   [Serving Models](#serving-models)
 
 Overview
 --------
@@ -90,8 +90,8 @@ dir(model_path, recursive = TRUE)
     ## [2] "variables/variables.data-00000-of-00001"
     ## [3] "variables/variables.index"
 
-Saving an TF Estimators model
------------------------------
+Saving a TFEstimators model
+---------------------------
 
 A sample model using the `mtcars` data frame is trained using `tfestimators`. The resulting model is the one that will be saved to disk. To train, we can follow the TensorFlow estimators [Quick Start](https://tensorflow.rstudio.com/tfestimators/); or for convenienve, run:
 
@@ -145,26 +145,11 @@ library(keras)
     ##     evaluate
 
 ``` r
-install_keras()
-```
-
-    ## Using existing virtualenv at  ~/.virtualenvs/r-tensorflow 
-    ## Upgrading pip ...
-    ## Upgrading wheel ...
-    ## Upgrading setuptools ...
-    ## Installing TensorFlow ...
-    ## 
-    ## Installation of TensorFlow complete.
-    ## 
-    ## 
-    ## Installation of Keras complete.
-
-``` r
 model <- tfserve_mnist_keras_train(epochs = 3)
 ```
 
-Serving a Model
----------------
+Serving Models
+--------------
 
 See [Tensorflow Serving Setup](https://www.tensorflow.org/serving/setup#installing_using_apt-get), but in general, from Linux, first install prereqs:
 

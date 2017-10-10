@@ -14,7 +14,7 @@ tfserve_view_graph <- function(path = file.path(getwd(), "trained/tensorflow-mni
 
       # if (length(sm$meta_graphs) > 1) stop("More than one graph")
 
-      g_in <- tf$import_graph_def(graph_def[[1]]$graph_def)
+      g_in <- tf$import_graph_def(sm$meta_graphs[[1]]$graph_def)
     })
   })
 

@@ -6,6 +6,7 @@ tfserve: Tensorflow Serve Examples
 -   [Saving a TFEstimators model](#saving-a-tfestimators-model)
 -   [Saving a Keras Model](#saving-a-keras-model)
 -   [Serving Models](#serving-models)
+-   [Using Models](#using-models)
 
 Overview
 --------
@@ -63,7 +64,7 @@ mnist_model
 ```
 
     ## $input
-    ## Tensor("Placeholder:0", shape=(?, 784), dtype=float32)
+    ## Tensor("input:0", shape=(?, 784), dtype=float32)
     ## 
     ## $output
     ## Tensor("Softmax:0", shape=(?, 10), dtype=float32)
@@ -134,8 +135,6 @@ First train a `keras` model as described under [R interface to Keras](https://te
 ``` r
 library(keras)
 ```
-
-    ## Warning: package 'keras' was built under R version 3.4.2
 
     ## 
     ## Attaching package: 'keras'
@@ -218,4 +217,22 @@ One can use `saved_model_cli` to inspect model contents, as in:
 
 ``` bash
 saved_model_cli show --dir /mnt/hgfs/tfserve/trained/tensorflow-mnist/1
+```
+
+Using Models
+============
+
+Manually download [mnist\_client.py](https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/example/mnist_client.py) and [mnist\_saved\_model.py](https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/example/mnist_saved_model.py). Then run:
+
+``` bash
+python mnist_client.py --num_tests=1000 --server=localhost:9000
+
+Successfully downloaded train-images-idx3-ubyte.gz 9912422 bytes.
+Extracting /tmp/train-images-idx3-ubyte.gz
+Successfully downloaded train-labels-idx1-ubyte.gz 28881 bytes.
+Extracting /tmp/train-labels-idx1-ubyte.gz
+Successfully downloaded t10k-images-idx3-ubyte.gz 1648877 bytes.
+Extracting /tmp/t10k-images-idx3-ubyte.gz
+Successfully downloaded t10k-labels-idx1-ubyte.gz 4542 bytes.
+Extracting /tmp/t10k-labels-idx1-ubyte.gz
 ```

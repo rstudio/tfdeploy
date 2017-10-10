@@ -64,7 +64,7 @@ mnist_model
 ```
 
     ## $input
-    ## Tensor("input:0", shape=(?, 784), dtype=float32)
+    ## Tensor("Placeholder:0", shape=(?, 784), dtype=float32)
     ## 
     ## $output
     ## Tensor("Softmax:0", shape=(?, 10), dtype=float32)
@@ -120,6 +120,7 @@ export_savedmodel(model,
                   serving_input_receiver_fn = input_receiver)
 
 model_folder <- list.files()[1]
+
 dir(model_path, recursive = TRUE)
 ```
 
@@ -144,6 +145,8 @@ library(keras)
     ##     evaluate
 
 ``` r
+tf$reset_default_graph()
+
 model <- tfserve_mnist_keras_train(epochs = 1)
 ```
 

@@ -222,7 +222,7 @@ saved_model_cli show --dir /mnt/hgfs/tfserve/trained/tensorflow-mnist/1
 Using Models
 ============
 
-Manually download [mnist\_client.py](https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/example/mnist_client.py) and [mnist\_saved\_model.py](https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/example/mnist_saved_model.py). Then run:
+Manually download [mnist\_client.py](https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/example/mnist_client.py) and [mnist\_input\_data.py](https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/example/mnist_input_data.py). Then run:
 
 ``` bash
 python mnist_client.py --num_tests=1000 --server=localhost:9000

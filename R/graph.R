@@ -22,6 +22,7 @@ tfserve_view_graph <- function(
 
     train_writer <- tf$summary$FileWriter(log_dir)
     train_writer$add_graph(sess$graph)
+    train_writer$close()
   })
 
   tensorboard(log_dir = log_dir)

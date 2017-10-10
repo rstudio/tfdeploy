@@ -102,6 +102,7 @@ export_savedmodel(model,
                   serving_input_receiver_fn = input_receiver)
 
 model_folder <- list.files()[1]
+
 dir(model_path, recursive = TRUE)
 ```
 
@@ -111,6 +112,8 @@ First train a `keras` model as described under [R interface to Keras](https://te
 
 ```{r}
 library(keras)
+tf$reset_default_graph()
+
 model <- tfserve_mnist_keras_train(epochs = 1)
 ```
 

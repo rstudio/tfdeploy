@@ -144,7 +144,7 @@ library(keras)
     ##     evaluate
 
 ``` r
-model <- tfserve_mnist_keras_train(epochs = 3)
+model <- tfserve_mnist_keras_train(epochs = 1)
 ```
 
 Then use the TensorFlow backend to export the model (see also [/keras/issues/6212](https://github.com/fchollet/keras/issues/6212) and [Exporting a model with TF Serving from Keras blog](https://blog.keras.io/keras-as-a-simplified-interface-to-tensorflow-tutorial.html#exporting-a-model-with-tensorflow-serving)):
@@ -154,7 +154,10 @@ model_path <- "trained/keras-mnist/1"
 
 sess <- backend()$get_session()
 
-signature <- tfserve_mnist_signature(mnist_model$input, mnist_model$output)
+signature <- tfserve_mnist_signature(
+  model$input_layers[[1]]$input,
+  model$output_layers[[1]]$output)
+
 tfserve_save(sess, model_path, signature, overwrite = TRUE)
 ```
 
@@ -220,7 +223,7 @@ saved_model_cli show --dir /mnt/hgfs/tfserve/trained/tensorflow-mnist/1
 ```
 
 Using Models
-============
+------------
 
 Manually download [mnist\_client.py](https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/example/mnist_client.py) and [mnist\_input\_data.py](https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/example/mnist_input_data.py). Then run:
 

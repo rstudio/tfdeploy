@@ -181,3 +181,20 @@ One can use `saved_model_cli` to inspect model contents, as in:
 ```{bash eval=F}
 saved_model_cli show --dir /mnt/hgfs/tfserve/trained/tensorflow-mnist/1
 ```
+
+# Using Models
+
+Manually download [mnist_client.py](https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/example/mnist_client.py) and [mnist_saved_model.py](https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/example/mnist_saved_model.py). Then run:
+
+```{bash eval=F}
+python mnist_client.py --num_tests=1000 --server=localhost:9000
+
+Successfully downloaded train-images-idx3-ubyte.gz 9912422 bytes.
+Extracting /tmp/train-images-idx3-ubyte.gz
+Successfully downloaded train-labels-idx1-ubyte.gz 28881 bytes.
+Extracting /tmp/train-labels-idx1-ubyte.gz
+Successfully downloaded t10k-images-idx3-ubyte.gz 1648877 bytes.
+Extracting /tmp/t10k-images-idx3-ubyte.gz
+Successfully downloaded t10k-labels-idx1-ubyte.gz 4542 bytes.
+Extracting /tmp/t10k-labels-idx1-ubyte.gz
+```

@@ -235,4 +235,6 @@ Successfully downloaded t10k-images-idx3-ubyte.gz 1648877 bytes.
 Extracting /tmp/t10k-images-idx3-ubyte.gz
 Successfully downloaded t10k-labels-idx1-ubyte.gz 4542 bytes.
 Extracting /tmp/t10k-labels-idx1-ubyte.gz
+........................................
+Inference error rate: 9.5%
 ```

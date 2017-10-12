@@ -136,5 +136,7 @@ tfserve_mnist_keras_train <- function(epochs = 30) {
     validation_split = 0.2
   )
 
+  model %>% keras::evaluate(x_test, y_test) %>% print()
+
   model
 }

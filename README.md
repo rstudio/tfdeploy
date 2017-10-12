@@ -133,7 +133,7 @@ Saving a Keras Model
 
 First train a `keras` model as described under [R interface to Keras](https://tensorflow.rstudio.com/keras/), for convinience, run instead:
 
-> Notice `set_learning_phase(TRUE)` to prevent 'You must feed a value for placeholder tensor 'dropout\_1/keras\_learning\_phase' while serving set learning phase (see [stackoverflow.com/q/42025660](https://stackoverflow.com/questions/42025660/keras-set-learning-phase-for-dropout-when-saving-tensorflow-session), [keras/issues/2310](https://github.com/fchollet/keras/issues/2310), [keras/issues/7720](https://github.com/fchollet/keras/issues/7720)).
+> Notice `set_learning_phase(TRUE)` to prevent 'You must feed a value for placeholder tensor 'dropout\_1/keras\_learning\_phase' while serving set learning phase (see [stackoverflow.com/q/42025660](https://stackoverflow.com/questions/42025660/keras-set-learning-phase-for-dropout-when-saving-tensorflow-session), [keras/issues/2310](https://github.com/fchollet/keras/issues/2310), [keras/issues/7720](https://github.com/fchollet/keras/issues/7720), [/tensorflow/serving/issues/310](https://github.com/tensorflow/serving/issues/310)).
 
 ``` r
 library(keras)
@@ -153,6 +153,12 @@ backend()$set_learning_phase(TRUE)
 
 model <- tfserve_mnist_keras_train(epochs = 1)
 ```
+
+    ## $loss
+    ## [1] 0.2294266
+    ## 
+    ## $acc
+    ## [1] 0.9318
 
 Then use the TensorFlow backend to export the model (see also [/keras/issues/6212](https://github.com/fchollet/keras/issues/6212) and [Exporting a model with TF Serving from Keras blog](https://blog.keras.io/keras-as-a-simplified-interface-to-tensorflow-tutorial.html#exporting-a-model-with-tensorflow-serving)):
 
@@ -177,6 +183,21 @@ dir(model_path, recursive = TRUE)
     ## [1] "saved_model.pb"                         
     ## [2] "variables/variables.data-00000-of-00001"
     ## [3] "variables/variables.index"
+
+**TODO**: Validate accuracy of saved model.
+
+``` r
+library(tensorflow)
+library(keras)
+
+sess$close()
+
+sess <- backend()$get_session()
+tf$saved_model$loader$load(
+  sess,
+  tf$python$saved_model$tag_constants$SERVING,
+  "trained/keras-mnist/1")
+```
 
 Serving Models
 --------------
@@ -261,3 +282,5 @@ Extracting /tmp/t10k-labels-idx1-ubyte.gz
 ............
 Inference error rate: 84.5%
 ```
+
+**TODO:** Investigate inference error rate under keras, see: [/keras/issues/7848](https://github.com/fchollet/keras/issues/7848).

@@ -114,7 +114,8 @@ First train a `keras` model as described under [R interface to Keras](https://te
 > placeholder tensor 'dropout_1/keras_learning_phase' while serving set learning
 > phase (see [stackoverflow.com/q/42025660](https://stackoverflow.com/questions/42025660/keras-set-learning-phase-for-dropout-when-saving-tensorflow-session),
 > [keras/issues/2310](https://github.com/fchollet/keras/issues/2310), 
-> [keras/issues/7720](https://github.com/fchollet/keras/issues/7720)).
+> [keras/issues/7720](https://github.com/fchollet/keras/issues/7720),
+> [/tensorflow/serving/issues/310](https://github.com/tensorflow/serving/issues/310)).
 
 ```{r}
 library(keras)
@@ -139,6 +140,21 @@ signature <- tfserve_mnist_signature(
 tfserve_save(sess, model_path, signature, overwrite = TRUE)
 
 dir(model_path, recursive = TRUE)
+```
+
+**TODO**: Validate accuracy of saved model.
+
+```{r eval=F}
+library(tensorflow)
+library(keras)
+
+sess$close()
+
+sess <- backend()$get_session()
+tf$saved_model$loader$load(
+  sess,
+  tf$python$saved_model$tag_constants$SERVING,
+  "trained/keras-mnist/1")
 ```
 
 ## Serving Models
@@ -228,3 +244,5 @@ Extracting /tmp/t10k-labels-idx1-ubyte.gz
 Inference error rate: 84.5%
 
 ```
+
+**TODO:** Investigate inference error rate under keras, see: [/keras/issues/7848](https://github.com/fchollet/keras/issues/7848).

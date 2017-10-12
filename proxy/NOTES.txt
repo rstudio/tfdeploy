@@ -1,0 +1,8 @@
+TF Serving Defitinion:
+
+https://github.com/tensorflow/serving/tree/master/tensorflow_serving/apis
+
+Proxy Generation:
+
+https://github.com/grpc-ecosystem/grpc-gateway
+

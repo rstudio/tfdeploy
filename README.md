@@ -133,6 +133,8 @@ Saving a Keras Model
 
 First train a `keras` model as described under [R interface to Keras](https://tensorflow.rstudio.com/keras/), for convinience, run instead:
 
+> Notice `set_learning_phase(TRUE)` to prevent 'You must feed a value for placeholder tensor 'dropout\_1/keras\_learning\_phase' while serving set learning phase (see [stackoverflow.com/q/42025660](https://stackoverflow.com/questions/42025660/keras-set-learning-phase-for-dropout-when-saving-tensorflow-session), [keras/issues/2310](https://github.com/fchollet/keras/issues/2310), [keras/issues/7720](https://github.com/fchollet/keras/issues/7720)).
+
 ``` r
 library(keras)
 ```
@@ -146,6 +148,8 @@ library(keras)
 
 ``` r
 tf$reset_default_graph()
+
+backend()$set_learning_phase(TRUE)
 
 model <- tfserve_mnist_keras_train(epochs = 1)
 ```
@@ -243,4 +247,17 @@ Successfully downloaded t10k-labels-idx1-ubyte.gz 4542 bytes.
 Extracting /tmp/t10k-labels-idx1-ubyte.gz
 ........................................
 Inference error rate: 9.5%
+```
+
+Or while running the Keras model under TF Serving, :
+
+``` bash
+python mnist_client.py --num_tests=1000 --server=localhost:9000
+
+Extracting /tmp/train-images-idx3-ubyte.gz
+Extracting /tmp/train-labels-idx1-ubyte.gz
+Extracting /tmp/t10k-images-idx3-ubyte.gz
+Extracting /tmp/t10k-labels-idx1-ubyte.gz
+............
+Inference error rate: 84.5%
 ```

@@ -33,6 +33,17 @@ server_content_type <- function(file_path) {
 
 server_handlers <- function() {
   list(
+    "^/swagger.json" = function(req) {
+      list(
+        status = 200L,
+        headers = list(
+          "Content-Type" = paste0(server_content_type("js"), "; charset=UTF-8")
+        ),
+        body = charToRaw(enc2utf8(
+          swagger_from_graph()
+        ))
+      )
+    },
     "^/[^/]*$" = function(req) {
       file_path <- system.file(paste0("swagger-ui", req$PATH_INFO), package = "tfserve")
       file_contents <- if (file.exists(file_path)) readBin(file_path, "raw", n = file.info(file_path)$size) else NULL
@@ -74,8 +85,4 @@ run_server <- function(host, port) {
       NULL
     }
   ))
-}
-
-swagger_from_graph <- function() {
-  # http://petstore.swagger.io/v2/swagger.json
 }

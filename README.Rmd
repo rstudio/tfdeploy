@@ -250,11 +250,12 @@ graph$signature_def
 
 ## Loading a Keras Model
 
-```{r eval=F}
+```{r}
 library(tensorflow)
-library(keras)
 
-sess <- backend()$get_session()
+tf$reset_default_graph()
+sess <- tf$Session()
+
 grpah <- tf$saved_model$loader$load(
   sess,
   list(tf$python$saved_model$tag_constants$SERVING),

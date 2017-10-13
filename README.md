@@ -157,10 +157,10 @@ model <- tfserve_mnist_keras_train(epochs = 1)
 ```
 
     ## $loss
-    ## [1] 0.2177356
+    ## [1] 0.2357769
     ## 
     ## $acc
-    ## [1] 0.9327
+    ## [1] 0.9297
 
 Then use the TensorFlow backend to export the model (see also [/keras/issues/6212](https://github.com/fchollet/keras/issues/6212) and [Exporting a model with TF Serving from Keras blog](https://blog.keras.io/keras-as-a-simplified-interface-to-tensorflow-tutorial.html#exporting-a-model-with-tensorflow-serving)):
 
@@ -368,9 +368,10 @@ Loading a Keras Model
 
 ``` r
 library(tensorflow)
-library(keras)
 
-sess <- backend()$get_session()
+tf$reset_default_graph()
+sess <- tf$Session()
+
 grpah <- tf$saved_model$loader$load(
   sess,
   list(tf$python$saved_model$tag_constants$SERVING),

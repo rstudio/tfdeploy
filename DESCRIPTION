@@ -15,6 +15,7 @@ LazyData: true
 Import:
   - tensorflow
   - httpuv
+  - jsonlite
 Suggest:
   - keras
 Remotes:

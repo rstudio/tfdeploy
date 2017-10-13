@@ -87,7 +87,7 @@ model <- tfserve_mtcars_train()
 The `export_savemodel()` will create the **pb** file and the **variables** folder
 
 ```{r}
-#Create an input spec
+# Create an input spec
 input_spec <- regressor_parse_example_spec(feature_columns = feature_columns( 
                                              column_numeric("disp", "cyl")
                                            ),
@@ -140,21 +140,6 @@ signature <- tfserve_mnist_signature(
 tfserve_save(sess, model_path, signature, overwrite = TRUE)
 
 dir(model_path, recursive = TRUE)
-```
-
-**TODO**: Validate accuracy of saved model.
-
-```{r eval=F}
-library(tensorflow)
-library(keras)
-
-sess$close()
-
-sess <- backend()$get_session()
-tf$saved_model$loader$load(
-  sess,
-  tf$python$saved_model$tag_constants$SERVING,
-  "trained/keras-mnist/1")
 ```
 
 ## Serving Models
@@ -246,3 +231,30 @@ Inference error rate: 84.5%
 ```
 
 **TODO:** Investigate inference error rate under keras, see: [/keras/issues/7848](https://github.com/fchollet/keras/issues/7848).
+
+## Loading a TensorFlow Model
+
+```{r eval=F}
+library(tensorflow)
+
+sess <- tf$Session()
+graph <- tf$saved_model$loader$load(
+  sess,
+  list(tf$python$saved_model$tag_constants$SERVING),
+  "trained/tensorflow-mnist/1")
+
+graph$signature_def
+```
+
+## Loading a Keras Model
+
+```{r eval=F}
+library(tensorflow)
+library(keras)
+
+sess <- backend()$get_session()
+grpah <- tf$saved_model$loader$load(
+  sess,
+  list(tf$python$saved_model$tag_constants$SERVING),
+  "trained/keras-mnist/1")
+```

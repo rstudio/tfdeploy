@@ -157,10 +157,10 @@ model <- tfserve_mnist_keras_train(epochs = 1)
 ```
 
     ## $loss
-    ## [1] 0.2335161
+    ## [1] 0.2177356
     ## 
     ## $acc
-    ## [1] 0.93
+    ## [1] 0.9327
 
 Then use the TensorFlow backend to export the model (see also [/keras/issues/6212](https://github.com/fchollet/keras/issues/6212) and [Exporting a model with TF Serving from Keras blog](https://blog.keras.io/keras-as-a-simplified-interface-to-tensorflow-tutorial.html#exporting-a-model-with-tensorflow-serving)):
 
@@ -278,7 +278,9 @@ Loading a TensorFlow Model
 ``` r
 library(tensorflow)
 
+tf$reset_default_graph()
 sess <- tf$Session()
+
 graph <- tf$saved_model$loader$load(
   sess,
   list(tf$python$saved_model$tag_constants$SERVING),
@@ -286,6 +288,80 @@ graph <- tf$saved_model$loader$load(
 
 graph$signature_def
 ```
+
+    ## {u'serving_default': inputs {
+    ##   key: "inputs"
+    ##   value {
+    ##     name: "tf_example:0"
+    ##     dtype: DT_STRING
+    ##     tensor_shape {
+    ##       unknown_rank: true
+    ##     }
+    ##   }
+    ## }
+    ## outputs {
+    ##   key: "classes"
+    ##   value {
+    ##     name: "index_to_string_Lookup:0"
+    ##     dtype: DT_STRING
+    ##     tensor_shape {
+    ##       dim {
+    ##         size: -1
+    ##       }
+    ##       dim {
+    ##         size: 10
+    ##       }
+    ##     }
+    ##   }
+    ## }
+    ## outputs {
+    ##   key: "scores"
+    ##   value {
+    ##     name: "TopKV2:0"
+    ##     dtype: DT_FLOAT
+    ##     tensor_shape {
+    ##       dim {
+    ##         size: -1
+    ##       }
+    ##       dim {
+    ##         size: 10
+    ##       }
+    ##     }
+    ##   }
+    ## }
+    ## method_name: "tensorflow/serving/classify"
+    ## , u'predict_images': inputs {
+    ##   key: "images"
+    ##   value {
+    ##     name: "Placeholder:0"
+    ##     dtype: DT_FLOAT
+    ##     tensor_shape {
+    ##       dim {
+    ##         size: -1
+    ##       }
+    ##       dim {
+    ##         size: 784
+    ##       }
+    ##     }
+    ##   }
+    ## }
+    ## outputs {
+    ##   key: "scores"
+    ##   value {
+    ##     name: "Softmax:0"
+    ##     dtype: DT_FLOAT
+    ##     tensor_shape {
+    ##       dim {
+    ##         size: -1
+    ##       }
+    ##       dim {
+    ##         size: 10
+    ##       }
+    ##     }
+    ##   }
+    ## }
+    ## method_name: "tensorflow/serving/predict"
+    ## }
 
 Loading a Keras Model
 ---------------------

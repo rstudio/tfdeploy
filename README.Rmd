@@ -234,10 +234,12 @@ Inference error rate: 84.5%
 
 ## Loading a TensorFlow Model
 
-```{r eval=F}
+```{r}
 library(tensorflow)
 
+tf$reset_default_graph()
 sess <- tf$Session()
+
 graph <- tf$saved_model$loader$load(
   sess,
   list(tf$python$saved_model$tag_constants$SERVING),

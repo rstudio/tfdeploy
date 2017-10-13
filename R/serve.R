@@ -20,20 +20,32 @@ load_model <- function(model_path) {
   graph$signature_def
 }
 
+server_content_type <- function(file_path) {
+  file_split <- strsplit(file_path, split = "\\.")[[1]]
+  switch(file_split[[length(file_split)]],
+    "css" = "text/css",
+    "html" = "text/html",
+    "js" = "application/javascript",
+    "map" = "text/plain",
+    "png" = "image/png"
+  )
+}
+
 server_handlers <- function() {
   list(
-    "^/[^/]*$" = function() {
+    "^/[^/]*$" = function(req) {
+      file_path <- system.file(paste0("swagger-ui", req$PATH_INFO), package = "tfserve")
+      file_contents <- if (file.exists(file_path)) readBin(file_path, "raw", n = file.info(file_path)$size) else NULL
+
       list(
-        status = 500L,
+        status = 200L,
         headers = list(
-          "Content-Type" = "text/plain; charset=UTF-8"
+          "Content-Type" = paste0(server_content_type(req$PATH_INFO))
         ),
-        body = charToRaw(enc2utf8(
-          "Hello from tfserve."
-        ))
+        body = file_contents
       )
     },
-    ".*" = function() {
+    ".*" = function(req) {
       list(
         status = 404L,
         headers = list(
@@ -56,7 +68,7 @@ run_server <- function(host, port) {
     },
     call = function(req){
       matches <- sapply(names(handlers), function(e) grepl(e, req$PATH_INFO))
-      handlers[matches][[1]]()
+      handlers[matches][[1]](req)
     },
     onWSOpen = function(ws) {
       NULL

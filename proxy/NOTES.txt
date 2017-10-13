@@ -6,3 +6,6 @@ Proxy Generation:
 
 https://github.com/grpc-ecosystem/grpc-gateway
 
+CloudML V1 Proto:
+
+https://github.com/googleapis/googleapis/blob/master/google/cloud/ml/v1/prediction_service.proto

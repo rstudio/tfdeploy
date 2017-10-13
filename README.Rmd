@@ -4,28 +4,29 @@ output:
   github_document:
     fig_width: 9
     fig_height: 5
-    toc: true
     toc_depth: 3
 ---
 
 `tfserve` provides a [GoogleML](https://cloud.google.com/ml-engine/docs/prediction-overview)
 compatiable REST API for predictions to serve TensorFlow Models from R with ease.
 
+<img src="tools/readme/swagger.png" width=400 />
+
+## Quick Start
+
 For example, we can train MNIST as described by [MNIST For ML Beginners](https://tensorflow.rstudio.com/tensorflow/articles/tutorial_mnist_beginners.html)
 and then save using `SavedModelBuilder` and the right signature or, for conviniece, 
 use a `tfserve` helper function as follows:
 
-```{r message=F}
+```{r message=F, warning=F}
 library(tfserve)
 
 model_path <- "trained/tensorflow-mnist/1"
 mnist_train_save(model_path)
-
-dir(model_path, recursive = T)
 ```
 
 Then, we can serve this model with ease by running:
 
-```{r}
+```{r eval=F}
 serve(model_path)
 ```

@@ -7,6 +7,8 @@ tfserve: Tensorflow Serve Examples
 -   [Saving a Keras Model](#saving-a-keras-model)
 -   [Serving Models](#serving-models)
 -   [Using Models](#using-models)
+-   [Loading a TensorFlow Model](#loading-a-tensorflow-model)
+-   [Loading a Keras Model](#loading-a-keras-model)
 
 Overview
 --------
@@ -105,7 +107,7 @@ model <- tfserve_mtcars_train()
 The `export_savemodel()` will create the **pb** file and the **variables** folder
 
 ``` r
-#Create an input spec
+# Create an input spec
 input_spec <- regressor_parse_example_spec(feature_columns = feature_columns( 
                                              column_numeric("disp", "cyl")
                                            ),
@@ -155,10 +157,10 @@ model <- tfserve_mnist_keras_train(epochs = 1)
 ```
 
     ## $loss
-    ## [1] 0.2294266
+    ## [1] 0.2335161
     ## 
     ## $acc
-    ## [1] 0.9318
+    ## [1] 0.93
 
 Then use the TensorFlow backend to export the model (see also [/keras/issues/6212](https://github.com/fchollet/keras/issues/6212) and [Exporting a model with TF Serving from Keras blog](https://blog.keras.io/keras-as-a-simplified-interface-to-tensorflow-tutorial.html#exporting-a-model-with-tensorflow-serving)):
 
@@ -183,21 +185,6 @@ dir(model_path, recursive = TRUE)
     ## [1] "saved_model.pb"                         
     ## [2] "variables/variables.data-00000-of-00001"
     ## [3] "variables/variables.index"
-
-**TODO**: Validate accuracy of saved model.
-
-``` r
-library(tensorflow)
-library(keras)
-
-sess$close()
-
-sess <- backend()$get_session()
-tf$saved_model$loader$load(
-  sess,
-  tf$python$saved_model$tag_constants$SERVING,
-  "trained/keras-mnist/1")
-```
 
 Serving Models
 --------------
@@ -284,3 +271,32 @@ Inference error rate: 84.5%
 ```
 
 **TODO:** Investigate inference error rate under keras, see: [/keras/issues/7848](https://github.com/fchollet/keras/issues/7848).
+
+Loading a TensorFlow Model
+--------------------------
+
+``` r
+library(tensorflow)
+
+sess <- tf$Session()
+graph <- tf$saved_model$loader$load(
+  sess,
+  list(tf$python$saved_model$tag_constants$SERVING),
+  "trained/tensorflow-mnist/1")
+
+graph$signature_def
+```
+
+Loading a Keras Model
+---------------------
+
+``` r
+library(tensorflow)
+library(keras)
+
+sess <- backend()$get_session()
+grpah <- tf$saved_model$loader$load(
+  sess,
+  list(tf$python$saved_model$tag_constants$SERVING),
+  "trained/keras-mnist/1")
+```

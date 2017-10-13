@@ -1,9 +1,15 @@
 tfserve: Serve Tensorflow Models
 ================
 
+tfserve: Serve Tensorflow Models
+================================
+
+Overview
+--------
+
 `tfserve` provides a [GoogleML](https://cloud.google.com/ml-engine/docs/prediction-overview) compatiable REST API for predictions to serve TensorFlow Models from R with ease.
 
-<img src="tools/readme/swagger.png" width=400 />
+<img src="tools/readme/swagger.png" width=500 />
 
 Quick Start
 -----------

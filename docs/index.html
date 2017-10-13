@@ -79,21 +79,28 @@
     
     
 <div class="contents">
+<div id="tfserve-serve-tensorflow-models" class="section level1">
+<div class="page-header"><h1 class="hasAnchor">
+<a href="#tfserve-serve-tensorflow-models" class="anchor"></a>tfserve: Serve Tensorflow Models</h1></div>
+<div id="overview" class="section level2">
+<h2 class="hasAnchor">
+<a href="#overview" class="anchor"></a>Overview</h2>
 <p><code>tfserve</code> provides a <a href="https://cloud.google.com/ml-engine/docs/prediction-overview">GoogleML</a> compatiable REST API for predictions to serve TensorFlow Models from R with ease.</p>
+<p><img src="tools/readme/swagger.png" width="500"></p>
+</div>
+<div id="quick-start" class="section level2">
+<h2 class="hasAnchor">
+<a href="#quick-start" class="anchor"></a>Quick Start</h2>
 <p>For example, we can train MNIST as described by <a href="https://tensorflow.rstudio.com/tensorflow/articles/tutorial_mnist_beginners.html">MNIST For ML Beginners</a> and then save using <code>SavedModelBuilder</code> and the right signature or, for conviniece, use a <code>tfserve</code> helper function as follows:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tfserve)</code></pre></div>
-<pre><code>## Warning: replacing previous import 'keras::evaluate' by
-## 'tfestimators::evaluate' when loading 'tfserve'</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">model_path &lt;-<span class="st"> "trained/tensorflow-mnist/1"</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tfserve)
+
+model_path &lt;-<span class="st"> "trained/tensorflow-mnist/1"</span>
 <span class="kw"><a href="reference/mnist_train_save.html">mnist_train_save</a></span>(model_path)</code></pre></div>
 <pre><code>## [1] "trained/tensorflow-mnist/1/saved_model.pb"</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dir</span>(model_path, <span class="dt">recursive =</span> T)</code></pre></div>
-<pre><code>## [1] "saved_model.pb"                         
-## [2] "variables/variables.data-00000-of-00001"
-## [3] "variables/variables.index"</code></pre>
 <p>Then, we can serve this model with ease by running:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/serve.html">serve</a></span>(model_path)</code></pre></div>
-<pre><code>## NULL</code></pre>
+</div>
+</div>
 </div>
   </div>
 

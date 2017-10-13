@@ -2,6 +2,9 @@ Package: tfserve
 Type: Package
 Title: What the Package Does (Title Case)
 Version: 0.1.0
+Authors@R: c(
+    person(family = "RStudio", role = c("cph"))
+    )
 Author: Who wrote it
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
@@ -11,6 +14,7 @@ Encoding: UTF-8
 LazyData: true
 Import:
   - tensorflow
+Suggest:
   - keras
 Remotes:
   - rstudio/tfestimators

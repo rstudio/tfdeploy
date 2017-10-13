@@ -1,0 +1,29 @@
+template:
+  params:
+    bootswatch: cosmo
+
+navbar:
+  title: "tfserve"
+  type: inverse
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Guides"
+      menu:
+        - text: "Exporting"
+          href: articles/guides-exporting.html
+    - text: "Reference"
+      menu:
+        - text: "Functions"
+          href: reference/index.html
+  right:
+   - icon: fa-github
+     href: https://github.com/rstudio/tfserve
+
+reference:
+  - title: "Operations"
+    contents:
+      - serve
+  - title: "Examples"
+    contents:
+      - mnist_train_save

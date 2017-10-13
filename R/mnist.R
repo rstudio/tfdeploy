@@ -1,7 +1,7 @@
 #' @import tensorflow
 
 #' @export
-tfserve_mnist_train <- function(sess) {
+mnist_train <- function(sess) {
   datasets <- tf$contrib$learn$datasets
   mnist <- datasets$mnist$read_data_sets("MNIST-data", one_hot = TRUE)
 
@@ -42,7 +42,7 @@ tfserve_mnist_train <- function(sess) {
 }
 
 #' @export
-tfserve_mnist_signature <- function(x, y) {
+mnist_signature <- function(x, y) {
   serialized_tf_example <- tf$placeholder(tf$string, name = 'tf_example')
 
   classification_inputs <- tf$saved_model$utils$build_tensor_info(
@@ -97,7 +97,7 @@ tfserve_mnist_signature <- function(x, y) {
 
 #' @import keras
 #' @export
-tfserve_mnist_keras_train <- function(epochs = 30) {
+mnist_train_keras <- function(epochs = 30) {
   mnist <- dataset_mnist()
 
   x_train <- mnist$train$x
@@ -139,4 +139,21 @@ tfserve_mnist_keras_train <- function(epochs = 30) {
   model %>% keras::evaluate(x_test, y_test) %>% print()
 
   model
+}
+
+#' Trains and Save MNIST
+#'
+#' Trains and saves MNIST using TensorFlow
+#'
+#' @param model_path Destination path where the model will be saved.
+#'
+#' @export
+mnist_train_save <- function(model_path) {
+  if (dir.exists(model_path)) unlink(model_path, recursive = TRUE)
+
+  sess <- tf$Session()
+  mnist_model <- mnist_train(sess)
+  signature <- mnist_signature(mnist_model$input, mnist_model$output)
+
+  tfserve_save(sess, model_path, signature, overwrite = TRUE)
 }

@@ -1,6 +1,6 @@
 #' @import tfestimators
 #' @export
-tfserve_mtcars_train <- function () {
+mtcars_train <- function () {
   mtcars_input_fn <- function(data) {
     input_fn(data,
              features = c("disp", "cyl"),

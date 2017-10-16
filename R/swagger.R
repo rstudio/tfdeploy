@@ -78,7 +78,7 @@ swagger_paths <- function(graph) {
     path_values[[serving_default]] <- NULL
 
     path_names <- c(serving_default, path_names)
-    path_values <- c(serving_default_value, path_values)
+    path_values <- c(list(serving_default_value), path_values)
   }
 
   full_urls <- paste0("/", path_names, "/predict/")

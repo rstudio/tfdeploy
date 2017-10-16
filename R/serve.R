@@ -4,8 +4,11 @@
 #'
 #' @importFrom httpuv runServer
 #' @export
-serve <- function(model_path, host = "127.0.0.1", port = 8089) {
+serve <- function(model_path, host = "127.0.0.1", port = 8089, browse = interactive()) {
   graph <- load_model(model_path)
+
+  if (browse) utils::browseURL(paste0("http://", host, ":", port))
+
   run_server(host, port, graph)
 }
 
@@ -31,6 +34,19 @@ server_content_type <- function(file_path) {
   )
 }
 
+server_static_file_response <- function(file_path) {
+  file_path <- system.file(file_path, package = "tfserve")
+  file_contents <- if (file.exists(file_path)) readBin(file_path, "raw", n = file.info(file_path)$size) else NULL
+
+  list(
+    status = 200L,
+    headers = list(
+      "Content-Type" = paste0(server_content_type(file_path))
+    ),
+    body = file_contents
+  )
+}
+
 server_handlers <- function() {
   list(
     "^/swagger.json" = function(req, graph) {
@@ -44,17 +60,11 @@ server_handlers <- function() {
         ))
       )
     },
+    "^/$" = function(req, graph) {
+      server_static_file_response("swagger-ui/index.html")
+    },
     "^/[^/]*$" = function(req, graph) {
-      file_path <- system.file(paste0("swagger-ui", req$PATH_INFO), package = "tfserve")
-      file_contents <- if (file.exists(file_path)) readBin(file_path, "raw", n = file.info(file_path)$size) else NULL
-
-      list(
-        status = 200L,
-        headers = list(
-          "Content-Type" = paste0(server_content_type(req$PATH_INFO))
-        ),
-        body = file_contents
-      )
+      server_static_file_response(file.path("swagger-ui", req$PATH_INFO))
     },
     ".*" = function(req, graph) {
       list(

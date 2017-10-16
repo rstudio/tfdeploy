@@ -20,7 +20,7 @@ swagger_header <- function() {
     host = unbox("127.0.0.1"),
     basePath = unbox("/api"),
     schemes = list(
-      "http"
+      unbox("http")
     )
   )
 }
@@ -31,18 +31,20 @@ swagger_path <- function(tensor_name, tensor_id) {
       summary = unbox(paste0("Perform prediction over the '", tensor_name, "' model.")),
       description = unbox(""),
       consumes = list(
-        "application/json"
+        unbox("application/json")
       ),
       produces = list(
-        "application/json"
+        unbox("application/json")
       ),
       parameters = list(
-        "in" = unbox("body"),
-        name = unbox("body"),
-        description = unbox("Input tensor(s)."),
-        required = unbox(TRUE),
-        schema = list(
-          "$ref" = unbox("#/definitions/Tensor")
+        list(
+          "in" = unbox("body"),
+          name = unbox("body"),
+          description = unbox("Input tensor(s)."),
+          required = unbox(TRUE),
+          schema = list(
+            "$ref" = unbox("#/definitions/Tensor")
+          )
         )
       ),
       responses = list(
@@ -75,7 +77,7 @@ swagger_defs <- function() {
       Tensor = list(
         type = unbox("object"),
         required = list(
-          "input"
+          unbox("input")
         ),
         properties = list(
           input = list(

@@ -61,18 +61,31 @@ swagger_paths <- function(graph) {
   path_values <- lapply(seq_along(path_names), function(path_index) {
     swagger_path(path_names[[path_index]], path_index)
   })
+  names(path_names) <- path_names
 
-  if (!tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY %in% path_names) {
+  serving_default <- tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY
+  if (!serving_default %in% path_names) {
     warning(
       "Signature '",
       tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY,
-      "' missing but required when deploying to TensorFlow serving."
+      "' is missing but required when deploying to TensorFlow serving."
     )
   }
+  else {
+    # make serving default first entry in swagger-ui
+    path_names <- path_names[path_names != serving_default]
+    serving_default_value <- path_values[[serving_default]]
+    path_values[[serving_default]] <- NULL
 
-  full_urls <- paste0("/predict/", path_names)
+    path_names <- c(serving_default, path_names)
+    path_values <- c(serving_default_value, path_values)
+  }
+
+  full_urls <- paste0("/", path_names, "/predict/")
 
   names(path_values) <- full_urls
+
+  path_values[order(unlist(path_values), decreasing=TRUE)]
 
   list(
     paths = path_values

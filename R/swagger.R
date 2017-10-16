@@ -28,7 +28,7 @@ swagger_header <- function() {
 swagger_path <- function(tensor_name, tensor_id) {
   list(
     post = list(
-      summary = unbox(paste0("Perform prediction over the '", tensor_name, "' model.")),
+      summary = unbox(paste0("Perform prediction over '", tensor_name, "'")),
       description = unbox(""),
       consumes = list(
         unbox("application/json")
@@ -40,7 +40,7 @@ swagger_path <- function(tensor_name, tensor_id) {
         list(
           "in" = unbox("body"),
           name = unbox("body"),
-          description = unbox("Input tensor(s)."),
+          description = unbox(paste0("Input tensor(s) over '", tensor_name, "'")),
           required = unbox(TRUE),
           schema = list(
             "$ref" = unbox("#/definitions/Tensor")
@@ -61,6 +61,14 @@ swagger_paths <- function(graph) {
   path_values <- lapply(seq_along(path_names), function(path_index) {
     swagger_path(path_names[[path_index]], path_index)
   })
+
+  if (!tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY %in% path_names) {
+    warning(
+      "Signature '",
+      tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY,
+      "' missing but required when deploying to TensorFlow serving."
+    )
+  }
 
   full_urls <- paste0("/predict/", path_names)
 

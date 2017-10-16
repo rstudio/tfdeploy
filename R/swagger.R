@@ -3,7 +3,7 @@ swagger_from_graph <- function(graph) {
   def <- c(
     swagger_header(),
     swagger_paths(graph),
-    swagger_defs()
+    swagger_defs(graph)
   )
 
   jsonlite::toJSON(def)
@@ -40,10 +40,10 @@ swagger_path <- function(tensor_name, tensor_id) {
         list(
           "in" = unbox("body"),
           name = unbox("body"),
-          description = unbox(paste0("Input tensor(s) over '", tensor_name, "'")),
+          description = unbox(paste0("Prediction instances for '", tensor_name, "'")),
           required = unbox(TRUE),
           schema = list(
-            "$ref" = unbox("#/definitions/Tensor")
+            "$ref" = unbox("#/definitions/Instances")
           )
         )
       ),
@@ -68,7 +68,7 @@ swagger_paths <- function(graph) {
     warning(
       "Signature '",
       tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY,
-      "' is missing but required when deploying to TensorFlow serving."
+      "' is missing but is required for some services like CloudML."
     )
   }
   else {
@@ -92,18 +92,24 @@ swagger_paths <- function(graph) {
   )
 }
 
-swagger_defs <- function() {
+swagger_defs <- function(graph) {
+  # TODO: Iterate over graph$get(signature_name)
+
   list(
     definitions = list(
-      Tensor = list(
+      Instances = list(
         type = unbox("object"),
-        required = list(
-          unbox("input")
-        ),
         properties = list(
-          input = list(
-            type = unbox("integer"),
-            format = unbox("int64")
+          instances = list(
+            type = unbox("array"),
+            items = list(
+              type = unbox("array"),
+              items = list(
+                type = unbox("integer"),
+                format = unbox("int64")
+              ),
+              example = c(1, 0, 0, 0, 0)
+            )
           )
         )
       )

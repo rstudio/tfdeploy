@@ -25,10 +25,10 @@ swagger_header <- function() {
   )
 }
 
-swagger_path <- function(graph) {
+swagger_path <- function(tensor_name, tensor_id) {
   list(
     post = list(
-      summary = unbox("Perform prediction over the model."),
+      summary = unbox(paste0("Perform prediction over the '", tensor_name, "' model.")),
       description = unbox(""),
       consumes = list(
         "application/json"
@@ -39,7 +39,7 @@ swagger_path <- function(graph) {
       parameters = list(
         "in" = unbox("body"),
         name = unbox("body"),
-        description = unbox("Input tensors."),
+        description = unbox("Input tensor(s)."),
         required = unbox(TRUE),
         schema = list(
           "$ref" = unbox("#/definitions/Tensor")
@@ -56,9 +56,10 @@ swagger_path <- function(graph) {
 
 swagger_paths <- function(graph) {
   path_names <- graph$keys()
-  path_values <- lapply(path_names, function(path_name) {
-    swagger_path()
+  path_values <- lapply(seq_along(path_names), function(path_index) {
+    swagger_path(path_names[[path_index]], path_index)
   })
+
   full_urls <- paste0("/predict/", path_names)
 
   names(path_values) <- full_urls

@@ -1,8 +1,8 @@
 #' @import jsonlite
-swagger_from_graph <- function() {
+swagger_from_graph <- function(graph) {
   def <- c(
     swagger_header(),
-    swagger_paths(),
+    swagger_paths(graph),
     swagger_defs()
   )
 
@@ -25,36 +25,46 @@ swagger_header <- function() {
   )
 }
 
-swagger_paths <- function() {
+swagger_path <- function(graph) {
   list(
-    paths = list(
-      "/predict" = list(
-        post = list(
-          summary = unbox("Perform prediction over the model."),
-          description = unbox(""),
-          consumes = list(
-            "application/json"
-          ),
-          produces = list(
-            "application/json"
-          ),
-          parameters = list(
-            "in" = unbox("body"),
-            name = unbox("body"),
-            description = unbox("Input tensors."),
-            required = unbox(TRUE),
-            schema = list(
-              "$ref" = unbox("#/definitions/Tensor")
-            )
-          ),
-          responses = list(
-            "200" = list(
-              description = unbox("Success")
-            )
-          )
+    post = list(
+      summary = unbox("Perform prediction over the model."),
+      description = unbox(""),
+      consumes = list(
+        "application/json"
+      ),
+      produces = list(
+        "application/json"
+      ),
+      parameters = list(
+        "in" = unbox("body"),
+        name = unbox("body"),
+        description = unbox("Input tensors."),
+        required = unbox(TRUE),
+        schema = list(
+          "$ref" = unbox("#/definitions/Tensor")
+        )
+      ),
+      responses = list(
+        "200" = list(
+          description = unbox("Success")
         )
       )
     )
+  )
+}
+
+swagger_paths <- function(graph) {
+  path_names <- graph$keys()
+  path_values <- lapply(path_names, function(path_name) {
+    swagger_path()
+  })
+  full_urls <- paste0("/predict/", path_names)
+
+  names(path_values) <- full_urls
+
+  list(
+    paths = path_values
   )
 }
 

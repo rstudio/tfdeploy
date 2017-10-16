@@ -5,8 +5,8 @@
 #' @importFrom httpuv runServer
 #' @export
 serve <- function(model_path, host = "127.0.0.1", port = 8089) {
-  load_model(model_path)
-  run_server(host, port)
+  graph <- load_model(model_path)
+  run_server(host, port, graph)
 }
 
 load_model <- function(model_path) {
@@ -33,18 +33,18 @@ server_content_type <- function(file_path) {
 
 server_handlers <- function() {
   list(
-    "^/swagger.json" = function(req) {
+    "^/swagger.json" = function(req, graph) {
       list(
         status = 200L,
         headers = list(
           "Content-Type" = paste0(server_content_type("js"), "; charset=UTF-8")
         ),
         body = charToRaw(enc2utf8(
-          swagger_from_graph()
+          swagger_from_graph(graph)
         ))
       )
     },
-    "^/[^/]*$" = function(req) {
+    "^/[^/]*$" = function(req, graph) {
       file_path <- system.file(paste0("swagger-ui", req$PATH_INFO), package = "tfserve")
       file_contents <- if (file.exists(file_path)) readBin(file_path, "raw", n = file.info(file_path)$size) else NULL
 
@@ -56,7 +56,7 @@ server_handlers <- function() {
         body = file_contents
       )
     },
-    ".*" = function(req) {
+    ".*" = function(req, graph) {
       list(
         status = 404L,
         headers = list(
@@ -70,7 +70,7 @@ server_handlers <- function() {
   )
 }
 
-run_server <- function(host, port) {
+run_server <- function(host, port, graph) {
   handlers <- server_handlers()
 
   httpuv::runServer(host, port, list(
@@ -79,7 +79,7 @@ run_server <- function(host, port) {
     },
     call = function(req){
       matches <- sapply(names(handlers), function(e) grepl(e, req$PATH_INFO))
-      handlers[matches][[1]](req)
+      handlers[matches][[1]](req, graph)
     },
     onWSOpen = function(ws) {
       NULL

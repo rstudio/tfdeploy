@@ -25,10 +25,10 @@ swagger_header <- function() {
   )
 }
 
-swagger_path <- function(tensor_name, tensor_id) {
+swagger_path <- function(siagnature_name, signature_id) {
   list(
     post = list(
-      summary = unbox(paste0("Perform prediction over '", tensor_name, "'")),
+      summary = unbox(paste0("Perform prediction over '", siagnature_name, "'")),
       description = unbox(""),
       consumes = list(
         unbox("application/json")
@@ -40,10 +40,10 @@ swagger_path <- function(tensor_name, tensor_id) {
         list(
           "in" = unbox("body"),
           name = unbox("body"),
-          description = unbox(paste0("Prediction instances for '", tensor_name, "'")),
+          description = unbox(paste0("Prediction instances for '", siagnature_name, "'")),
           required = unbox(TRUE),
           schema = list(
-            "$ref" = unbox("#/definitions/Instances")
+            "$ref" = unbox(paste0("#/definitions/Instances", signature_id))
           )
         )
       ),
@@ -61,7 +61,7 @@ swagger_paths <- function(graph) {
   path_values <- lapply(seq_along(path_names), function(path_index) {
     swagger_path(path_names[[path_index]], path_index)
   })
-  names(path_names) <- path_names
+  names(path_values) <- path_names
 
   serving_default <- tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY
   if (!serving_default %in% path_names) {
@@ -92,27 +92,35 @@ swagger_paths <- function(graph) {
   )
 }
 
-swagger_defs <- function(graph) {
-  # TODO: Iterate over graph$get(signature_name)
-
+swagger_def <- function(signature_name, signature_id) {
   list(
-    definitions = list(
-      Instances = list(
-        type = unbox("object"),
-        properties = list(
-          instances = list(
-            type = unbox("array"),
-            items = list(
-              type = unbox("array"),
-              items = list(
-                type = unbox("integer"),
-                format = unbox("int64")
-              ),
-              example = c(1, 0, 0, 0, 0)
-            )
-          )
+    type = unbox("object"),
+    properties = list(
+      instances = list(
+        type = unbox("array"),
+        items = list(
+          type = unbox("array"),
+          items = list(
+            type = unbox("integer"),
+            format = unbox("int64")
+          ),
+          example = c(1, 0, 0, 0, 0)
         )
       )
     )
+  )
+}
+
+swagger_defs <- function(graph) {
+  defs_names <- graph$keys()
+  defs_values <- lapply(seq_along(defs_names), function(defs_index) {
+    swagger_def(defs_names[[defs_index]], defs_index)
+  })
+  names(defs_values) <- lapply(seq_along(defs_names), function(def_idx) {
+    paste0("Instances", def_idx)
+  })
+
+  list(
+    definitions = defs_values
   )
 }

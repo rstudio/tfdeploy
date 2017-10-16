@@ -47,7 +47,7 @@ server_static_file_response <- function(file_path) {
   )
 }
 
-server_handlers <- function() {
+server_handlers <- function(host, port) {
   list(
     "^/swagger.json" = function(req, graph) {
       list(
@@ -56,7 +56,7 @@ server_handlers <- function() {
           "Content-Type" = paste0(server_content_type("js"), "; charset=UTF-8")
         ),
         body = charToRaw(enc2utf8(
-          swagger_from_graph(graph)
+          swagger_from_graph(graph, host, port)
         ))
       )
     },
@@ -65,6 +65,17 @@ server_handlers <- function() {
     },
     "^/[^/]*$" = function(req, graph) {
       server_static_file_response(file.path("swagger-ui", req$PATH_INFO))
+    },
+    "^/api/.*" = function(req, graph) {
+      list(
+        status = 500L,
+        headers = list(
+          "Content-Type" = "text/plain; charset=UTF-8"
+        ),
+        body = charToRaw(enc2utf8(
+          "Not yet implemented."
+        ))
+      )
     },
     ".*" = function(req, graph) {
       list(
@@ -81,7 +92,7 @@ server_handlers <- function() {
 }
 
 run_server <- function(host, port, graph) {
-  handlers <- server_handlers()
+  handlers <- server_handlers(host, port)
 
   httpuv::runServer(host, port, list(
     onHeaders = function(req) {

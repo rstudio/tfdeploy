@@ -1,7 +1,7 @@
 #' @import jsonlite
-swagger_from_graph <- function(graph) {
+swagger_from_graph <- function(graph, host, port) {
   def <- c(
-    swagger_header(),
+    swagger_header(host, port),
     swagger_paths(graph),
     swagger_defs(graph)
   )
@@ -9,7 +9,7 @@ swagger_from_graph <- function(graph) {
   jsonlite::toJSON(def)
 }
 
-swagger_header <- function() {
+swagger_header <- function(host, port) {
   list(
     swagger = unbox("2.0"),
     info = list(
@@ -17,7 +17,7 @@ swagger_header <- function() {
       version = unbox("1.0.0"),
       title = unbox("TensorFlow Model")
     ),
-    host = unbox("127.0.0.1"),
+    host = unbox(paste(host, port, sep = ":")),
     basePath = unbox("/api"),
     schemes = list(
       unbox("http")

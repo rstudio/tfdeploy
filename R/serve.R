@@ -92,10 +92,10 @@ server_handlers <- function(host, port) {
       sess$run(tf$global_variables_initializer())
 
       feed_dict <- list()
-      feed_dict[[graph$get("predict_images")$inputs$get("images")$name]] <- array(rep(1.0, 784), list(1, 784))
+      feed_dict[[graph$get(signature_name)$inputs$get("images")$name]] <- array(rep(1.0, 784), list(1, 784))
       result <- sess$run(
         fetches = sess$graph$get_tensor_by_name(
-          graph$get("predict_images")$outputs$get("scores")$name
+          graph$get(signature_name)$outputs$get("scores")$name
         ),
         feed_dict = feed_dict
       )

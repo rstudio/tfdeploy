@@ -48,14 +48,17 @@ server_static_file_response <- function(file_path) {
   )
 }
 
-server_invalid_request <- function() {
+server_invalid_request <- function(message = NULL) {
   list(
     status = 404L,
     headers = list(
       "Content-Type" = "text/plain; charset=UTF-8"
     ),
     body = charToRaw(enc2utf8(
-      "Invalid Request."
+      paste(
+        "Invalid Request. ",
+        message
+      )
     ))
   )
 }
@@ -94,11 +97,23 @@ server_handlers <- function(host, port) {
       sess <- tf$Session()
       sess$run(tf$global_variables_initializer())
 
+      tensor_input_names <- graph$get(signature_name)$inputs$keys()
+      if (length(tensor_input_names) != 1) {
+        server_invalid_request("Currently, only single-tensor inputs are supported but found ", length(tensor_input_names))
+        return()
+      }
+
+      tensor_output_names <- graph$get(signature_name)$outputs$keys()
+      if (length(tensor_output_names) != 1) {
+        server_invalid_request("Currently, only single-tensor outputs are supported but found ", length(tensor_output_names))
+        return()
+      }
+
       feed_dict <- list()
-      feed_dict[[graph$get(signature_name)$inputs$get("images")$name]] <- json_req$instances
+      feed_dict[[graph$get(signature_name)$inputs$get(tensor_input_names[[1]])$name]] <- json_req$instances
       result <- sess$run(
         fetches = sess$graph$get_tensor_by_name(
-          graph$get(signature_name)$outputs$get("scores")$name
+          graph$get(signature_name)$outputs$get(tensor_output_names[[1]])$name
         ),
         feed_dict = feed_dict
       )

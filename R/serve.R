@@ -104,10 +104,6 @@ server_handlers <- function(host, port) {
       }
 
       tensor_output_names <- graph$get(signature_name)$outputs$keys()
-      if (length(tensor_output_names) != 1) {
-        server_invalid_request("Currently, only single-tensor outputs are supported but found ", length(tensor_output_names))
-        return()
-      }
 
       fetches_list <- lapply(seq_along(tensor_output_names), function(fetch_idx) {
         sess$graph$get_tensor_by_name(

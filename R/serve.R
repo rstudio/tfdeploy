@@ -109,12 +109,16 @@ server_handlers <- function(host, port) {
         return()
       }
 
+      fetches_list <- lapply(seq_along(tensor_output_names), function(fetch_idx) {
+        sess$graph$get_tensor_by_name(
+          graph$get(signature_name)$outputs$get(tensor_output_names[[fetch_idx]])$name
+        )
+      })
+
       feed_dict <- list()
       feed_dict[[graph$get(signature_name)$inputs$get(tensor_input_names[[1]])$name]] <- json_req$instances
       result <- sess$run(
-        fetches = sess$graph$get_tensor_by_name(
-          graph$get(signature_name)$outputs$get(tensor_output_names[[1]])$name
-        ),
+        fetches = fetches_list,
         feed_dict = feed_dict
       )
 

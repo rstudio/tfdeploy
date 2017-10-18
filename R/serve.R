@@ -29,6 +29,7 @@ server_content_type <- function(file_path) {
     "css" = "text/css",
     "html" = "text/html",
     "js" = "application/javascript",
+    "json" = "application/json",
     "map" = "text/plain",
     "png" = "image/png"
   )
@@ -47,13 +48,25 @@ server_static_file_response <- function(file_path) {
   )
 }
 
+server_invalid_request <- function() {
+  list(
+    status = 404L,
+    headers = list(
+      "Content-Type" = "text/plain; charset=UTF-8"
+    ),
+    body = charToRaw(enc2utf8(
+      "Invalid Request."
+    ))
+  )
+}
+
 server_handlers <- function(host, port) {
   list(
     "^/swagger.json" = function(req, graph) {
       list(
         status = 200L,
         headers = list(
-          "Content-Type" = paste0(server_content_type("js"), "; charset=UTF-8")
+          "Content-Type" = paste0(server_content_type("json"), "; charset=UTF-8")
         ),
         body = charToRaw(enc2utf8(
           swagger_from_graph(graph, host, port)
@@ -66,27 +79,39 @@ server_handlers <- function(host, port) {
     "^/[^/]*$" = function(req, graph) {
       server_static_file_response(file.path("swagger-ui", req$PATH_INFO))
     },
-    "^/api/.*" = function(req, graph) {
+    "^/api/[^/]*/predict" = function(req, graph) {
+      signature_names <- graph$keys()
+      signature_name <- strsplit(req$PATH_INFO, "/")[[1]][[3]]
+
+      if (!signature_name %in% signature_names) {
+        server_invalid_request()
+        return()
+      }
+
+      sess <- tf$Session()
+      sess$run(tf$global_variables_initializer())
+
+      feed_dict <- list()
+      feed_dict[[graph$get("predict_images")$inputs$get("images")$name]] <- array(rep(1.0, 784), list(1, 784))
+      result <- sess$run(
+        fetches = sess$graph$get_tensor_by_name(
+          graph$get("predict_images")$outputs$get("scores")$name
+        ),
+        feed_dict = feed_dict
+      )
+
       list(
-        status = 500L,
+        status = 200L,
         headers = list(
-          "Content-Type" = "text/plain; charset=UTF-8"
+          "Content-Type" = paste0(server_content_type("json"), "; charset=UTF-8")
         ),
         body = charToRaw(enc2utf8(
-          "Not yet implemented."
+          jsonlite::toJSON(result)
         ))
       )
     },
     ".*" = function(req, graph) {
-      list(
-        status = 404L,
-        headers = list(
-          "Content-Type" = "text/plain; charset=UTF-8"
-        ),
-        body = charToRaw(enc2utf8(
-          "Invalid Request."
-        ))
-      )
+      server_invalid_request()
     }
   )
 }

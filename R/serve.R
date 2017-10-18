@@ -88,11 +88,14 @@ server_handlers <- function(host, port) {
         return()
       }
 
+      json_raw <- req$rook.input$read()
+      json_req <- jsonlite::fromJSON(rawToChar(json_raw))
+
       sess <- tf$Session()
       sess$run(tf$global_variables_initializer())
 
       feed_dict <- list()
-      feed_dict[[graph$get(signature_name)$inputs$get("images")$name]] <- array(rep(1.0, 784), list(1, 784))
+      feed_dict[[graph$get(signature_name)$inputs$get("images")$name]] <- json_req$instances
       result <- sess$run(
         fetches = sess$graph$get_tensor_by_name(
           graph$get(signature_name)$outputs$get("scores")$name

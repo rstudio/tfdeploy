@@ -92,21 +92,62 @@ swagger_paths <- function(graph) {
   )
 }
 
-swagger_def <- function(signature_name, signature_id) {
+swagger_dtype_to_swagger <- function(dtype) {
+  # DTypes: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/framework/dtypes.py
+  # Swagger: https://swagger.io/docs/specification/data-models/data-types/
+
+  regex_mapping <- list(
+    "int32"     = list(type = "integer", format = "int32"),
+    "int64"     = list(type = "integer", format = "int64"),
+    "int"       = list(type = "integer", format = ""),
+    "float"     = list(type = "number",  format = "float"),
+    "complex"   = list(type = "number",  format = ""),
+    "string"    = list(type = "string",  format = ""),
+    "bool"      = list(type = "boolean", format = "")
+  )
+
+  regex_name <- Filter(function(r) grepl(r, dtype$name), names(regex_mapping))
+  if (length(regex_name) == 0) {
+    stop("Failed to map dtype ", dtype$name, " to swagger type.")
+  }
+
+  result <- regex_mapping[[regex_name[[1]]]]
+
+  lapply(result, jsonlite::unbox)
+}
+
+swagger_def <- function(graph, signature_name, signature_id) {
+  tensor_input_names <- graph$get(signature_name)$inputs$keys()
+  if (length(tensor_input_names) != 1) {
+    stop("Currently, only single-tensor inputs are supported but found ", length(tensor_input_names))
+  }
+
+  tensor_input <- graph$get(signature_name)$inputs$get(tensor_input_names[[1]])
+
+  tensor_input_dim <- tensor_input$tensor_shape$dim
+  tensor_input_dim_len <- tensor_input_dim$`__len__`()
+
+  if (tensor_input_dim_len == 0) {
+    stop("Invalid tensor with dimation length ", tensor_input_dim_len)
+  }
+
+  arrays_def <- list(
+    type = unbox("array"),
+    items = swagger_dtype_to_swagger(tf$DType(tensor_input$dtype)),
+    example = rep(1.0, tensor_input$tensor_shape$dim[[tensor_input_dim_len - 1]]$size)
+  )
+
+  for (idx in seq_len(tensor_input_dim_len - 1)) {
+    arrays_def <- list(
+      type = unbox("array"),
+      items = arrays_def
+    )
+  }
+
   list(
     type = unbox("object"),
     properties = list(
-      instances = list(
-        type = unbox("array"),
-        items = list(
-          type = unbox("array"),
-          items = list(
-            type = unbox("integer"),
-            format = unbox("int64")
-          ),
-          example = c(1, 0, 0, 0, 0)
-        )
-      )
+      instances = arrays_def
     )
   )
 }
@@ -114,7 +155,7 @@ swagger_def <- function(signature_name, signature_id) {
 swagger_defs <- function(graph) {
   defs_names <- graph$keys()
   defs_values <- lapply(seq_along(defs_names), function(defs_index) {
-    swagger_def(defs_names[[defs_index]], defs_index)
+    swagger_def(graph, defs_names[[defs_index]], defs_index)
   })
   names(defs_values) <- lapply(seq_along(defs_names), function(def_idx) {
     paste0("Instances", def_idx)

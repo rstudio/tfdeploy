@@ -127,30 +127,31 @@ swagger_def <- function(graph, signature_name, signature_id) {
   tensor_input_dim <- tensor_input$tensor_shape$dim
   tensor_input_dim_len <- tensor_input_dim$`__len__`()
 
+  swagger_type_def <- NULL
   if (tensor_input_dim_len == 0) {
-    swagger_dtype_to_swagger(tf$DType(tensor_input$dtype))
+    swagger_type_def <- swagger_dtype_to_swagger(tf$DType(tensor_input$dtype))
   }
   else {
-    arrays_def <- list(
+    swagger_type_def <- list(
       type = unbox("array"),
       items = swagger_dtype_to_swagger(tf$DType(tensor_input$dtype)),
       example = rep(1.0, tensor_input$tensor_shape$dim[[tensor_input_dim_len - 1]]$size)
     )
 
     for (idx in seq_len(tensor_input_dim_len - 1)) {
-      arrays_def <- list(
+      swagger_type_def <- list(
         type = unbox("array"),
-        items = arrays_def
+        items = swagger_type_def
       )
     }
-
-    list(
-      type = unbox("object"),
-      properties = list(
-        instances = arrays_def
-      )
-    )
   }
+
+  list(
+    type = unbox("object"),
+    properties = list(
+      instances = swagger_type_def
+    )
+  )
 }
 
 swagger_defs <- function(graph) {

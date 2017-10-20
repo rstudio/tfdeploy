@@ -4,7 +4,7 @@
 \alias{serve}
 \title{Serve a TensorFlow Model}
 \usage{
-serve(model_path, host = "127.0.0.1", port = 8089)
+serve(model_path, host = "127.0.0.1", port = 8089, browse = interactive())
 }
 \description{
 Serve a TensorFlow Model into a local REST API.

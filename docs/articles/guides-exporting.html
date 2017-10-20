@@ -178,10 +178,10 @@ model_folder &lt;-<span class="st"> </span><span class="kw">list.files</span>()[
 
 model &lt;-<span class="st"> </span><span class="kw">mnist_train_keras</span>(<span class="dt">epochs =</span> <span class="dv">1</span>)</code></pre></div>
 <pre><code>## $loss
-## [1] 0.2206705
+## [1] 0.2202289
 ## 
 ## $acc
-## [1] 0.933</code></pre>
+## [1] 0.9321</code></pre>
 <p>Then use the TensorFlow backend to export the model (see also <a href="https://github.com/fchollet/keras/issues/6212">/keras/issues/6212</a> and <a href="https://blog.keras.io/keras-as-a-simplified-interface-to-tensorflow-tutorial.html#exporting-a-model-with-tensorflow-serving">Exporting a model with TF Serving from Keras blog</a>):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">model_path &lt;-<span class="st"> "trained/keras-mnist/1"</span>
 

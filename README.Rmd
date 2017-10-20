@@ -7,8 +7,6 @@ output:
     toc_depth: 3
 ---
 
-# tfserve: Serve Tensorflow Models
-
 ## Overview
 
 `tfserve` provides a [GoogleML](https://cloud.google.com/ml-engine/docs/prediction-overview)
@@ -24,6 +22,7 @@ use a `tfserve` helper function as follows:
 
 ```{r message=F, warning=F}
 library(tfserve)
+library(magrittr)
 
 model_path <- "trained/tensorflow-mnist/1"
 mnist_train_save(model_path)
@@ -33,4 +32,39 @@ Then, we can serve this model with ease by running:
 
 ```{r eval=F}
 serve(model_path)
+```
+
+Instead of blocking R while running `serve()`, we can start a server with:
+
+```{r eval=F}
+handle <- start_server(model_path)
+```
+
+We can make use of the `pixeldraw` HTMLWidget to manually collect a vector of pixels:
+
+```{r eval=F}
+devtools::install_github("javierluraschi/pixels")
+library(pixels)
+
+pixels <- get_pixels() %>% as.numeric() * 1.0
+```
+
+Then, using the collected `pixels`, we can run:
+
+```{r eval=F}
+httr::POST(
+  url = "http://127.0.0.1:8089/api/predict_images/predict/",
+  body = list(
+    instances = list(
+      pixels
+    )
+  ),
+  encode = "json"
+) %>% httr::content(as = "text") %>% jsonlite::fromJSON() %>% as.vector() %>% round(digits = 1)
+```
+
+Finally, we close the server using it's `handle`:
+
+```{r eval=F}
+stop_server(handle)
 ```

@@ -60,7 +60,7 @@ httr::POST(
     )
   ),
   encode = "json"
-) %>% httr::content(as = "text") %>% jsonlite::fromJSON() %>% as.vector() %>% round(digits = 1)
+) %>% httr::content(as = "text") %>% jsonlite::fromJSON() %>% as.vector() %>% round(digits = 1) %>% as.logical() %>% which() - 1
 ```
 
 Finally, we close the server using it's `handle`:

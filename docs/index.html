@@ -99,21 +99,30 @@ model_path &lt;-<span class="st"> "trained/tensorflow-mnist/1"</span>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/serve.html">serve</a></span>(model_path)</code></pre></div>
 <p>Instead of blocking R while running <code><a href="reference/serve.html">serve()</a></code>, we can start a server with:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">handle &lt;-<span class="st"> </span><span class="kw">start_server</span>(model_path)</code></pre></div>
-<p>We can make use of the <code>pixeldraw</code> HTMLWidget to manually collect a vector of pixels:</p>
+<p>We can make use of the <code>pixeldraw</code> HTMLWidget to manually collect a vector of pixels and pass them to the REST API from <code>tfserve</code> as follows:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"javierluraschi/pixels"</span>)
 <span class="kw">library</span>(pixels)
 
-pixels &lt;-<span class="st"> </span><span class="kw">get_pixels</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.numeric</span>() <span class="op">*</span><span class="st"> </span><span class="fl">1.0</span></code></pre></div>
-<p>Then, using the collected <code>pixels</code>, we can run:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">httr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/httr/topics/POST">POST</a></span>(
-  <span class="dt">url =</span> <span class="st">"http://127.0.0.1:8089/api/predict_images/predict/"</span>,
-  <span class="dt">body =</span> <span class="kw">list</span>(
-    <span class="dt">instances =</span> <span class="kw">list</span>(
-      pixels
-    )
-  ),
-  <span class="dt">encode =</span> <span class="st">"json"</span>
-) <span class="op">%&gt;%</span><span class="st"> </span>httr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/httr/topics/content">content</a></span>(<span class="dt">as =</span> <span class="st">"text"</span>) <span class="op">%&gt;%</span><span class="st"> </span>jsonlite<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/jsonlite/topics/fromJSON">fromJSON</a></span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.vector</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">1</span>)</code></pre></div>
+recognize_digit &lt;-<span class="st"> </span><span class="cf">function</span>() {
+  pixels_bad &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/pixels/topics/get_pixels">get_pixels</a></span>()
+  httr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/httr/topics/POST">POST</a></span>(
+    <span class="dt">url =</span> <span class="st">"http://127.0.0.1:8089/api/predict_images/predict/"</span>,
+    <span class="dt">body =</span> <span class="kw">list</span>(
+      <span class="dt">instances =</span> <span class="kw">list</span>(
+        <span class="kw">matrix</span>(<span class="kw">as.double</span>(pixels_bad), <span class="dv">28</span>, <span class="dv">28</span>, <span class="dt">byrow =</span> T) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.vector</span>()
+      )
+    ),
+    <span class="dt">encode =</span> <span class="st">"json"</span>
+  ) <span class="op">%&gt;%</span>
+<span class="st">    </span>httr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/httr/topics/content">content</a></span>(<span class="dt">as =</span> <span class="st">"text"</span>) <span class="op">%&gt;%</span>
+<span class="st">    </span>jsonlite<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/jsonlite/topics/fromJSON">fromJSON</a></span>() <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">as.vector</span>() <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">1</span>) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">as.logical</span>() <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">which</span>() <span class="op">-</span><span class="st"> </span><span class="dv">1</span>
+}</code></pre></div>
+<p>Then, running <code>recognize_digit()</code> we can capture manually a few instances:</p>
+<p><img src="tools/readme/mnist-digits.gif" width="400"></p>
 <p>Finally, we close the server using it’s <code>handle</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">stop_server</span>(handle)</code></pre></div>
 </div>

@@ -35,28 +35,35 @@ Instead of blocking R while running `serve()`, we can start a server with:
 handle <- start_server(model_path)
 ```
 
-We can make use of the `pixeldraw` HTMLWidget to manually collect a vector of pixels:
+We can make use of the `pixeldraw` HTMLWidget to manually collect a vector of pixels and pass them to the REST API from `tfserve` as follows:
 
 ``` r
 devtools::install_github("javierluraschi/pixels")
 library(pixels)
 
-pixels <- get_pixels() %>% as.numeric() * 1.0
+recognize_digit <- function() {
+  pixels_bad <- get_pixels()
+  httr::POST(
+    url = "http://127.0.0.1:8089/api/predict_images/predict/",
+    body = list(
+      instances = list(
+        matrix(as.double(pixels_bad), 28, 28, byrow = T) %>% as.vector()
+      )
+    ),
+    encode = "json"
+  ) %>%
+    httr::content(as = "text") %>%
+    jsonlite::fromJSON() %>%
+    as.vector() %>%
+    round(digits = 1) %>%
+    as.logical() %>%
+    which() - 1
+}
 ```
 
-Then, using the collected `pixels`, we can run:
+Then, running `recognize_digit()` we can capture manually a few instances:
 
-``` r
-httr::POST(
-  url = "http://127.0.0.1:8089/api/predict_images/predict/",
-  body = list(
-    instances = list(
-      pixels
-    )
-  ),
-  encode = "json"
-) %>% httr::content(as = "text") %>% jsonlite::fromJSON() %>% as.vector() %>% round(digits = 1)
-```
+<img src="tools/readme/mnist-digits.gif" width=400 />
 
 Finally, we close the server using it's `handle`:
 

@@ -5,18 +5,24 @@
 #' @importFrom httpuv runServer
 #' @export
 serve <- function(model_path, host = "127.0.0.1", port = 8089, browse = interactive()) {
-  graph <- load_model(model_path)
-
-  if (browse) utils::browseURL(paste0("http://", host, ":", port))
-
-  run_server(host, port, graph)
+  run_server(host, port, sess, graph, httpuv::runServer, model_path, browse)
 }
 
-load_model <- function(model_path) {
+#' @export
+start_server <- function(model_path, host = "127.0.0.1", port = 8089, browse = interactive()) {
+  run_server(host, port, sess, graph, httpuv::startDaemonizedServer, model_path, browse)
+}
+
+#' @export
+stop_server <- function(handle) {
+  httpuv::stopDaemonizedServer(handle)
+}
+
+load_model <- function(sess, model_path) {
   tf$reset_default_graph()
 
   graph <- tf$saved_model$loader$load(
-    tf$Session(),
+    sess,
     list(tf$python$saved_model$tag_constants$SERVING),
     model_path)
 
@@ -65,7 +71,7 @@ server_invalid_request <- function(message = NULL) {
 
 server_handlers <- function(host, port) {
   list(
-    "^/swagger.json" = function(req, graph) {
+    "^/swagger.json" = function(req, sess, graph) {
       list(
         status = 200L,
         headers = list(
@@ -76,13 +82,13 @@ server_handlers <- function(host, port) {
         ))
       )
     },
-    "^/$" = function(req, graph) {
+    "^/$" = function(req, sess, graph) {
       server_static_file_response("swagger-ui/index.html")
     },
-    "^/[^/]*$" = function(req, graph) {
+    "^/[^/]*$" = function(req, sess, graph) {
       server_static_file_response(file.path("swagger-ui", req$PATH_INFO))
     },
-    "^/api/[^/]*/predict" = function(req, graph) {
+    "^/api/[^/]*/predict" = function(req, sess, graph) {
       signature_names <- graph$keys()
       signature_name <- strsplit(req$PATH_INFO, "/")[[1]][[3]]
 
@@ -93,9 +99,6 @@ server_handlers <- function(host, port) {
 
       json_raw <- req$rook.input$read()
       json_req <- jsonlite::fromJSON(rawToChar(json_raw))
-
-      sess <- tf$Session()
-      sess$run(tf$global_variables_initializer())
 
       tensor_input_names <- graph$get(signature_name)$inputs$keys()
       if (length(tensor_input_names) != 1) {
@@ -134,16 +137,22 @@ server_handlers <- function(host, port) {
   )
 }
 
-run_server <- function(host, port, graph) {
+run_server <- function(host, port, sess, graph, start, model_path, browse) {
+  sess <- tf$Session()
+  graph <- load_model(sess, model_path)
+  # sess$run(tf$global_variables_initializer())
+
+  if (browse) utils::browseURL(paste0("http://", host, ":", port))
+
   handlers <- server_handlers(host, port)
 
-  httpuv::runServer(host, port, list(
+  start(host, port, list(
     onHeaders = function(req) {
       NULL
     },
     call = function(req){
       matches <- sapply(names(handlers), function(e) grepl(e, req$PATH_INFO))
-      handlers[matches][[1]](req, graph)
+      handlers[matches][[1]](req, sess, graph)
     },
     onWSOpen = function(ws) {
       NULL

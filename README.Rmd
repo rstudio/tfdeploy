@@ -48,12 +48,12 @@ devtools::install_github("javierluraschi/pixels")
 library(pixels)
 
 recognize_digit <- function() {
-  pixels_bad <- get_pixels()
+  pixels <- get_pixels()
   httr::POST(
     url = "http://127.0.0.1:8089/api/predict_images/predict/",
     body = list(
       instances = list(
-        matrix(as.double(pixels_bad), 28, 28, byrow = T) %>% as.vector()
+        matrix(as.double(pixels), 28, 28, byrow = T) %>% as.vector()
       )
     ),
     encode = "json"

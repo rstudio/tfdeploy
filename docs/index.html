@@ -104,12 +104,12 @@ model_path &lt;-<span class="st"> "trained/tensorflow-mnist/1"</span>
 <span class="kw">library</span>(pixels)
 
 recognize_digit &lt;-<span class="st"> </span><span class="cf">function</span>() {
-  pixels_bad &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/pixels/topics/get_pixels">get_pixels</a></span>()
+  pixels &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/pixels/topics/get_pixels">get_pixels</a></span>()
   httr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/httr/topics/POST">POST</a></span>(
     <span class="dt">url =</span> <span class="st">"http://127.0.0.1:8089/api/predict_images/predict/"</span>,
     <span class="dt">body =</span> <span class="kw">list</span>(
       <span class="dt">instances =</span> <span class="kw">list</span>(
-        <span class="kw">matrix</span>(<span class="kw">as.double</span>(pixels_bad), <span class="dv">28</span>, <span class="dv">28</span>, <span class="dt">byrow =</span> T) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.vector</span>()
+        <span class="kw">matrix</span>(<span class="kw">as.double</span>(pixels), <span class="dv">28</span>, <span class="dv">28</span>, <span class="dt">byrow =</span> T) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.vector</span>()
       )
     ),
     <span class="dt">encode =</span> <span class="st">"json"</span>

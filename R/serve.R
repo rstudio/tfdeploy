@@ -1,21 +1,18 @@
 #' Serve a TensorFlow Model
 #'
-#' Serve a TensorFlow Model into a local REST API.
+#' Serve a TensorFlow Model into a local REST/JSON API.
 #'
 #' @importFrom httpuv runServer
 #' @export
-serve <- function(model_path, host = "127.0.0.1", port = 8089, browse = interactive()) {
+serve <- function(
+  model_path,
+  host = "127.0.0.1",
+  port = 8089,
+  browse = interactive()
+  ) {
+
   run_server(host, port, sess, graph, httpuv::runServer, model_path, browse)
-}
 
-#' @export
-start_server <- function(model_path, host = "127.0.0.1", port = 8089, browse = interactive()) {
-  run_server(host, port, sess, graph, httpuv::startDaemonizedServer, model_path, browse)
-}
-
-#' @export
-stop_server <- function(handle) {
-  httpuv::stopDaemonizedServer(handle)
 }
 
 load_model <- function(sess, model_path) {

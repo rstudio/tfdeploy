@@ -17,7 +17,9 @@ Import:
   - httpuv
   - jsonlite
 Suggest:
-  - keras
+  - testthat
 Remotes:
-  - rstudio/tfestimators
+    rstudio/reticulate,
+    rstudio/swagger
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.1

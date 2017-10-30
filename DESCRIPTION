@@ -16,10 +16,9 @@ Import:
   - tensorflow
   - httpuv
   - jsonlite
+  - swagger
 Suggest:
   - testthat
-Remotes:
-    rstudio/reticulate,
-    rstudio/swagger
+  - pixels
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.1

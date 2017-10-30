@@ -1,6 +1,6 @@
 context("Serve")
 
-source("utils.R")
+library(tensorflow)
 
 test_mnist_train <- function(sess) {
   datasets <- tf$contrib$learn$datasets
@@ -69,6 +69,7 @@ test_that("can serve mnist model", {
   test_mnist_save(sess, model_dir, trained$input, trained$output)
 
   handle <- serve_savedmodel(model_dir, daemonized = TRUE)
+  Sys.sleep(5)
 
   expect_true(!is.null(handle))
 

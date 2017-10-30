@@ -155,5 +155,21 @@ mnist_train_save <- function(model_path) {
   mnist_model <- mnist_train(sess)
   signature <- mnist_signature(mnist_model$input, mnist_model$output)
 
-  tfserve_save(sess, model_path, signature, overwrite = TRUE)
+  if (overwrite && dir.exists(model_path)) unlink(model_path, recursive = TRUE)
+  builder <- tf$saved_model$builder$SavedModelBuilder(model_path)
+
+  if (!is.null(signature)) {
+    legacy_init_op <- tf$group(tf$tables_initializer(), name = "legacy_init_op")
+
+    builder$add_meta_graph_and_variables(
+      sess,
+      list(
+        tf$python$saved_model$tag_constants$SERVING
+      ),
+      signature_def_map = signature,
+      legacy_init_op = legacy_init_op
+    )
+  }
+
+  builder$save()
 }

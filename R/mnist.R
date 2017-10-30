@@ -148,7 +148,7 @@ mnist_train_keras <- function(epochs = 30) {
 #' @param model_path Destination path where the model will be saved.
 #'
 #' @export
-mnist_train_save <- function(model_path) {
+mnist_train_save <- function(model_path, overwrite = FALSE) {
   if (dir.exists(model_path)) unlink(model_path, recursive = TRUE)
 
   sess <- tf$Session()

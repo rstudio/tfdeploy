@@ -38,7 +38,6 @@ handle <- start_server(model_path)
 We can make use of the `pixeldraw` HTMLWidget to manually collect a vector of pixels and pass them to the REST API from `tfserve` as follows:
 
 ``` r
-devtools::install_github("javierluraschi/pixels")
 library(pixels)
 
 recognize_digit <- function() {

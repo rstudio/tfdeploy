@@ -74,13 +74,15 @@ serve_content_type <- function(file_path) {
   )
 }
 
-serve_static_file_response <- function(package, file_path, remove = NULL) {
+serve_static_file_response <- function(package, file_path, replace = NULL) {
   file_path <- system.file(file_path, package = package)
   file_contents <- if (file.exists(file_path)) readBin(file_path, "raw", n = file.info(file_path)$size) else NULL
 
   if (!is.null(remove)) {
     contents <- rawToChar(file_contents)
-    contents <- sub(remove, "", contents)
+    for (r in names(replace)) {
+      contents <- sub(r, replace[[r]], contents)
+    }
     file_contents <- charToRaw(enc2utf8(contents))
   }
 
@@ -125,7 +127,10 @@ serve_handlers <- function(host, port) {
       serve_static_file_response(
         "swagger",
         "dist/index.html",
-        "http://petstore\\.swagger\\.io/v2"
+        list(
+          "http://petstore\\.swagger\\.io/v2" = "",
+          "layout: \"StandaloneLayout\"" = "layout: \"StandaloneLayout\",\nvalidatorUrl : false"
+        )
       )
     },
     "^/[^/]*$" = function(req, sess, signature_def) {

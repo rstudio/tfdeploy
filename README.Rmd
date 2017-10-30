@@ -1,5 +1,5 @@
 ---
-title: "tfserve: Serve Tensorflow Models"
+title: "tfserve: Serves Tensorflow Models"
 output:
   github_document:
     fig_width: 9
@@ -12,9 +12,13 @@ output:
 `tfserve` provides a [GoogleML](https://cloud.google.com/ml-engine/docs/prediction-overview)
 compatiable REST API for predictions to serve TensorFlow Models from R with ease.
 
-<img src="tools/readme/swagger.png" width=500 />
-
 ## Quick Start
+
+`tfserve` provides a [GoogleML](https://cloud.google.com/ml-engine/docs/prediction-overview)
+compatiable REST API for predictions, which can be used to serve TensorFlow Models
+from R with ease.
+
+<img src="tools/readme/swagger.png" width=500 />
 
 For example, we can train MNIST as described by [MNIST For ML Beginners](https://tensorflow.rstudio.com/tensorflow/articles/tutorial_mnist_beginners.html)
 and then save using `SavedModelBuilder` and the right signature or, for conviniece, 
@@ -31,16 +35,10 @@ mnist_train_save(model_path)
 Then, we can serve this model with ease by running:
 
 ```{r eval=F}
-serve(model_path)
+serve_savedmodel(model_path)
 ```
 
-Instead of blocking R while running `serve()`, we can start a server with:
-
-```{r eval=F}
-handle <- start_server(model_path)
-```
-
-We can make use of the `pixeldraw` HTMLWidget to manually collect a vector of
+We can make use of the `pixels` HTMLWidget to manually collect a vector of
 pixels and pass them to the REST API from `tfserve` as follows:
 
 ```{r eval=F}
@@ -65,14 +63,7 @@ recognize_digit <- function() {
     which() - 1
 }
 
+recognize_digit()
 ```
-
-Then, running `recognize_digit()` we can capture manually a few instances:
 
 <img src="tools/readme/mnist-digits.gif" width=400 />
-
-Finally, we close the server using it's `handle`:
-
-```{r eval=F}
-stop_server(handle)
-```

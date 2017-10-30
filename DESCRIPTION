@@ -1,15 +1,14 @@
 Package: tfserve
 Type: Package
-Title: What the Package Does (Title Case)
+Title: tfserve: Serves TensorFlow Models
 Version: 0.1.0
 Authors@R: c(
-    person(family = "RStudio", role = c("cph")),
-    person(family="SmartBear Software", role=c("ctb", "cph"), comment="swagger-ui"))
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+    person("Javier", "Luraschi", email = "javier@rstudio.com", role = c("aut", "cre")),
+    person(family = "RStudio", role = c("cph"))
+  )
+Maintainer: Javier Luraschi <javier@rstudio.com>
+Description: Serves local TensorFlow models with an API compatibale with 'CloudML'.
+License: Apache License 2.0
 Encoding: UTF-8
 LazyData: true
 Import:

@@ -4,7 +4,7 @@
 \alias{mnist_train_save}
 \title{Trains and Save MNIST}
 \usage{
-mnist_train_save(model_path)
+mnist_train_save(model_path, overwrite = FALSE)
 }
 \arguments{
 \item{model_path}{Destination path where the model will be saved.}

@@ -39,7 +39,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/guides-exporting.html">Exporting</a>
+      <a href="../articles/guides-exporting.html">Exporting Models</a>
+    </li>
+    <li>
+      <a href="../articles/guides-tensorflow-serving.html">Using TensorFlow Serving</a>
     </li>
   </ul>
 </li>
@@ -85,21 +88,21 @@
 <div id="overview" class="section level2">
 <h2 class="hasAnchor">
 <a href="#overview" class="anchor"></a>Overview</h2>
-<p>This repo provides tools and examples to serve Tensorflow models from R. The process has two stages:</p>
-<ul>
-<li>Save the model</li>
-<li>Deploy (serve) the model</li>
-</ul>
-<p>The way the model is saved varies based on the package that was used to create it.</p>
+<p>The first step towards deploying a trained model is to export this model from TensorFlow. This guide demostrates how to export models from: TensorFlow, tfestimators and keras.</p>
 </div>
-<div id="saving-a-tensorflow-model" class="section level2">
+<div id="exporting-from-tensorflow" class="section level2">
 <h2 class="hasAnchor">
-<a href="#saving-a-tensorflow-model" class="anchor"></a>Saving a Tensorflow model</h2>
+<a href="#exporting-from-tensorflow" class="anchor"></a>Exporting from TensorFlow</h2>
 <p>One can train MNIST as described by <a href="https://tensorflow.rstudio.com/tensorflow/articles/tutorial_mnist_beginners.html">MNIST For ML Beginners</a> and track the model’s inputs and outputs named <code>x</code> and <code>y</code> under that particular article. For convinience, we can run instead:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tensorflow)
 <span class="kw">library</span>(tfserve)</code></pre></div>
 <pre><code>## Warning: replacing previous import 'keras::evaluate' by
-## 'tfestimators::evaluate' when loading 'tfserve'</code></pre>
+## 'tensorflow::evaluate' when loading 'tfserve'</code></pre>
+<pre><code>## 
+## Attaching package: 'tfserve'</code></pre>
+<pre><code>## The following object is masked from 'package:tensorflow':
+## 
+##     serve_savedmodel</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sess &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Session</span>()
 mnist_model &lt;-<span class="st"> </span><span class="kw">mnist_train</span>(sess)</code></pre></div>
 <p>Once trained, the model can be saved with <a href="https://www.tensorflow.org/api_docs/python/tf/saved_model/builder/SavedModelBuilder">SavedModelBuilder</a>.</p>
@@ -123,18 +126,65 @@ builder<span class="op">$</span><span class="kw">save</span>()</code></pre></div
 <p>with them, we can use the following convenience function to retrieve the signature for the model:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">signature &lt;-<span class="st"> </span><span class="kw">mnist_signature</span>(mnist_model<span class="op">$</span>input, mnist_model<span class="op">$</span>output)</code></pre></div>
 <p>This signature can be used in combination with <code>SavedModelBuilder.add_meta_graph_and_variables</code> to provide a model usable with Tensorflow Serving:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tfserve_save</span>(sess, model_path, signature, <span class="dt">overwrite =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tfserve_save &lt;-<span class="st"> </span><span class="cf">function</span>(sess, model_path, signature, <span class="dt">overwrite =</span> <span class="ot">FALSE</span>) {
+  <span class="cf">if</span> (overwrite <span class="op">&amp;&amp;</span><span class="st"> </span><span class="kw">dir.exists</span>(model_path)) <span class="kw">unlink</span>(model_path, <span class="dt">recursive =</span> <span class="ot">TRUE</span>)
+  builder &lt;-<span class="st"> </span>tf<span class="op">$</span>saved_model<span class="op">$</span>builder<span class="op">$</span><span class="kw">SavedModelBuilder</span>(model_path)
+
+  <span class="cf">if</span> (<span class="op">!</span><span class="kw">is.null</span>(signature)) {
+    legacy_init_op &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">group</span>(tf<span class="op">$</span><span class="kw">tables_initializer</span>(), <span class="dt">name =</span> <span class="st">"legacy_init_op"</span>)
+
+    builder<span class="op">$</span><span class="kw">add_meta_graph_and_variables</span>(
+      sess,
+      <span class="kw">list</span>(
+        tf<span class="op">$</span>python<span class="op">$</span>saved_model<span class="op">$</span>tag_constants<span class="op">$</span>SERVING
+      ),
+      <span class="dt">signature_def_map =</span> signature,
+      <span class="dt">legacy_init_op =</span> legacy_init_op
+    )
+  }
+
+  builder<span class="op">$</span><span class="kw">save</span>()
+}
+
+<span class="kw">tfserve_save</span>(sess, model_path, signature, <span class="dt">overwrite =</span> <span class="ot">TRUE</span>)</code></pre></div>
 <pre><code>## [1] "trained/tensorflow-mnist/1/saved_model.pb"</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dir</span>(model_path, <span class="dt">recursive =</span> <span class="ot">TRUE</span>)</code></pre></div>
 <pre><code>## [1] "saved_model.pb"                         
 ## [2] "variables/variables.data-00000-of-00001"
 ## [3] "variables/variables.index"</code></pre>
 </div>
-<div id="saving-a-tfestimators-model" class="section level2">
+<div id="exporting-from-tfestimators" class="section level2">
 <h2 class="hasAnchor">
-<a href="#saving-a-tfestimators-model" class="anchor"></a>Saving a TFEstimators model</h2>
+<a href="#exporting-from-tfestimators" class="anchor"></a>Exporting from TFEstimators</h2>
 <p>A sample model using the <code>mtcars</code> data frame is trained using <code>tfestimators</code>. The resulting model is the one that will be saved to disk. To train, we can follow the TensorFlow estimators <a href="https://tensorflow.rstudio.com/tfestimators/">Quick Start</a>; or for convenienve, run:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tfestimators)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tfestimators)</code></pre></div>
+<pre><code>## 
+## Attaching package: 'tfestimators'</code></pre>
+<pre><code>## The following objects are masked from 'package:tensorflow':
+## 
+##     evaluate, train, train_and_evaluate</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mtcars_train &lt;-<span class="st"> </span><span class="cf">function</span> () {
+  mtcars_input_fn &lt;-<span class="st"> </span><span class="cf">function</span>(data) {
+    <span class="kw"><a href="http://www.rdocumentation.org/packages/tfestimators/topics/input_fn">input_fn</a></span>(data,
+             <span class="dt">features =</span> <span class="kw">c</span>(<span class="st">"disp"</span>, <span class="st">"cyl"</span>),
+             <span class="dt">response =</span> <span class="st">"mpg"</span>)
+  }
+
+  cols &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/tfestimators/topics/feature_columns">feature_columns</a></span>(
+    <span class="kw"><a href="http://www.rdocumentation.org/packages/tfestimators/topics/column_numeric">column_numeric</a></span>(<span class="st">"disp"</span>),
+    <span class="kw"><a href="http://www.rdocumentation.org/packages/tfestimators/topics/column_numeric">column_numeric</a></span>(<span class="st">"cyl"</span>)
+  )
+
+  model &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/tfestimators/topics/linear_estimators">linear_regressor</a></span>(<span class="dt">feature_columns =</span> cols)
+
+  indices &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(mtcars), <span class="dt">size =</span> <span class="fl">0.80</span> <span class="op">*</span><span class="st"> </span><span class="kw">nrow</span>(mtcars))
+  train &lt;-<span class="st"> </span>mtcars[indices, ]
+  test  &lt;-<span class="st"> </span>mtcars[<span class="op">-</span>indices, ]
+
+  model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/tfestimators/topics/train">train</a></span>(<span class="kw">mtcars_input_fn</span>(train))
+
+  model
+}
 
 model &lt;-<span class="st"> </span><span class="kw">mtcars_train</span>()</code></pre></div>
 <p>The <code>export_savemodel()</code> will create the <strong>pb</strong> file and the <strong>variables</strong> folder</p>
@@ -159,9 +209,9 @@ model_folder &lt;-<span class="st"> </span><span class="kw">list.files</span>()[
 ## [2] "variables/variables.data-00000-of-00001"
 ## [3] "variables/variables.index"</code></pre>
 </div>
-<div id="saving-a-keras-model" class="section level2">
+<div id="exporting-from-keras" class="section level2">
 <h2 class="hasAnchor">
-<a href="#saving-a-keras-model" class="anchor"></a>Saving a Keras Model</h2>
+<a href="#exporting-from-keras" class="anchor"></a>Exporting from Keras</h2>
 <p>First train a <code>keras</code> model as described under <a href="https://tensorflow.rstudio.com/keras/">R interface to Keras</a>, for convinience, run instead:</p>
 <blockquote>
 <p>Notice <code>set_learning_phase(TRUE)</code> to prevent ‘You must feed a value for placeholder tensor ’dropout_1/keras_learning_phase’ while serving set learning phase (see <a href="https://stackoverflow.com/questions/42025660/keras-set-learning-phase-for-dropout-when-saving-tensorflow-session">stackoverflow.com/q/42025660</a>, <a href="https://github.com/fchollet/keras/issues/2310">keras/issues/2310</a>, <a href="https://github.com/fchollet/keras/issues/7720">keras/issues/7720</a>, <a href="https://github.com/tensorflow/serving/issues/310">/tensorflow/serving/issues/310</a>).</p>
@@ -172,16 +222,19 @@ model_folder &lt;-<span class="st"> </span><span class="kw">list.files</span>()[
 <pre><code>## The following object is masked from 'package:tfestimators':
 ## 
 ##     evaluate</code></pre>
+<pre><code>## The following object is masked from 'package:tensorflow':
+## 
+##     evaluate</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tf<span class="op">$</span><span class="kw">reset_default_graph</span>()
 
 <span class="kw"><a href="http://www.rdocumentation.org/packages/keras/topics/backend">backend</a></span>()<span class="op">$</span><span class="kw">set_learning_phase</span>(<span class="ot">TRUE</span>)
 
 model &lt;-<span class="st"> </span><span class="kw">mnist_train_keras</span>(<span class="dt">epochs =</span> <span class="dv">1</span>)</code></pre></div>
 <pre><code>## $loss
-## [1] 0.2289843
+## [1] 0.2399678
 ## 
 ## $acc
-## [1] 0.9311</code></pre>
+## [1] 0.9239</code></pre>
 <p>Then use the TensorFlow backend to export the model (see also <a href="https://github.com/fchollet/keras/issues/6212">/keras/issues/6212</a> and <a href="https://blog.keras.io/keras-as-a-simplified-interface-to-tensorflow-tutorial.html#exporting-a-model-with-tensorflow-serving">Exporting a model with TF Serving from Keras blog</a>):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">model_path &lt;-<span class="st"> "trained/keras-mnist/1"</span>
 
@@ -198,166 +251,6 @@ signature &lt;-<span class="st"> </span><span class="kw">mnist_signature</span>(
 ## [2] "variables/variables.data-00000-of-00001"
 ## [3] "variables/variables.index"</code></pre>
 </div>
-<div id="serving-models" class="section level2">
-<h2 class="hasAnchor">
-<a href="#serving-models" class="anchor"></a>Serving Models</h2>
-<p>See <a href="https://www.tensorflow.org/serving/setup#installing_using_apt-get">Tensorflow Serving Setup</a>, but in general, from Linux, first install prereqs:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> apt-get update <span class="kw">&amp;&amp;</span> <span class="fu">sudo</span> apt-get install -y build-essential curl libcurl3-dev git libfreetype6-dev libpng12-dev libzmq3-dev pkg-config python-dev python-numpy python-pip software-properties-common swig zip zlib1g-dev</code></pre></div>
-<p>Then install Tensorflow Serving:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="bu">echo</span> <span class="st">"deb [arch=amd64] http://storage.googleapis.com/tensorflow-serving-apt stable tensorflow-model-server tensorflow-model-server-universal"</span> <span class="kw">|</span> <span class="fu">sudo</span> tee /etc/apt/sources.list.d/tensorflow-serving.list
-
-<span class="ex">curl</span> https://storage.googleapis.com/tensorflow-serving-apt/tensorflow-serving.release.pub.gpg <span class="kw">|</span> <span class="fu">sudo</span> apt-key add -
-
-<span class="fu">sudo</span> apt-get update <span class="kw">&amp;&amp;</span> <span class="fu">sudo</span> apt-get install tensorflow-model-server</code></pre></div>
-<p>Optionally, install the api client:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> pip install tensorflow-serving-api --no-cache-dir</code></pre></div>
-<p>Then serve the TensorFlow model using:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">tensorflow_model_server</span> --port=9000 --model_name=mnist --model_base_path=/mnt/hgfs/tfserve/trained/tensorflow-mnist</code></pre></div>
-<pre><code>2017-10-04 14:53:15.291409: I external/org_tensorflow/tensorflow/cc/saved_model/loader.cc:284] Loading SavedModel: success. Took 113175 microseconds.
-2017-10-04 14:53:15.293200: I tensorflow_serving/core/loader_harness.cc:86] Successfully loaded servable version {name: mnist version: 1}
-2017-10-04 14:53:15.299338: I tensorflow_serving/model_servers/main.cc:288] Running ModelServer at 0.0.0.0:9000 ...</code></pre>
-<p>Or the <code>tfestimators</code> model using:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">tensorflow_model_server</span> --port=9000 --model_name=mnist --model_base_path=/mnt/hgfs/tfserve/trained/tfestimators-mtcars</code></pre></div>
-<pre><code>2017-10-04 15:33:21.279211: I external/org_tensorflow/tensorflow/cc/saved_model/loader.cc:284] Loading SavedModel: success. Took 43820 microseconds.
-2017-10-04 15:33:21.281129: I tensorflow_serving/core/loader_harness.cc:86] Successfully loaded servable version {name: mnist version: 1507156394}
-2017-10-04 15:33:21.284161: I tensorflow_serving/model_servers/main.cc:288] Running ModelServer at 0.0.0.0:9000 ...
-</code></pre>
-<p>One can use <code>saved_model_cli</code> to inspect model contents, as in:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">saved_model_cli</span> show --dir /mnt/hgfs/tfserve/trained/tensorflow-mnist/1</code></pre></div>
-</div>
-<div id="using-models" class="section level2">
-<h2 class="hasAnchor">
-<a href="#using-models" class="anchor"></a>Using Models</h2>
-<p>Manually download <a href="https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/example/mnist_client.py">mnist_client.py</a> and <a href="https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/example/mnist_input_data.py">mnist_input_data.py</a>. Then run:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">python</span> mnist_client.py --num_tests=1000 --server=localhost:9000
-
-<span class="ex">Successfully</span> downloaded train-images-idx3-ubyte.gz 9912422 bytes.
-<span class="ex">Extracting</span> /tmp/train-images-idx3-ubyte.gz
-<span class="ex">Successfully</span> downloaded train-labels-idx1-ubyte.gz 28881 bytes.
-<span class="ex">Extracting</span> /tmp/train-labels-idx1-ubyte.gz
-<span class="ex">Successfully</span> downloaded t10k-images-idx3-ubyte.gz 1648877 bytes.
-<span class="ex">Extracting</span> /tmp/t10k-images-idx3-ubyte.gz
-<span class="ex">Successfully</span> downloaded t10k-labels-idx1-ubyte.gz 4542 bytes.
-<span class="ex">Extracting</span> /tmp/t10k-labels-idx1-ubyte.gz
-<span class="ex">........................................</span>
-<span class="ex">Inference</span> error rate: 9.5%</code></pre></div>
-<p>Or while running the Keras model under TF Serving, :</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">python</span> mnist_client.py --num_tests=1000 --server=localhost:9000
-
-<span class="ex">Extracting</span> /tmp/train-images-idx3-ubyte.gz
-<span class="ex">Extracting</span> /tmp/train-labels-idx1-ubyte.gz
-<span class="ex">Extracting</span> /tmp/t10k-images-idx3-ubyte.gz
-<span class="ex">Extracting</span> /tmp/t10k-labels-idx1-ubyte.gz
-<span class="ex">............</span>
-<span class="ex">Inference</span> error rate: 84.5%</code></pre></div>
-<p><strong>TODO:</strong> Investigate inference error rate under keras, see: <a href="https://github.com/fchollet/keras/issues/7848">/keras/issues/7848</a>.</p>
-</div>
-<div id="loading-a-tensorflow-model" class="section level2">
-<h2 class="hasAnchor">
-<a href="#loading-a-tensorflow-model" class="anchor"></a>Loading a TensorFlow Model</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tensorflow)
-
-tf<span class="op">$</span><span class="kw">reset_default_graph</span>()
-sess &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Session</span>()
-
-graph &lt;-<span class="st"> </span>tf<span class="op">$</span>saved_model<span class="op">$</span>loader<span class="op">$</span><span class="kw">load</span>(
-  sess,
-  <span class="kw">list</span>(tf<span class="op">$</span>python<span class="op">$</span>saved_model<span class="op">$</span>tag_constants<span class="op">$</span>SERVING),
-  <span class="st">"trained/tensorflow-mnist/1"</span>)
-
-graph<span class="op">$</span>signature_def</code></pre></div>
-<pre><code>## {u'serving_default': inputs {
-##   key: "inputs"
-##   value {
-##     name: "tf_example:0"
-##     dtype: DT_STRING
-##     tensor_shape {
-##       unknown_rank: true
-##     }
-##   }
-## }
-## outputs {
-##   key: "classes"
-##   value {
-##     name: "index_to_string_Lookup:0"
-##     dtype: DT_STRING
-##     tensor_shape {
-##       dim {
-##         size: -1
-##       }
-##       dim {
-##         size: 10
-##       }
-##     }
-##   }
-## }
-## outputs {
-##   key: "scores"
-##   value {
-##     name: "TopKV2:0"
-##     dtype: DT_FLOAT
-##     tensor_shape {
-##       dim {
-##         size: -1
-##       }
-##       dim {
-##         size: 10
-##       }
-##     }
-##   }
-## }
-## method_name: "tensorflow/serving/classify"
-## , u'predict_images': inputs {
-##   key: "images"
-##   value {
-##     name: "Placeholder:0"
-##     dtype: DT_FLOAT
-##     tensor_shape {
-##       dim {
-##         size: -1
-##       }
-##       dim {
-##         size: 784
-##       }
-##     }
-##   }
-## }
-## outputs {
-##   key: "scores"
-##   value {
-##     name: "Softmax:0"
-##     dtype: DT_FLOAT
-##     tensor_shape {
-##       dim {
-##         size: -1
-##       }
-##       dim {
-##         size: 10
-##       }
-##     }
-##   }
-## }
-## method_name: "tensorflow/serving/predict"
-## }</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tensorflow)
-
-datasets &lt;-<span class="st"> </span>tf<span class="op">$</span>contrib<span class="op">$</span>learn<span class="op">$</span>datasets
-mnist &lt;-<span class="st"> </span>datasets<span class="op">$</span>mnist<span class="op">$</span><span class="kw">read_data_sets</span>(<span class="st">"MNIST-data"</span>, <span class="dt">one_hot =</span> <span class="ot">TRUE</span>)
-batches &lt;-<span class="st"> </span>mnist<span class="op">$</span>train<span class="op">$</span><span class="kw">next_batch</span>(1L)</code></pre></div>
-</div>
-<div id="loading-a-keras-model" class="section level2">
-<h2 class="hasAnchor">
-<a href="#loading-a-keras-model" class="anchor"></a>Loading a Keras Model</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tensorflow)
-
-tf<span class="op">$</span><span class="kw">reset_default_graph</span>()
-sess &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Session</span>()
-
-graph &lt;-<span class="st"> </span>tf<span class="op">$</span>saved_model<span class="op">$</span>loader<span class="op">$</span><span class="kw">load</span>(
-  sess,
-  <span class="kw">list</span>(tf<span class="op">$</span>python<span class="op">$</span>saved_model<span class="op">$</span>tag_constants<span class="op">$</span>SERVING),
-  <span class="st">"trained/keras-mnist/1"</span>)</code></pre></div>
-</div>
 </div>
   </div>
 
@@ -367,13 +260,9 @@ graph &lt;-<span class="st"> </span>tf<span class="op">$</span>saved_model<span 
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
 <li><a href="#overview">Overview</a></li>
-      <li><a href="#saving-a-tensorflow-model">Saving a Tensorflow model</a></li>
-      <li><a href="#saving-a-tfestimators-model">Saving a TFEstimators model</a></li>
-      <li><a href="#saving-a-keras-model">Saving a Keras Model</a></li>
-      <li><a href="#serving-models">Serving Models</a></li>
-      <li><a href="#using-models">Using Models</a></li>
-      <li><a href="#loading-a-tensorflow-model">Loading a TensorFlow Model</a></li>
-      <li><a href="#loading-a-keras-model">Loading a Keras Model</a></li>
+      <li><a href="#exporting-from-tensorflow">Exporting from TensorFlow</a></li>
+      <li><a href="#exporting-from-tfestimators">Exporting from TFEstimators</a></li>
+      <li><a href="#exporting-from-keras">Exporting from Keras</a></li>
       </ul>
 </div>
       </div>
@@ -382,7 +271,7 @@ graph &lt;-<span class="st"> </span>tf<span class="op">$</span>saved_model<span 
 
 
       <footer><div class="copyright">
-  <p>Developed by .</p>
+  <p>Developed by Javier Luraschi.</p>
 </div>
 
 <div class="pkgdown">

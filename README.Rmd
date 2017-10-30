@@ -7,13 +7,6 @@ output:
     toc_depth: 3
 ---
 
-## Overview
-
-`tfserve` provides a [GoogleML](https://cloud.google.com/ml-engine/docs/prediction-overview)
-compatiable REST API for predictions to serve TensorFlow Models from R with ease.
-
-## Quick Start
-
 `tfserve` provides a [GoogleML](https://cloud.google.com/ml-engine/docs/prediction-overview)
 compatiable REST API for predictions, which can be used to serve TensorFlow Models
 from R with ease.

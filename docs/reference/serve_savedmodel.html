@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Trains and Save MNIST — mnist_train_save • tfserve</title>
+<title>Serve a TensorFlow Model — serve_savedmodel • tfserve</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -101,31 +101,77 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Trains and Save MNIST</h1>
+    <h1>Serve a TensorFlow Model</h1>
     </div>
 
     
-    <p>Trains and saves MNIST using TensorFlow</p>
+    <p>Serve a TensorFlow Model into a local REST/JSON API.</p>
     
 
-    <pre class="usage"><span class='fu'>mnist_train_save</span>(<span class='no'>model_path</span>, <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>serve_savedmodel</span>(<span class='no'>model_dir</span>, <span class='kw'>host</span> <span class='kw'>=</span> <span class='st'>"127.0.0.1"</span>, <span class='kw'>port</span> <span class='kw'>=</span> <span class='fl'>8089</span>,
+  <span class='kw'>daemonized</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>model_path</th>
-      <td><p>Destination path where the model will be saved.</p></td>
+      <th>model_dir</th>
+      <td><p>The path to the exported model, as a string.</p></td>
+    </tr>
+    <tr>
+      <th>host</th>
+      <td><p>Address to use to serve model, as a string.</p></td>
+    </tr>
+    <tr>
+      <th>port</th>
+      <td><p>Port to use to serve model, as numeric.</p></td>
+    </tr>
+    <tr>
+      <th>daemonized</th>
+      <td><p>Makes 'httpuv' server daemonized so R interactive sessions
+are not blocked to handle requests. To terminate a daemonized server, call
+'httpuv::stopDaemonizedServer()' with the handle returned from this call.</p></td>
     </tr>
     </table>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+<span class='fu'>library</span>(<span class='no'>tensorflow</span>)
+<span class='no'>sess</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>Session</span>()
+
+<span class='co'># (1) Train MNIST model.</span>
+
+<span class='co'># (2) Save model with signature.</span>
+
+<span class='no'>model_dir</span> <span class='kw'>&lt;-</span> <span class='st'>"trained"</span>
+<span class='no'>builder</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='no'>saved_model</span>$<span class='no'>builder</span>$<span class='fu'>SavedModelBuilder</span>(<span class='no'>model_dir</span>)
+<span class='no'>builder</span>$<span class='fu'>add_meta_graph_and_variables</span>(
+  <span class='no'>sess</span>,
+  <span class='fu'>list</span>(
+    <span class='no'>tf</span>$<span class='no'>python</span>$<span class='no'>saved_model</span>$<span class='no'>tag_constants</span>$<span class='no'>SERVING</span>
+  ),
+  <span class='kw'>signature_def_map</span> <span class='kw'>=</span> <span class='fu'>list</span>(
+    <span class='kw'>serving_default</span> <span class='kw'>=</span> <span class='no'>tf</span>$<span class='no'>saved_model</span>$<span class='no'>signature_def_utils</span>$<span class='fu'>build_signature_def</span>(
+      <span class='kw'>inputs</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>images</span> <span class='kw'>=</span> <span class='no'>tf</span>$<span class='no'>saved_model</span>$<span class='no'>utils</span>$<span class='fu'>build_tensor_info</span>(<span class='no'>x</span>)),
+      <span class='kw'>outputs</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>scores</span> <span class='kw'>=</span> <span class='no'>tf</span>$<span class='no'>saved_model</span>$<span class='no'>utils</span>$<span class='fu'>build_tensor_info</span>(<span class='no'>y</span>))
+    )
+  )
+)
+<span class='no'>builder</span>$<span class='fu'>save</span>()
+
+<span class='co'># (3) Serve saved model.</span>
+
+<span class='fu'>serve_savedmodel</span>(<span class='no'>model_dir</span>)
+<span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+            
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

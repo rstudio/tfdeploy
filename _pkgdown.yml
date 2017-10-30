@@ -10,8 +10,10 @@ navbar:
       href: index.html
     - text: "Guides"
       menu:
-        - text: "Exporting"
+        - text: "Exporting Models"
           href: articles/guides-exporting.html
+        - text: "Using TensorFlow Serving"
+          href: articles/guides-tensorflow-serving.html
     - text: "Reference"
       menu:
         - text: "Functions"
@@ -23,7 +25,7 @@ navbar:
 reference:
   - title: "Operations"
     contents:
-      - serve
+      - serve_savedmodel
   - title: "Examples"
     contents:
       - mnist_train_save

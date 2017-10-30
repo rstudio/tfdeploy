@@ -9,14 +9,11 @@ knitr::opts_chunk$set(eval = TRUE)
 
 ## Overview
 
-This repo provides tools and examples to serve Tensorflow models from R. The process has two stages:
+The first step towards deploying a trained model is to export this model from
+TensorFlow. This guide demostrates how to export models from: TensorFlow,
+tfestimators and keras.
 
-- Save the model
-- Deploy (serve) the model
-
-The way the model is saved varies based on the package that was used to create it.  
-
-## Saving a Tensorflow model
+## Exporting from TensorFlow
 
 One can train MNIST as described by [MNIST For ML Beginners](https://tensorflow.rstudio.com/tensorflow/articles/tutorial_mnist_beginners.html) and track
 the model's inputs and outputs named `x` and `y` under that particular article. For convinience, we can
@@ -62,12 +59,33 @@ This signature can be used in combination with `SavedModelBuilder.add_meta_graph
 provide a model usable with Tensorflow Serving:
 
 ```{r}
+
+tfserve_save <- function(sess, model_path, signature, overwrite = FALSE) {
+  if (overwrite && dir.exists(model_path)) unlink(model_path, recursive = TRUE)
+  builder <- tf$saved_model$builder$SavedModelBuilder(model_path)
+
+  if (!is.null(signature)) {
+    legacy_init_op <- tf$group(tf$tables_initializer(), name = "legacy_init_op")
+
+    builder$add_meta_graph_and_variables(
+      sess,
+      list(
+        tf$python$saved_model$tag_constants$SERVING
+      ),
+      signature_def_map = signature,
+      legacy_init_op = legacy_init_op
+    )
+  }
+
+  builder$save()
+}
+
 tfserve_save(sess, model_path, signature, overwrite = TRUE)
 
 dir(model_path, recursive = TRUE)
 ```
 
-## Saving a TFEstimators model
+## Exporting from TFEstimators
 
 A sample model using the `mtcars` data frame is trained using `tfestimators`.  The resulting model is the one that will be saved to disk. To train, we can follow the TensorFlow estimators [Quick Start](https://tensorflow.rstudio.com/tfestimators/); or for convenienve, run:
 
@@ -122,7 +140,7 @@ model_folder <- list.files()[1]
 dir(model_path, recursive = TRUE)
 ```
 
-## Saving a Keras Model
+## Exporting from Keras
 
 First train a `keras` model as described under [R interface to Keras](https://tensorflow.rstudio.com/keras/), for convinience, run instead:
 
@@ -156,133 +174,4 @@ signature <- mnist_signature(
 tfserve_save(sess, model_path, signature, overwrite = TRUE)
 
 dir(model_path, recursive = TRUE)
-```
-
-## Serving Models
-
-See [Tensorflow Serving Setup](https://www.tensorflow.org/serving/setup#installing_using_apt-get), but in general, from Linux, first install prereqs:
-
-```{bash eval=F}
-sudo apt-get update && sudo apt-get install -y build-essential curl libcurl3-dev git libfreetype6-dev libpng12-dev libzmq3-dev pkg-config python-dev python-numpy python-pip software-properties-common swig zip zlib1g-dev
-```
-
-Then install Tensorflow Serving:
-
-```{bash eval=F}
-echo "deb [arch=amd64] http://storage.googleapis.com/tensorflow-serving-apt stable tensorflow-model-server tensorflow-model-server-universal" | sudo tee /etc/apt/sources.list.d/tensorflow-serving.list
-
-curl https://storage.googleapis.com/tensorflow-serving-apt/tensorflow-serving.release.pub.gpg | sudo apt-key add -
-
-sudo apt-get update && sudo apt-get install tensorflow-model-server
-```
-
-Optionally, install the api client:
-
-```{bash eval=F}
-sudo pip install tensorflow-serving-api --no-cache-dir
-```
-
-Then serve the TensorFlow model using:
-
-```{bash eval=F}
-tensorflow_model_server --port=9000 --model_name=mnist --model_base_path=/mnt/hgfs/tfserve/trained/tensorflow-mnist
-```
-
-```
-2017-10-04 14:53:15.291409: I external/org_tensorflow/tensorflow/cc/saved_model/loader.cc:284] Loading SavedModel: success. Took 113175 microseconds.
-2017-10-04 14:53:15.293200: I tensorflow_serving/core/loader_harness.cc:86] Successfully loaded servable version {name: mnist version: 1}
-2017-10-04 14:53:15.299338: I tensorflow_serving/model_servers/main.cc:288] Running ModelServer at 0.0.0.0:9000 ...
-```
-
-Or the `tfestimators` model using:
-
-```{bash eval=F}
-tensorflow_model_server --port=9000 --model_name=mnist --model_base_path=/mnt/hgfs/tfserve/trained/tfestimators-mtcars
-```
-
-```
-2017-10-04 15:33:21.279211: I external/org_tensorflow/tensorflow/cc/saved_model/loader.cc:284] Loading SavedModel: success. Took 43820 microseconds.
-2017-10-04 15:33:21.281129: I tensorflow_serving/core/loader_harness.cc:86] Successfully loaded servable version {name: mnist version: 1507156394}
-2017-10-04 15:33:21.284161: I tensorflow_serving/model_servers/main.cc:288] Running ModelServer at 0.0.0.0:9000 ...
-
-```
-
-One can use `saved_model_cli` to inspect model contents, as in:
-
-```{bash eval=F}
-saved_model_cli show --dir /mnt/hgfs/tfserve/trained/tensorflow-mnist/1
-```
-
-## Using Models
-
-Manually download [mnist_client.py](https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/example/mnist_client.py) and [mnist_input_data.py](https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/example/mnist_input_data.py). Then run:
-
-```{bash eval=F}
-python mnist_client.py --num_tests=1000 --server=localhost:9000
-
-Successfully downloaded train-images-idx3-ubyte.gz 9912422 bytes.
-Extracting /tmp/train-images-idx3-ubyte.gz
-Successfully downloaded train-labels-idx1-ubyte.gz 28881 bytes.
-Extracting /tmp/train-labels-idx1-ubyte.gz
-Successfully downloaded t10k-images-idx3-ubyte.gz 1648877 bytes.
-Extracting /tmp/t10k-images-idx3-ubyte.gz
-Successfully downloaded t10k-labels-idx1-ubyte.gz 4542 bytes.
-Extracting /tmp/t10k-labels-idx1-ubyte.gz
-........................................
-Inference error rate: 9.5%
-```
-
-Or while running the Keras model under TF Serving, :
-
-```{bash eval=F}
-python mnist_client.py --num_tests=1000 --server=localhost:9000
-
-Extracting /tmp/train-images-idx3-ubyte.gz
-Extracting /tmp/train-labels-idx1-ubyte.gz
-Extracting /tmp/t10k-images-idx3-ubyte.gz
-Extracting /tmp/t10k-labels-idx1-ubyte.gz
-............
-Inference error rate: 84.5%
-
-```
-
-**TODO:** Investigate inference error rate under keras, see: [/keras/issues/7848](https://github.com/fchollet/keras/issues/7848).
-
-## Loading a TensorFlow Model
-
-```{r}
-library(tensorflow)
-
-tf$reset_default_graph()
-sess <- tf$Session()
-
-graph <- tf$saved_model$loader$load(
-  sess,
-  list(tf$python$saved_model$tag_constants$SERVING),
-  "trained/tensorflow-mnist/1")
-
-graph$signature_def
-```
-
-```{r eval=F}
-library(tensorflow)
-
-datasets <- tf$contrib$learn$datasets
-mnist <- datasets$mnist$read_data_sets("MNIST-data", one_hot = TRUE)
-batches <- mnist$train$next_batch(1L)
-
-```
-
-## Loading a Keras Model
-
-```{r}
-library(tensorflow)
-
-tf$reset_default_graph()
-sess <- tf$Session()
-
-graph <- tf$saved_model$loader$load(
-  sess,
-  list(tf$python$saved_model$tag_constants$SERVING),
-  "trained/keras-mnist/1")
 ```

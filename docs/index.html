@@ -102,7 +102,9 @@ recognize_digit &lt;-<span class="st"> </span><span class="cf">function</span>()
     <span class="dt">url =</span> <span class="st">"http://127.0.0.1:8089/api/predict_images/predict/"</span>,
     <span class="dt">body =</span> <span class="kw">list</span>(
       <span class="dt">instances =</span> <span class="kw">list</span>(
-        <span class="kw">matrix</span>(<span class="kw">as.double</span>(pixels), <span class="dv">28</span>, <span class="dv">28</span>, <span class="dt">byrow =</span> T) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.vector</span>()
+        <span class="dt">input =</span> <span class="kw">list</span>(
+            <span class="kw">matrix</span>(<span class="kw">as.double</span>(pixels), <span class="dv">28</span>, <span class="dv">28</span>, <span class="dt">byrow =</span> T) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.vector</span>()
+        )
       )
     ),
     <span class="dt">encode =</span> <span class="st">"json"</span>

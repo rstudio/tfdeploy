@@ -43,7 +43,9 @@ recognize_digit <- function() {
     url = "http://127.0.0.1:8089/api/predict_images/predict/",
     body = list(
       instances = list(
-        matrix(as.double(pixels), 28, 28, byrow = T) %>% as.vector()
+        input = list(
+            matrix(as.double(pixels), 28, 28, byrow = T) %>% as.vector()
+        )
       )
     ),
     encode = "json"

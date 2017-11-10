@@ -96,8 +96,6 @@
 <p>One can train MNIST as described by <a href="https://tensorflow.rstudio.com/tensorflow/articles/tutorial_mnist_beginners.html">MNIST For ML Beginners</a> and track the model’s inputs and outputs named <code>x</code> and <code>y</code> under that particular article. For convinience, we can run instead:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tensorflow)
 <span class="kw">library</span>(tfserve)</code></pre></div>
-<pre><code>## Warning: replacing previous import 'keras::evaluate' by
-## 'tensorflow::evaluate' when loading 'tfserve'</code></pre>
 <pre><code>## 
 ## Attaching package: 'tfserve'</code></pre>
 <pre><code>## The following object is masked from 'package:tensorflow':
@@ -222,29 +220,18 @@ model_folder &lt;-<span class="st"> </span><span class="kw">list.files</span>()[
 <pre><code>## The following object is masked from 'package:tfestimators':
 ## 
 ##     evaluate</code></pre>
-<pre><code>## The following object is masked from 'package:tensorflow':
-## 
-##     evaluate</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tf<span class="op">$</span><span class="kw">reset_default_graph</span>()
 
 <span class="kw"><a href="http://www.rdocumentation.org/packages/keras/topics/backend">backend</a></span>()<span class="op">$</span><span class="kw">set_learning_phase</span>(<span class="ot">TRUE</span>)
 
 model &lt;-<span class="st"> </span><span class="kw">mnist_train_keras</span>(<span class="dt">epochs =</span> <span class="dv">1</span>)</code></pre></div>
 <pre><code>## $loss
-## [1] 0.2399678
+## [1] 0.2264274
 ## 
 ## $acc
-## [1] 0.9239</code></pre>
-<p>Then use the TensorFlow backend to export the model (see also <a href="https://github.com/fchollet/keras/issues/6212">/keras/issues/6212</a> and <a href="https://blog.keras.io/keras-as-a-simplified-interface-to-tensorflow-tutorial.html#exporting-a-model-with-tensorflow-serving">Exporting a model with TF Serving from Keras blog</a>):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">model_path &lt;-<span class="st"> "trained/keras-mnist/1"</span>
-
-sess &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/keras/topics/backend">backend</a></span>()<span class="op">$</span><span class="kw">get_session</span>()
-
-signature &lt;-<span class="st"> </span><span class="kw">mnist_signature</span>(
-  model<span class="op">$</span>input_layers[[<span class="dv">1</span>]]<span class="op">$</span>input,
-  model<span class="op">$</span>output_layers[[<span class="dv">1</span>]]<span class="op">$</span>output)
-
-<span class="kw">tfserve_save</span>(sess, model_path, signature, <span class="dt">overwrite =</span> <span class="ot">TRUE</span>)</code></pre></div>
+## [1] 0.9308</code></pre>
+<p>Then save using <code><a href="http://www.rdocumentation.org/packages/tensorflow/topics/export_savedmodel">export_savedmodel()</a></code> as follows:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="http://www.rdocumentation.org/packages/tensorflow/topics/export_savedmodel">export_savedmodel</a></span>(model, <span class="st">"trained/keras-mnist/1"</span>)</code></pre></div>
 <pre><code>## [1] "trained/keras-mnist/1/saved_model.pb"</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dir</span>(model_path, <span class="dt">recursive =</span> <span class="ot">TRUE</span>)</code></pre></div>
 <pre><code>## [1] "saved_model.pb"                         

@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Exporting Models • tfserve</title>
+<title>Exporting Models • tfdeploy</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
@@ -24,7 +24,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">tfserve</a>
+      <a class="navbar-brand" href="../index.html">tfdeploy</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
@@ -61,7 +61,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/rstudio/tfserve">
+  <a href="https://github.com/rstudio/tfdeploy">
     <span class="fa fa-github"></span>
      
   </a>
@@ -95,13 +95,9 @@
 <a href="#exporting-from-tensorflow" class="anchor"></a>Exporting from TensorFlow</h2>
 <p>One can train MNIST as described by <a href="https://tensorflow.rstudio.com/tensorflow/articles/tutorial_mnist_beginners.html">MNIST For ML Beginners</a> and track the model’s inputs and outputs named <code>x</code> and <code>y</code> under that particular article. For convinience, we can run instead:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tensorflow)
-<span class="kw">library</span>(tfserve)</code></pre></div>
-<pre><code>## 
-## Attaching package: 'tfserve'</code></pre>
-<pre><code>## The following object is masked from 'package:tensorflow':
-## 
-##     serve_savedmodel</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sess &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Session</span>()
+<span class="kw">library</span>(tfserve)
+
+sess &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Session</span>()
 mnist_model &lt;-<span class="st"> </span><span class="kw">mnist_train</span>(sess)</code></pre></div>
 <p>Once trained, the model can be saved with <a href="https://www.tensorflow.org/api_docs/python/tf/saved_model/builder/SavedModelBuilder">SavedModelBuilder</a>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">if</span> (<span class="kw">dir.exists</span>(<span class="st">"trained"</span>)) <span class="kw">unlink</span>(<span class="st">"trained"</span>, <span class="dt">recursive =</span> <span class="ot">TRUE</span>)
@@ -155,13 +151,9 @@ builder<span class="op">$</span><span class="kw">save</span>()</code></pre></div
 <h2 class="hasAnchor">
 <a href="#exporting-from-tfestimators" class="anchor"></a>Exporting from TFEstimators</h2>
 <p>A sample model using the <code>mtcars</code> data frame is trained using <code>tfestimators</code>. The resulting model is the one that will be saved to disk. To train, we can follow the TensorFlow estimators <a href="https://tensorflow.rstudio.com/tfestimators/">Quick Start</a>; or for convenienve, run:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tfestimators)</code></pre></div>
-<pre><code>## 
-## Attaching package: 'tfestimators'</code></pre>
-<pre><code>## The following objects are masked from 'package:tensorflow':
-## 
-##     evaluate, train, train_and_evaluate</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mtcars_train &lt;-<span class="st"> </span><span class="cf">function</span> () {
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tfestimators)
+
+mtcars_train &lt;-<span class="st"> </span><span class="cf">function</span> () {
   mtcars_input_fn &lt;-<span class="st"> </span><span class="cf">function</span>(data) {
     <span class="kw"><a href="http://www.rdocumentation.org/packages/tfestimators/topics/input_fn">input_fn</a></span>(data,
              <span class="dt">features =</span> <span class="kw">c</span>(<span class="st">"disp"</span>, <span class="st">"cyl"</span>),
@@ -179,7 +171,7 @@ builder<span class="op">$</span><span class="kw">save</span>()</code></pre></div
   train &lt;-<span class="st"> </span>mtcars[indices, ]
   test  &lt;-<span class="st"> </span>mtcars[<span class="op">-</span>indices, ]
 
-  model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/tfestimators/topics/train">train</a></span>(<span class="kw">mtcars_input_fn</span>(train))
+  model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/tfestimators/topics/reexports">train</a></span>(<span class="kw">mtcars_input_fn</span>(train))
 
   model
 }
@@ -196,7 +188,7 @@ input_spec &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rd
 <span class="co"># Parse the spec as an input receiver </span>
 input_receiver &lt;-<span class="st"> </span>tf<span class="op">$</span>estimator<span class="op">$</span>export<span class="op">$</span><span class="kw">build_parsing_serving_input_receiver_fn</span>(input_spec)
 
-<span class="kw"><a href="http://www.rdocumentation.org/packages/tensorflow/topics/export_savedmodel">export_savedmodel</a></span>(model, 
+<span class="kw"><a href="http://www.rdocumentation.org/packages/tfestimators/topics/reexports">export_savedmodel</a></span>(model, 
                   <span class="dt">export_dir_base =</span> <span class="st">"trained/tfestimators-mtcars"</span>,
                   <span class="dt">serving_input_receiver_fn =</span> input_receiver)
 
@@ -214,24 +206,19 @@ model_folder &lt;-<span class="st"> </span><span class="kw">list.files</span>()[
 <blockquote>
 <p>Notice <code>set_learning_phase(TRUE)</code> to prevent ‘You must feed a value for placeholder tensor ’dropout_1/keras_learning_phase’ while serving set learning phase (see <a href="https://stackoverflow.com/questions/42025660/keras-set-learning-phase-for-dropout-when-saving-tensorflow-session">stackoverflow.com/q/42025660</a>, <a href="https://github.com/fchollet/keras/issues/2310">keras/issues/2310</a>, <a href="https://github.com/fchollet/keras/issues/7720">keras/issues/7720</a>, <a href="https://github.com/tensorflow/serving/issues/310">/tensorflow/serving/issues/310</a>).</p>
 </blockquote>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(keras)</code></pre></div>
-<pre><code>## 
-## Attaching package: 'keras'</code></pre>
-<pre><code>## The following object is masked from 'package:tfestimators':
-## 
-##     evaluate</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tf<span class="op">$</span><span class="kw">reset_default_graph</span>()
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(keras)
+tf<span class="op">$</span><span class="kw">reset_default_graph</span>()
 
 <span class="kw"><a href="http://www.rdocumentation.org/packages/keras/topics/backend">backend</a></span>()<span class="op">$</span><span class="kw">set_learning_phase</span>(<span class="ot">TRUE</span>)
 
 model &lt;-<span class="st"> </span><span class="kw">mnist_train_keras</span>(<span class="dt">epochs =</span> <span class="dv">1</span>)</code></pre></div>
 <pre><code>## $loss
-## [1] 0.2264274
+## [1] 0.2248618
 ## 
 ## $acc
-## [1] 0.9308</code></pre>
-<p>Then save using <code><a href="http://www.rdocumentation.org/packages/tensorflow/topics/export_savedmodel">export_savedmodel()</a></code> as follows:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="http://www.rdocumentation.org/packages/tensorflow/topics/export_savedmodel">export_savedmodel</a></span>(model, <span class="st">"trained/keras-mnist/1"</span>)</code></pre></div>
+## [1] 0.9344</code></pre>
+<p>Then save using <code><a href="http://www.rdocumentation.org/packages/keras/topics/reexports">export_savedmodel()</a></code> as follows:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="http://www.rdocumentation.org/packages/keras/topics/reexports">export_savedmodel</a></span>(model, <span class="st">"trained/keras-mnist/1"</span>)</code></pre></div>
 <pre><code>## [1] "trained/keras-mnist/1/saved_model.pb"</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dir</span>(model_path, <span class="dt">recursive =</span> <span class="ot">TRUE</span>)</code></pre></div>
 <pre><code>## [1] "saved_model.pb"                         

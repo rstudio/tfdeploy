@@ -1,14 +1,14 @@
-tfserve: Serves Tensorflow Models
+tfdeploy: Deploy Tensorflow Models from R
 ================
 
-`tfserve` provides a [GoogleML](https://cloud.google.com/ml-engine/docs/prediction-overview) compatiable REST API for predictions, which can be used to serve TensorFlow Models from R with ease.
+`tfdeploys` provides a [GoogleML](https://cloud.google.com/ml-engine/docs/prediction-overview) compatiable REST API for predictions, which can be used to serve TensorFlow Models from R with ease.
 
 <img src="tools/readme/swagger.png" width=500 />
 
-For example, we can train MNIST as described by [MNIST For ML Beginners](https://tensorflow.rstudio.com/tensorflow/articles/tutorial_mnist_beginners.html) and then save using `SavedModelBuilder` and the right signature or, for conviniece, use a `tfserve` helper function as follows:
+For example, we can train MNIST as described by [MNIST For ML Beginners](https://tensorflow.rstudio.com/tensorflow/articles/tutorial_mnist_beginners.html) and then save using `SavedModelBuilder` and the right signature or, for conviniece, use a `tfdeploy` helper function as follows:
 
 ``` r
-library(tfserve)
+library(tfdeploy)
 
 model_path <- "trained/tensorflow-mnist/1"
 mnist_train_save(model_path)
@@ -22,7 +22,7 @@ Then, we can serve this model with ease by running:
 serve_savedmodel(model_path)
 ```
 
-We can make use of the `pixels` HTMLWidget to manually collect a vector of pixels and pass them to the REST API from `tfserve` as follows:
+We can make use of the `pixels` HTMLWidget to manually collect a vector of pixels and pass them to the REST API from `tfdeploy` as follows:
 
 ``` r
 library(pixels)

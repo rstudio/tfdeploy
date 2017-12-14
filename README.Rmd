@@ -1,5 +1,5 @@
 ---
-title: "tfserve: Serves Tensorflow Models"
+title: "tfdeploy: Deploy Tensorflow Models from R"
 output:
   github_document:
     fig_width: 9
@@ -7,7 +7,7 @@ output:
     toc_depth: 3
 ---
 
-`tfserve` provides a [GoogleML](https://cloud.google.com/ml-engine/docs/prediction-overview)
+`tfdeploys` provides a [GoogleML](https://cloud.google.com/ml-engine/docs/prediction-overview)
 compatiable REST API for predictions, which can be used to serve TensorFlow Models
 from R with ease.
 
@@ -15,11 +15,10 @@ from R with ease.
 
 For example, we can train MNIST as described by [MNIST For ML Beginners](https://tensorflow.rstudio.com/tensorflow/articles/tutorial_mnist_beginners.html)
 and then save using `SavedModelBuilder` and the right signature or, for conviniece, 
-use a `tfserve` helper function as follows:
+use a `tfdeploy` helper function as follows:
 
 ```{r message=F, warning=F}
-library(tfserve)
-library(magrittr)
+library(tfdeploy)
 
 model_path <- "trained/tensorflow-mnist/1"
 mnist_train_save(model_path)
@@ -32,10 +31,11 @@ serve_savedmodel(model_path)
 ```
 
 We can make use of the `pixels` HTMLWidget to manually collect a vector of
-pixels and pass them to the REST API from `tfserve` as follows:
+pixels and pass them to the REST API from `tfdeploy` as follows:
 
 ```{r eval=F}
 library(pixels)
+library(magrittr)
 
 recognize_digit <- function() {
   pixels <- get_pixels()

@@ -1,13 +1,14 @@
-Package: tfserve
+Package: tfdeploy
 Type: Package
-Title: tfserve: Serves TensorFlow Models
+Title: tfdeploy: Deploy TensorFlow Models
 Version: 0.1.0
 Authors@R: c(
     person("Javier", "Luraschi", email = "javier@rstudio.com", role = c("aut", "cre")),
     person(family = "RStudio", role = c("cph"))
   )
 Maintainer: Javier Luraschi <javier@rstudio.com>
-Description: Serves local TensorFlow models with an API compatibale with 'CloudML'.
+Description: Tools to deploy Tensorflow models as a local service, Tensorflow serving
+  and Tensorflow Lite.
 License: Apache License 2.0
 Encoding: UTF-8
 LazyData: true

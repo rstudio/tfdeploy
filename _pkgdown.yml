@@ -3,7 +3,7 @@ template:
     bootswatch: cosmo
 
 navbar:
-  title: "tfserve"
+  title: "tfdeploy"
   type: inverse
   left:
     - text: "Home"
@@ -20,7 +20,7 @@ navbar:
           href: reference/index.html
   right:
    - icon: fa-github
-     href: https://github.com/rstudio/tfserve
+     href: https://github.com/rstudio/tfdeploy
 
 reference:
   - title: "Operations"

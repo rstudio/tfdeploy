@@ -20,6 +20,8 @@ the model's inputs and outputs named `x` and `y` under that particular article. 
 run instead:
 
 ```{r}
+Sys.setenv(RETICULATE_TRACE = 1000)
+
 library(tensorflow)
 library(tfserve)
 

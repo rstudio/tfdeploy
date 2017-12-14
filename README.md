@@ -9,7 +9,6 @@ For example, we can train MNIST as described by [MNIST For ML Beginners](https:/
 
 ``` r
 library(tfserve)
-library(magrittr)
 
 model_path <- "trained/tensorflow-mnist/1"
 mnist_train_save(model_path)
@@ -27,6 +26,7 @@ We can make use of the `pixels` HTMLWidget to manually collect a vector of pixel
 
 ``` r
 library(pixels)
+library(magrittr)
 
 recognize_digit <- function() {
   pixels <- get_pixels()

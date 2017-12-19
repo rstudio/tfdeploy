@@ -7,18 +7,19 @@ Authors@R: c(
     person(family = "RStudio", role = c("cph"))
   )
 Maintainer: Javier Luraschi <javier@rstudio.com>
-Description: Tools to deploy Tensorflow models as a local service, Tensorflow serving
-  and Tensorflow Lite.
+Description: Tools to deploy Tensorflow models across multiple services.
 License: Apache License 2.0
 Encoding: UTF-8
 LazyData: true
 Import:
-  - tensorflow
-  - httpuv
-  - jsonlite
-  - swagger
+  cloudml,
+  httpuv,
+  jsonlite,
+  keras,
+  swagger,
+  tensorflow,
 Suggest:
-  - testthat
-  - pixels
+  pixels,
+  testthat
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.1

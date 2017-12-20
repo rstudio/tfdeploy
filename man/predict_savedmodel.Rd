@@ -4,7 +4,8 @@
 \alias{predict_savedmodel}
 \title{Predicts over a Saved Model}
 \usage{
-predict_savedmodel(input, location, service = c("cloudml", "file", "api"),
+predict_savedmodel(input, location, service = c("export", "cloudml",
+  "webapi"),
   signature_name = tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY)
 }
 \arguments{
@@ -13,7 +14,7 @@ predict_savedmodel(input, location, service = c("cloudml", "file", "api"),
 \item{location}{The location as a local path, REST url or CloudML name.}
 
 \item{service}{The type of service, valid values are \code{cloudml},
-\code{file}, \code{api}.}
+\code{export}, \code{webapi}.}
 
 \item{signature_name}{The named entry point to use in the model for prediction.}
 }

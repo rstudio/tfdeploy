@@ -1,5 +1,5 @@
 #' @import tensorflow
-predict_savedmodel_file <- function(input, sess, signature_def, signature_name) {
+predict_savedmodel_export <- function(input, sess, signature_def, signature_name) {
   signature_names <- signature_def$keys()
   if (!signature_name %in% signature_names) {
     stop(
@@ -70,7 +70,7 @@ predict_savedmodel_file <- function(input, sess, signature_def, signature_name) 
 }
 
 #' @export
-predict_savedmodel.file_predictionservice <- function(
+predict_savedmodel.export_predictionservice <- function(
   input,
   location,
   service,

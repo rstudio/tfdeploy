@@ -1,5 +1,5 @@
 #' @export
-predict_savedmodel.api_predictionservice <- function(
+predict_savedmodel.webapi_predictionservice <- function(
   input,
   location,
   service,

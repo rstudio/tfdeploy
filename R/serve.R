@@ -1,6 +1,7 @@
-#' Serve a TensorFlow Model
+#' Serve a TensorFlow SavedModel
 #'
-#' Serve a TensorFlow Model into a local REST/JSON API.
+#' Serve a TensorFlow SavedModel as a local web api under
+#' \url{http://localhost:8089}.
 #'
 #' @param model_dir The path to the exported model, as a string.
 #' @param host Address to use to serve model, as a string.
@@ -135,7 +136,7 @@ serve_handlers <- function(host, port) {
         simplifyMatrix = FALSE
       )
 
-      result <- predict_savedmodel_file(
+      result <- predict_savedmodel_export(
         input = json_req$instances,
         sess = sess,
         signature_def = signature_def,

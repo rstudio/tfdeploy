@@ -1,10 +1,10 @@
-context("Predict")
+context("Predict Local")
 
-test_that("can predict mnist model from file", {
+test_that("can predict mnist model from a local file", {
   results <- predict_savedmodel(
     list(images = list(rep(0, 784))),
     location = model_dir,
-    service = "file"
+    service = "local"
   )
 
   expect_true(ncol(results[[1]]) == 10)

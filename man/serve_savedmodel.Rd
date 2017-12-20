@@ -2,7 +2,7 @@
 % Please edit documentation in R/serve.R
 \name{serve_savedmodel}
 \alias{serve_savedmodel}
-\title{Serve a TensorFlow Model}
+\title{Serve a TensorFlow SavedModel}
 \usage{
 serve_savedmodel(model_dir, host = "127.0.0.1", port = 8089,
   daemonized = FALSE)
@@ -19,7 +19,8 @@ are not blocked to handle requests. To terminate a daemonized server, call
 'httpuv::stopDaemonizedServer()' with the handle returned from this call.}
 }
 \description{
-Serve a TensorFlow Model into a local REST/JSON API.
+Serve a TensorFlow SavedModel as a local web api under
+\url{http://localhost:8089}.
 }
 \examples{
 \dontrun{

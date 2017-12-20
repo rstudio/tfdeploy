@@ -7,7 +7,8 @@ Authors@R: c(
     person(family = "RStudio", role = c("cph"))
   )
 Maintainer: Javier Luraschi <javier@rstudio.com>
-Description: Tools to deploy Tensorflow models across multiple services.
+Description: Tools to deploy TensorFlow models across multiple services. For instance,
+  it provides a local server for testing cloudml compatible services.
 License: Apache License 2.0
 Encoding: UTF-8
 LazyData: true
@@ -17,7 +18,7 @@ Import:
   jsonlite,
   keras,
   swagger,
-  tensorflow,
+  tensorflow
 Suggest:
   pixels,
   testthat

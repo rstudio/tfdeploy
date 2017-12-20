@@ -1,0 +1,15 @@
+language: r
+
+dist: trusty
+sudo: false
+warnings_are_errors: false
+
+cache:
+  packages: true
+  directories:
+    - $HOME/.cache/pip
+
+before_script:
+  - pip2.7 install --upgrade --ignore-installed --user travis pip setuptools wheel virtualenv
+  - R CMD INSTALL .
+  - R -e 'tensorflow::install_tensorflow()'

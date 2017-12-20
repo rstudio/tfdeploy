@@ -1,4 +1,5 @@
 library(tfdeploy)
+library(cloudml)
 
 sysenv_file <- function(name, destination) {
   if (file.exists(destination))

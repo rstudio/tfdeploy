@@ -1,7 +1,7 @@
 context("Predict CloudML Model")
 
 test_that("can predict mnist model from cloudml", {
-  if (!cloudml_tests_configured()) skip()
+  skip_if_not(cloudml_tests_configured(), "CloudML account not correctly configured.")
 
   results <- cloudml::cloudml_predict(
     jsonlite::read_json(

@@ -1,9 +1,8 @@
 context("Serve")
 
 test_that("can serve mnist model", {
-  skip()
   handle <- serve_savedmodel(model_dir, daemonized = TRUE, port = 9090)
-  Sys.sleep(5)
+  Sys.sleep(3)
 
   expect_true(!is.null(handle))
 

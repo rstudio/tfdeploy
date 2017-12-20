@@ -8,7 +8,6 @@
 #'   \code{file}, \code{api}.
 #' @param signature_name The named entry point to use in the model for prediction.
 #'
-#' @import tensorflow
 #' @export
 predict_savedmodel <- function(
   input,

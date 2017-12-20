@@ -13,7 +13,8 @@ predict_savedmodel <- function(
   input,
   location,
   service = c("export", "cloudml", "webapi"),
-  signature_name = tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY) {
+  signature_name = tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY,
+  ...) {
   class(input) <- paste0(service, "_predictionservice")
   UseMethod("predict_savedmodel", input)
 }

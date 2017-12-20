@@ -5,11 +5,17 @@ test_that("can predict mnist model from cloudml", {
 
   results <- cloudml::cloudml_predict(
     jsonlite::read_json(
-      "requests/tensorflow-mnist.json",
+      "requests/tensorflow-mnist-request.json",
       simplifyVector = TRUE),
-    "cloudml",
+    "tfdeploy",
     "tensorflow_mnist")
 
-  expect_true(ncol(results[[1]]) == 10)
+  jsonlite::write_json(results, "requests/tensorflow-mnist-response.json")
+
+  expect_true(!is.null(results$predictions))
+  expect_true(!is.null(results$predictions$scores))
+
+  scores <- results$predictions$scores
+  expect_true(length(scores[[1]]) == 10)
 
 })

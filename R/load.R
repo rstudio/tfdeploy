@@ -1,3 +1,4 @@
+#' @export
 load_savedmodel <- function(sess, model_dir) {
   tf$reset_default_graph()
 

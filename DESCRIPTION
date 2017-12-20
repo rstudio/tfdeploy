@@ -12,7 +12,7 @@ Description: Tools to deploy TensorFlow models across multiple services. For ins
 License: Apache License 2.0
 Encoding: UTF-8
 LazyData: true
-Import:
+Imports:
   cloudml,
   httpuv,
   jsonlite,
@@ -23,6 +23,6 @@ Suggest:
   pixels,
   testthat
 Remotes:
-  rstudio/tensorflow
+  rstudio/tensorflowr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.1

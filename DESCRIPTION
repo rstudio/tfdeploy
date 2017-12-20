@@ -22,5 +22,7 @@ Import:
 Suggest:
   pixels,
   testthat
+Remotes:
+  rstudio/tensorflow
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.1

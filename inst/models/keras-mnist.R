@@ -32,6 +32,7 @@ model %>% compile(
   metrics = c('accuracy')
 )
 
+epochs <- 3
 model %>% fit(
   x_train, y_train,
   epochs = epochs, batch_size = 128,

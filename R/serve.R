@@ -159,30 +159,31 @@ serve_handlers <- function(host, port) {
 }
 
 serve_run <- function(model_dir, host, port, start, browse) {
-  sess <- tf$Session()
-  on.exit(sess$close(), add = TRUE)
+  with_new_session(function(sess) {
 
-  graph <- load_savedmodel(sess, model_dir)
-  signature_def <- graph$signature_def
+    graph <- load_savedmodel(sess, model_dir)
+    signature_def <- graph$signature_def
 
-  if (browse) utils::browseURL(paste0("http://", host, ":", port))
+    if (browse) utils::browseURL(paste0("http://", host, ":", port))
 
-  handlers <- serve_handlers(host, port)
+    handlers <- serve_handlers(host, port)
 
-  start(host, port, list(
-    onHeaders = function(req) {
-      NULL
-    },
-    call = function(req) {
-      tryCatch({
-        matches <- sapply(names(handlers), function(e) grepl(e, req$PATH_INFO))
-        handlers[matches][[1]](req, sess, signature_def)
-      }, error = function(e) {
-        serve_invalid_request(e$message)
-      })
-    },
-    onWSOpen = function(ws) {
-      NULL
-    }
-  ))
+    start(host, port, list(
+      onHeaders = function(req) {
+        NULL
+      },
+      call = function(req) {
+        tryCatch({
+          matches <- sapply(names(handlers), function(e) grepl(e, req$PATH_INFO))
+          handlers[matches][[1]](req, sess, signature_def)
+        }, error = function(e) {
+          serve_invalid_request(e$message)
+        })
+      },
+      onWSOpen = function(ws) {
+        NULL
+      }
+    ))
+
+  })
 }

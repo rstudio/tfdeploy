@@ -23,7 +23,7 @@ Suggests:
   pixels,
   testthat
 Remotes:
-  rstudio/tensorflow,
+  rstudio/tensorflow@bugfix/export-savedmodel-signature,
   rstudio/cloudml
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.1

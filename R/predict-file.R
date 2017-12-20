@@ -2,7 +2,9 @@
 predict_savedmodel_file <- function(input, sess, signature_def, signature_name) {
   signature_names <- signature_def$keys()
   if (!signature_name %in% signature_names) {
-    stop("Signature '", signature_name, "' not available in model signatures.")
+    stop(
+      "Signature '", signature_name, "' not available in model signatures. ",
+      "Available signatures: ", paste(signature_names, collapse = ","), ".")
   }
 
   signature_obj <- signature_def$get(signature_name)

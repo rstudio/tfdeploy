@@ -1,6 +1,8 @@
 tfdeploy: Deploy Tensorflow Models from R
 ================
 
+[![Build Status](https://travis-ci.org/rstudio/tfdeploy.svg?branch=master)](https://travis-ci.org/rstudio/tfdeploy)
+
 `tfdeploys` provides a [GoogleML](https://cloud.google.com/ml-engine/docs/prediction-overview) compatiable REST API for predictions, which can be used to serve TensorFlow Models from R with ease.
 
 <img src="tools/readme/swagger.png" width=500 />

@@ -1,4 +1,4 @@
-context("Predict CloudML")
+context("Predict CloudML Model")
 
 test_that("can predict mnist model from cloudml", {
   if (!cloudml_tests_configured()) skip()

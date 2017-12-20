@@ -81,7 +81,7 @@ predict_savedmodel.export_predictionservice <- function(
     graph <- load_savedmodel(sess, location)
     signature_def <- graph$signature_def
 
-    predict_savedmodel_file(
+    predict_savedmodel_export(
       input = input,
       sess = sess,
       signature_def = signature_def,

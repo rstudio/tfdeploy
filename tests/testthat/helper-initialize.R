@@ -1,3 +1,3 @@
 library(tfdeploy)
 
-model_dir <- system.file("models/tensorflow-mnist/1", package = "tfdeploy")
+model_dir <- system.file("models/tensorflow-mnist", package = "tfdeploy")

@@ -19,10 +19,11 @@ Imports:
   keras,
   swagger,
   tensorflow
-Suggest:
+Suggests:
   pixels,
   testthat
 Remotes:
-  rstudio/tensorflowr
+  rstudio/tensorflow,
+  rstudio/cloudml
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.1

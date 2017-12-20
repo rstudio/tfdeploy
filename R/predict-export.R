@@ -1,5 +1,4 @@
-#' @import tensorflow
-predict_savedmodel_export <- function(input, sess, signature_def, signature_name) {
+predict_savedmodel_export <- function(input_instances, sess, signature_def, signature_name) {
   signature_names <- signature_def$keys()
   if (!signature_name %in% signature_names) {
     stop(
@@ -21,8 +20,6 @@ predict_savedmodel_export <- function(input, sess, signature_def, signature_name
       signature_obj$outputs$get(tensor_output_names[[fetch_idx]])$name
     )
   })
-
-  input_instances <- input
 
   feed_dict <- list()
   if (is.list(input_instances)) {
@@ -71,7 +68,7 @@ predict_savedmodel_export <- function(input, sess, signature_def, signature_name
 
 #' @export
 predict_savedmodel.export_predictionservice <- function(
-  input,
+  instances,
   location,
   service,
   signature_name = tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY,
@@ -82,7 +79,7 @@ predict_savedmodel.export_predictionservice <- function(
     signature_def <- graph$signature_def
 
     predict_savedmodel_export(
-      input = input,
+      input_instances = instances,
       sess = sess,
       signature_def = signature_def,
       signature_name = signature_name

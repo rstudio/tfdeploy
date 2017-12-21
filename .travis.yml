@@ -13,3 +13,14 @@ before_script:
   - pip2.7 install --upgrade --ignore-installed --user travis pip setuptools wheel virtualenv
   - R CMD INSTALL .
   - R -e 'tensorflow::install_tensorflow()'
+
+script:
+  - |
+    R CMD build .
+    R CMD check --no-build-vignettes --no-manual tfdeploy*tar.gz
+
+after_failure:
+  - |
+    cd tests
+    travis_wait 30 Rscript ../.travis.R
+    sleep 2

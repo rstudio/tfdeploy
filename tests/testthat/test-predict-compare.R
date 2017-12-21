@@ -11,7 +11,8 @@ test_compare_services <- function(service_defs, instances_entries) {
     for (idx_result in length(services_results) - 1) {
       all_equal <- all.equal(
         first$predictions$scores,
-        services_results[idx_result]$scores
+        services_results[idx_result]$scores,
+        tolerance = 1e-3
       )
 
       if (!identical(all_equal, TRUE)) {

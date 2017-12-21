@@ -32,7 +32,7 @@ test_compare_services <- function(service_defs, instances_entries) {
     }
   }
 
-  success()
+  succeed()
 }
 
 test_that("mnist model predictions across services are equivalent", {

@@ -8,6 +8,7 @@
 #' @param service The type of service, valid values are \code{cloudml},
 #'   \code{export}, \code{webapi}.
 #' @param signature_name The named entry point to use in the model for prediction.
+#' @param ... Additional arguments, currently not in use.
 #'
 #' @export
 predict_savedmodel <- function(

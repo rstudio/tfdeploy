@@ -1,4 +1,6 @@
 predict_single_savedmodel_export <- function(instance, sess, signature_def, signature_name) {
+  if (!is.list(instance)) instance <- list(instance)
+
   signature_names <- signature_def$keys()
   if (!signature_name %in% signature_names) {
     stop(
@@ -109,9 +111,7 @@ predict_savedmodel.export_predictionservice <- function(
     graph <- load_savedmodel(sess, location)
     signature_def <- graph$signature_def
 
-    if (!is.list(instances)) {
-      stop("List of instances expected to perform predictions.")
-    }
+    if (!is.list(instances)) instances <- list(instances)
 
     predictions <- predict_savedmodel_export(
       instances = instances,

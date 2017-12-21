@@ -19,6 +19,8 @@ to the service. Even for single predictions, a list with one entry is expected.}
 \code{export}, \code{webapi}.}
 
 \item{signature_name}{The named entry point to use in the model for prediction.}
+
+\item{...}{Additional arguments, currently not in use.}
 }
 \description{
 Runs a prediction over a saved model file, local service or cloudml model.

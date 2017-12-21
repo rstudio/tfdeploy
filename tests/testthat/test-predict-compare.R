@@ -7,19 +7,25 @@ test_compare_services <- function(service_defs, instances_entries) {
       do.call("predict_savedmodel", service_def)
     })
 
-    all_equal <- do.call("all.equal", services_results)
-
-    if (!all_equal) {
-      fail(
-        "Results across ",
-        paste(service_defs, collapse = " and "),
-        " for entry ",
-        instances_index,
-        "/",
-        length(instances_entrie),
-        " don't match: ",
-        jsonlite::toJSON(services_results)
+    first <- services_results[[1]]
+    for (i in length(services_results) - 1) {
+      all_equal <- all.equal(
+        first$predictions$scores,
+        services_results[i]$scores
       )
+
+      if (!identical(all_equal, TRUE)) {
+        fail(
+          "Results across ",
+          names(service_defs)[[1]],
+          " and ",
+          names(service_defs)[[i]],
+          " for ",
+          names(instances_entries)[[instances_index]],
+          " do not match: ",
+          all_equal
+        )
+      }
     }
   }
 

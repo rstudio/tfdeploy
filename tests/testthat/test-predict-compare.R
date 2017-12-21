@@ -8,22 +8,24 @@ test_compare_services <- function(service_defs, instances_entries) {
     })
 
     first <- services_results[[1]]
-    for (i in length(services_results) - 1) {
+    for (idx_result in length(services_results) - 1) {
       all_equal <- all.equal(
         first$predictions$scores,
-        services_results[i]$scores
+        services_results[idx_result]$scores
       )
 
       if (!identical(all_equal, TRUE)) {
         fail(
-          "Results across ",
-          names(service_defs)[[1]],
-          " and ",
-          names(service_defs)[[i]],
-          " for ",
-          names(instances_entries)[[instances_index]],
-          " do not match: ",
-          all_equal
+          paste0(
+            "Results across '",
+            names(service_defs)[[1]],
+            "' and '",
+            names(service_defs)[[idx_result]],
+            "' for '",
+            names(instances_entries)[[instances_index]],
+            "' do not match: ",
+            all_equal
+          )
         )
       }
     }

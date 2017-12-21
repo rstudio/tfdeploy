@@ -3,7 +3,6 @@
 S3method(predict_savedmodel,cloudml_predictionservice)
 S3method(predict_savedmodel,export_predictionservice)
 S3method(predict_savedmodel,webapi_predictionservice)
-export(load_savedmodel)
 export(predict_savedmodel)
 export(serve_savedmodel)
 import(jsonlite)

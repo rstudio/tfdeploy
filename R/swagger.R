@@ -168,9 +168,6 @@ swagger_input_tensor_def <- function(signature_entry, tensor_input_name) {
 
 swagger_def <- function(signature_entry, signature_id) {
   tensor_input_names <- signature_entry$inputs$keys()
-  if (length(tensor_input_names) == 0) {
-    stop("No input tensor found for '", signature_key, "' signature.")
-  }
 
   swagger_input_defs <- lapply(tensor_input_names, function(tensor_input_name) {
     swagger_input_tensor_def(

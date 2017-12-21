@@ -1,17 +1,17 @@
 context("Compare Predictions")
 
 test_compare_services <- function(service_defs, instances_entries) {
-  for (instances_index in length(instances_entries)) {
+  for (instances_index in seq_along(instances_entries)) {
     services_results <- lapply(service_defs, function(service_def) {
       service_def$instances <- instances_entries[[instances_index]]
       do.call("predict_savedmodel", service_def)
     })
 
     first <- services_results[[1]]
-    for (idx_result in length(services_results) - 1) {
+    for (idx_result in 2:length(services_results)) {
       all_equal <- all.equal(
         first$predictions$scores,
-        services_results[idx_result]$scores,
+        services_results[[idx_result]]$predictions$scores,
         tolerance = 1e-3
       )
 

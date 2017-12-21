@@ -41,6 +41,7 @@
 #' serve_savedmodel(model_dir)
 #' }
 #' @importFrom httpuv runServer
+#' @import swagger
 #' @export
 serve_savedmodel <- function(
   model_dir,

@@ -16,7 +16,6 @@ Imports:
   cloudml,
   httpuv,
   jsonlite,
-  keras,
   swagger,
   tensorflow
 Suggests:

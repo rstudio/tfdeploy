@@ -1,57 +1,45 @@
-tfdeploy: Deploy Tensorflow Models from R
+tfdeploy: Deploy TensorFlow Models from R
 ================
 
 [![Build Status](https://travis-ci.org/rstudio/tfdeploy.svg?branch=master)](https://travis-ci.org/rstudio/tfdeploy)
 
-`tfdeploys` provides a [GoogleML](https://cloud.google.com/ml-engine/docs/prediction-overview) compatiable REST API for predictions, which can be used to serve TensorFlow Models from R with ease.
+`tfdeploy` provies tools for deploying TensorFlow SavedModels into local and remove services.
 
-<img src="tools/readme/swagger.png" width=500 />
+SavedModels can be trained using `tensorflow`, `keras` or `tfestimators` and exported using `export_savedmodel()`; or using any other TensorFlow tool that exports them using then [tf.train.Saver](https://www.tensorflow.org/api_docs/python/tf/train/Saver) interface.
 
-For example, we can train MNIST as described by [MNIST For ML Beginners](https://tensorflow.rstudio.com/tensorflow/articles/tutorial_mnist_beginners.html) and then save using `SavedModelBuilder` and the right signature or, for conviniece, use a `tfdeploy` helper function as follows:
+To get started, you can also use one of the pretrained models included in this package:
 
 ``` r
 library(tfdeploy)
-
-model_path <- "trained/tensorflow-mnist/1"
-mnist_train_save(model_path)
+model_path <- system.file("models/tensorflow-mnist/", package = "tfdeploy")
 ```
 
-    ## [1] "trained/tensorflow-mnist/1/saved_model.pb"
+### Local Deployment
 
-Then, we can serve this model with ease by running:
+`tfdeploy` provides a [GoogleML](https://cloud.google.com/ml-engine/docs/prediction-overview) compatible local R server that provides a web API to the the SavedModel using `serve_savedmodel()`:
 
 ``` r
 serve_savedmodel(model_path)
 ```
 
-We can make use of the `pixels` HTMLWidget to manually collect a vector of pixels and pass them to the REST API from `tfdeploy` as follows:
+<img src="tools/readme/swagger.png" width=500 />
+
+### Deployment Client
+
+`tfdeploy` provides a client capable of performing predictions over a SavedModel for local or remote prediction services A prediction over a local model can be performed using `predict_savedmodel()`:
 
 ``` r
-library(pixels)
-library(magrittr)
+predict_savedmodel(rep(0, 784), model_path)
+```
 
-recognize_digit <- function() {
-  pixels <- get_pixels()
-  httr::POST(
-    url = "http://127.0.0.1:8089/api/predict_images/predict/",
-    body = list(
-      instances = list(
-        input = list(
-            matrix(as.double(pixels), 28, 28, byrow = T) %>% as.vector()
-        )
-      )
-    ),
-    encode = "json"
-  ) %>%
-    httr::content(as = "text") %>%
-    jsonlite::fromJSON() %>%
-    as.vector() %>%
-    round(digits = 1) %>%
-    as.logical() %>%
-    which() - 1
-}
+    ## $predictions
+    ##                                                                           scores
+    ## 1 0.0557, 0.1143, 0.0904, 0.0587, 0.0820, 0.2934, 0.0713, 0.1516, 0.0191, 0.0635
 
-recognize_digit()
+We can make use of the `pixels` HTMLWidget to manually collect a vector of pixels and perform a prediction over the model:
+
+``` r
+predict_savedmodel(pixels::get_pixels(), model_path)
 ```
 
 <img src="tools/readme/mnist-digits.gif" width=400 />

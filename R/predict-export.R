@@ -84,6 +84,19 @@ predict_single_savedmodel_export <- function(instance, sess, signature_def, sign
   result
 }
 
+predict_savedmodel_export <- function(instances, sess, signature_def, signature_name) {
+  predictions <- lapply(instances, function(instance) {
+    predict_single_savedmodel_export(
+      instance = instance,
+      sess = sess,
+      signature_def = signature_def,
+      signature_name = signature_name
+    )
+  })
+
+  predictions
+}
+
 #' @export
 predict_savedmodel.export_predictionservice <- function(
   instances,
@@ -100,14 +113,12 @@ predict_savedmodel.export_predictionservice <- function(
       stop("List of instances expected to perform predictions.")
     }
 
-    predictions <- lapply(instances, function(instance) {
-      predict_single_savedmodel_export(
-        instance = instance,
-        sess = sess,
-        signature_def = signature_def,
-        signature_name = signature_name
-      )
-    })
+    predictions <- predict_savedmodel_export(
+      instances = instances,
+      sess = sess,
+      signature_def = signature_def,
+      signature_name = signature_name
+    )
 
     results <- list(predictions = predictions)
 

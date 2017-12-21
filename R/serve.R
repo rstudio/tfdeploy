@@ -137,7 +137,7 @@ serve_handlers <- function(host, port) {
       )
 
       result <- predict_savedmodel_export(
-        input = json_req$instances,
+        instances = json_req$instances,
         sess = sess,
         signature_def = signature_def,
         signature_name = signature_name

@@ -99,13 +99,33 @@ predict_savedmodel_export <- function(instances, sess, signature_def, signature_
   predictions
 }
 
+find_savedmodel <- function(path) {
+  if (is.null(path)) path <- getwd()
+
+  if (file.exists(file.path(path, "saved_model.pb")))
+    path
+  else if (file.exists(file.path(path, "runs"))) {
+    runs <- dir(file.path(path, "runs"))
+    ordered <- runs[order(runs, decreasing = T)]
+    output <- file.path(path, "runs", ordered[[1]])
+    model <- dir(output, recursive = T, full.names = T, pattern = "saved_model.pb")
+    if (length(model) == 1)
+      dirname(model)
+    else
+      path
+  }
+  else
+    path
+}
+
 #' @export
 predict_savedmodel.export_predictionservice <- function(
   instances,
-  location,
+  location = NULL,
   service,
   signature_name = tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY,
   ...) {
+  location <- find_savedmodel(location)
   with_new_session(function(sess) {
 
     graph <- load_savedmodel(sess, location)

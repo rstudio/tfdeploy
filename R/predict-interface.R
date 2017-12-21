@@ -13,7 +13,7 @@
 #' @export
 predict_savedmodel <- function(
   instances,
-  location,
+  location = NULL,
   service = c("export", "cloudml", "webapi"),
   signature_name = tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY,
   ...) {

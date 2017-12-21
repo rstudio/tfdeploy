@@ -24,6 +24,6 @@ Suggests:
   testthat
 Remotes:
   rstudio/tensorflow@bugfix/export-savedmodel-signature,
-  rstudio/cloudml
+  rstudio/cloudml@bugfix/predict-savedmodel-multiple
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.1

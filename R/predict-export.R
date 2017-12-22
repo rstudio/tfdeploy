@@ -32,7 +32,7 @@ predict_single_savedmodel_export <- function(instance, sess, signature_def, sign
       input_instance <- instance[[1]]
     }
     else if (!tensor_input_name %in% names(instance)) {
-      stop("Input '", tensor_input_name, "' found in model but not in API request.")
+      stop("Input '", tensor_input_name, "' found in model but missing in prediciton instance.")
     } else {
       input_instance <- instance[[tensor_input_name]]
     }
@@ -43,8 +43,8 @@ predict_single_savedmodel_export <- function(instance, sess, signature_def, sign
     else if (length(tensor_input_names) == 1 && length(names(input_instance)) == 0) {
       feed_dict[[placeholder_name]] <- input_instance
     }
-    else if (!tensor_input_name %in% names(input_instance)) {
-      stop("Input named '", tensor_input_name, "' not defined in all input instances.")
+    else if (!tensor_input_name %in% names(instance)) {
+      stop("Input named '", tensor_input_name, "' is missing from instance.")
     }
     else {
       feed_dict[[placeholder_name]] <- lapply(input_instance[[tensor_input_name]], function(e) {

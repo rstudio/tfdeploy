@@ -4,8 +4,8 @@
 \alias{predict_savedmodel}
 \title{Predicts over a Saved Model}
 \usage{
-predict_savedmodel(instances, location, service = c("export", "cloudml",
-  "webapi"),
+predict_savedmodel(instances, model = NULL, type = c("export", "cloudml",
+  "webapi", "graph"),
   signature_name = tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY,
   ...)
 }
@@ -13,10 +13,10 @@ predict_savedmodel(instances, location, service = c("export", "cloudml",
 \item{instances}{A list of prediction instances to be passed as input tensors
 to the service. Even for single predictions, a list with one entry is expected.}
 
-\item{location}{The location as a local path, REST url or CloudML name.}
+\item{model}{The model as a local path, REST url, CloudML name or graph object.}
 
-\item{service}{The type of service, valid values are \code{cloudml},
-\code{export}, \code{webapi}.}
+\item{type}{The type of object performing the prediction. Valid values
+are \code{cloudml}, \code{export}, \code{webapi} and \code{graph}.}
 
 \item{signature_name}{The named entry point to use in the model for prediction.}
 

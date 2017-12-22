@@ -4,19 +4,19 @@
 #'
 #' @param instances A list of prediction instances to be passed as input tensors
 #'   to the service. Even for single predictions, a list with one entry is expected.
-#' @param location The location as a local path, REST url or CloudML name.
-#' @param service The type of service, valid values are \code{cloudml},
-#'   \code{export}, \code{webapi}.
+#' @param model The model as a local path, REST url, CloudML name or graph object.
+#' @param type The type of object performing the prediction. Valid values
+#'   are \code{cloudml}, \code{export}, \code{webapi} and \code{graph}.
 #' @param signature_name The named entry point to use in the model for prediction.
 #' @param ... Additional arguments, currently not in use.
 #'
 #' @export
 predict_savedmodel <- function(
   instances,
-  location = NULL,
-  service = c("export", "cloudml", "webapi"),
+  model = NULL,
+  type = c("export", "cloudml", "webapi", "graph"),
   signature_name = tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY,
   ...) {
-  class(instances) <- paste0(service, "_predictionservice")
+  class(instances) <- paste0(type, "_predictionservice")
   UseMethod("predict_savedmodel", instances)
 }

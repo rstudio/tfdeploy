@@ -38,12 +38,12 @@ test_compare_services <- function(service_defs, instances_entries) {
 test_that("mnist model predictions across services are equivalent", {
   service_defs <- list(
     cloudml = list(
-      location = "tfdeploy",
+      model = "tfdeploy",
       version = "tensorflow_mnist",
       service = "cloudml"
     ),
     export = list(
-      location = model_dir,
+      model = model_dir,
       service = "export"
     )
   )

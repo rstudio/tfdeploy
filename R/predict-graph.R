@@ -40,19 +40,8 @@ predict_single_savedmodel_export <- function(instance, sess, signature_def, sign
     if (is.list(input_instance) && "b64" %in% names(input_instance)) {
       feed_dict[[placeholder_name]] <- tf$decode_base64(instance$b64)
     }
-    else if (length(tensor_input_names) == 1 && length(names(input_instance)) == 0) {
-      feed_dict[[placeholder_name]] <- input_instance
-    }
-    else if (!tensor_input_name %in% names(instance)) {
-      stop("Input named '", tensor_input_name, "' is missing from instance.")
-    }
     else {
-      feed_dict[[placeholder_name]] <- lapply(input_instance[[tensor_input_name]], function(e) {
-        if (is.list(e) && "b64" %in% names(e))
-          tf$decode_base64(instance$b64)
-        else
-          e
-      })
+      feed_dict[[placeholder_name]] <- input_instance
     }
 
     # models created using the data libraries will create an input

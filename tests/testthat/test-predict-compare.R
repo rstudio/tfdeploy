@@ -11,7 +11,7 @@ test_compare_services <- function(service_defs, instances_entries) {
     for (idx_result in 2:length(services_results)) {
 
       first_prediction <- first$predictions
-      other_prediction <- other_prediction
+      other_prediction <- services_results[[idx_result]]$predictions
 
       first_prediction <- first_prediction[order(colnames(first_prediction))]
       other_prediction <- other_prediction[order(colnames(other_prediction))]

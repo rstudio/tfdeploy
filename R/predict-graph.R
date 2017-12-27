@@ -48,8 +48,9 @@ predict_single_savedmodel_export <- function(instance, sess, signature_def, sign
     # tensor that supports multiple entries. MINST would be (-1, 784)
     # instead of just (784). This is to optimize prediction performance, but
     # since we feed one at a time, this is currently ignored.
-    if (input_tensor$tensor_shape$dim[[0]]$size == -1) {
-      if(is.null(dim(feed_dict[[placeholder_name]])))
+    if (input_tensor$tensor_shape$dim$`__len__`() > 0 &&
+        input_tensor$tensor_shape$dim[[0]]$size == -1) {
+      if (is.null(dim(feed_dict[[placeholder_name]])))
         input_dim <- length(feed_dict[[placeholder_name]])
       else
         input_dim <- dim(feed_dict[[placeholder_name]])

@@ -35,22 +35,66 @@ test_compare_services <- function(service_defs, instances_entries) {
   succeed()
 }
 
-test_that("mnist model predictions across services are equivalent", {
+test_that("mnist tensorflow model predictions across services are equivalent", {
   service_defs <- list(
     cloudml = list(
       model = "tfdeploy",
       version = "tensorflow_mnist",
-      service = "cloudml"
+      type = "cloudml"
     ),
     export = list(
       model = model_dir,
-      service = "export"
+      type = "export"
     )
   )
 
   instances_entries <- list(
     tensorflow_mnist_simple = list(list(images = rep(0, 784))),
-    tensorflow_mnist_double = list(list(images = rep(0, 784)), list(images = rep(0, 784)))
+    tensorflow_mnist_double = list(list(images = rep(0, 784)), list(input = rep(0, 784)))
+  )
+
+  test_compare_services(service_defs, instances_entries)
+})
+
+test_that("mnist keras model predictions across services are equivalent", {
+  service_defs <- list(
+    cloudml = list(
+      model = "tfdeploy",
+      version = "keras_mnist",
+      type = "cloudml"
+    ),
+    export = list(
+      model = "models/keras-mnist",
+      type = "export"
+    )
+  )
+
+  instances_entries <- list(
+    tensorflow_mnist_simple = list(list(input = rep(0, 784))),
+    tensorflow_mnist_double = list(list(input = rep(0, 784)), list(input = rep(0, 784)))
+  )
+
+  test_compare_services(service_defs, instances_entries)
+})
+
+test_that("multiple inputs and outputs model predictions across services are equivalent", {
+  service_defs <- list(
+    cloudml = list(
+      model = "tfdeploy",
+      version = "tensorflow_multiple",
+      type = "cloudml"
+    ),
+    export = list(
+      model = "models/tensorflow-multiple",
+      type = "export"
+    )
+  )
+
+  instances_entries <- list(
+    tensorflow_mnist_simple = list(list(i1 = "One", i2 = "Two")),
+    tensorflow_mnist_double = list(
+      list(i1 = "One", i2 = "Two"),
+      list(i1 = "One", i2 = "Two"))
   )
 
   test_compare_services(service_defs, instances_entries)

@@ -1,5 +1,7 @@
 library(keras)
 
+backend()$set_learning_phase(TRUE)
+
 mnist <- dataset_mnist()
 
 x_train <- mnist$train$x
@@ -24,7 +26,7 @@ model %>%
   layer_dropout(rate = 0.4) %>%
   layer_dense(units = 128, activation = 'relu') %>%
   layer_dropout(rate = 0.3) %>%
-  layer_dense(units = 10, activation = 'softmax')
+  layer_dense(units = 10, activation = 'softmax', name = "output")
 
 model %>% compile(
   loss = 'categorical_crossentropy',

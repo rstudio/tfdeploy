@@ -1,7 +1,5 @@
 library(keras)
 
-backend()$set_learning_phase(TRUE)
-
 mnist <- dataset_mnist()
 
 x_train <- mnist$train$x
@@ -23,9 +21,7 @@ y_test <- to_categorical(y_test, 10)
 model <- keras_model_sequential()
 model %>%
   layer_dense(units = 256, activation = 'relu', input_shape = c(784)) %>%
-  layer_dropout(rate = 0.4) %>%
   layer_dense(units = 128, activation = 'relu') %>%
-  layer_dropout(rate = 0.3) %>%
   layer_dense(units = 10, activation = 'softmax', name = "output")
 
 model %>% compile(

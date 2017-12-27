@@ -67,24 +67,35 @@ predict_single_savedmodel_export <- function(instance, sess, signature_def, sign
     feed_dict = feed_dict
   )
 
-  for (result_idx in length(result)) {
-    result[[result_idx]] <- as.vector(result[[result_idx]])
-  }
-
   names(result) <- tensor_output_names
 
   result
 }
 
 predict_savedmodel_export <- function(instances, sess, signature_def, signature_name) {
-  predictions <- lapply(instances, function(instance) {
-    predict_single_savedmodel_export(
+  # to provide the matching cloudml JSON structure, we use a dataframe
+  predictions <- data.frame(instance_id = rep(0, length(instances)))
+
+  entries <- list()
+  for (instance in instances) {
+    result <- predict_single_savedmodel_export(
       instance = instance,
       sess = sess,
       signature_def = signature_def,
       signature_name = signature_name
     )
-  })
+
+    for (r in names(result)) {
+      if (is.null(entries[[r]])) entries[[r]] <- list()
+      entries[[r]][[length(entries[[r]]) + 1]] <- result[[r]]
+    }
+  }
+
+  for (e in names(entries)) {
+    predictions[[e]] <- entries[[e]]
+  }
+
+  predictions$instance_id <- NULL
 
   predictions
 }

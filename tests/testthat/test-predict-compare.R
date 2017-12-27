@@ -50,7 +50,7 @@ test_that("mnist tensorflow model predictions across services are equivalent", {
 
   instances_entries <- list(
     tensorflow_mnist_simple = list(list(images = rep(0, 784))),
-    tensorflow_mnist_double = list(list(images = rep(0, 784)), list(input = rep(0, 784)))
+    tensorflow_mnist_double = list(list(images = rep(0, 784)), list(images = rep(0, 784)))
   )
 
   test_compare_services(service_defs, instances_entries)

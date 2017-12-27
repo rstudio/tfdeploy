@@ -25,7 +25,17 @@ test_compare_services <- function(service_defs, instances_entries) {
             "' for '",
             names(instances_entries)[[instances_index]],
             "' do not match: ",
-            all_equal
+            all_equal,
+            ".",
+            "\n   ",
+            names(services_results)[[1]],
+            ": ",
+            as.character(jsonlite::toJSON(first$predictions)),
+            "\n   ",
+            names(services_results)[[idx_result]],
+            ": ",
+            as.character(jsonlite::toJSON(services_results[[idx_result]]$predictions)),
+            "."
           )
         )
       }

@@ -17,9 +17,6 @@ predict_single_savedmodel_export <- function(instance, sess, signature_def, sign
 
   tensor_output_names <- signature_obj$outputs$keys()
 
-  # output names seem to be processed in reversed order while printing
-  tensor_output_names <- rev(tensor_output_names)
-
   fetches_list <- lapply(seq_along(tensor_output_names), function(fetch_idx) {
     sess$graph$get_tensor_by_name(
       signature_obj$outputs$get(tensor_output_names[[fetch_idx]])$name

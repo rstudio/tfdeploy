@@ -9,9 +9,16 @@ test_compare_services <- function(service_defs, instances_entries) {
 
     first <- services_results[[1]]
     for (idx_result in 2:length(services_results)) {
+
+      first_prediction <- first$predictions
+      other_prediction <- other_prediction
+
+      first_prediction <- first_prediction[order(colnames(first_prediction))]
+      other_prediction <- other_prediction[order(colnames(other_prediction))]
+
       all_equal <- all.equal(
-        first$predictions,
-        services_results[[idx_result]]$predictions,
+        first_prediction,
+        other_prediction,
         tolerance = 1e-3
       )
 
@@ -30,11 +37,11 @@ test_compare_services <- function(service_defs, instances_entries) {
             "\n   ",
             names(services_results)[[1]],
             ": ",
-            as.character(jsonlite::toJSON(first$predictions)),
+            as.character(jsonlite::toJSON(first_prediction)),
             "\n   ",
             names(services_results)[[idx_result]],
             ": ",
-            as.character(jsonlite::toJSON(services_results[[idx_result]]$predictions)),
+            as.character(jsonlite::toJSON(other_prediction)),
             "."
           )
         )

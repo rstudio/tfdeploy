@@ -94,7 +94,7 @@ test_that("mnist keras model predictions across services are equivalent", {
   test_compare_services(service_defs, instances_entries)
 })
 
-test_that("multiple inputs and outputs model predictions across services are equivalent", {
+test_that("multiple tensorflow inputs and outputs model predictions across services are equivalent", {
   service_defs <- list(
     cloudml = list(
       model = "tfdeploy",
@@ -112,6 +112,29 @@ test_that("multiple inputs and outputs model predictions across services are equ
     tensorflow_mnist_double = list(
       list(i1 = "One", i2 = "Two"),
       list(i1 = "One", i2 = "Two"))
+  )
+
+  test_compare_services(service_defs, instances_entries)
+})
+
+test_that("multiple keras inputs and outputs model predictions across services are equivalent", {
+  service_defs <- list(
+    cloudml = list(
+      model = "tfdeploy",
+      version = "keras_multiple",
+      type = "cloudml"
+    ),
+    export = list(
+      model = "models/keras-multiple",
+      type = "export"
+    )
+  )
+
+  instances_entries <- list(
+    tensorflow_mnist_simple = list(list(input1 = "a", input2 = "b")),
+    tensorflow_mnist_double = list(
+      list(input1 = "a", input2 = "b"),
+      list(input1 = "a", input2 = "b"))
   )
 
   test_compare_services(service_defs, instances_entries)

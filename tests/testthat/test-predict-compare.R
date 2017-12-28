@@ -60,7 +60,7 @@ test_that("mnist tensorflow model predictions across services are equivalent", {
       type = "cloudml"
     ),
     export = list(
-      model = model_dir,
+      model = system.file("models/tensorflow-mnist", package = "tfdeploy"),
       type = "export"
     )
   )

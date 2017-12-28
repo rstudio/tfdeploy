@@ -61,5 +61,3 @@ if (cloudml_tests_configured()) {
 
   cloudml_write_config()
 }
-
-model_dir <- system.file("models/tensorflow-mnist", package = "tfdeploy")

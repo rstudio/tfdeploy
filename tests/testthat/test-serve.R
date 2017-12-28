@@ -1,6 +1,8 @@
 context("Serve")
 
 test_that("can serve mnist model", {
+  model_dir <- system.file("models/tensorflow-mnist", package = "tfdeploy")
+
   handle <- serve_savedmodel(model_dir, daemonized = TRUE, port = 9090)
   Sys.sleep(3)
 

@@ -29,7 +29,7 @@ test_that("can predict tensorflow mnist model in cloudml", {
 
 test_that("can predict keras mnist model in cloudml", {
   test_cloudml_predict(
-    list(list(input = rep(0, 784))),
+    list(list(dense_1_input = rep(0, 784))),
     "tfdeploy",
     "keras_mnist")
 })

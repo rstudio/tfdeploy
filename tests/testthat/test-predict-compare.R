@@ -87,8 +87,8 @@ test_that("mnist keras model predictions across services are equivalent", {
   )
 
   instances_entries <- list(
-    tensorflow_mnist_simple = list(list(input = rep(0, 784))),
-    tensorflow_mnist_double = list(list(input = rep(0, 784)), list(input = rep(0, 784)))
+    tensorflow_mnist_simple = list(list(dense_1_input = rep(0, 784))),
+    tensorflow_mnist_double = list(list(dense_1_input = rep(0, 784)), list(dense_1_input = rep(0, 784)))
   )
 
   test_compare_services(service_defs, instances_entries)

@@ -28,7 +28,7 @@ predict_single_savedmodel_export <- function(instance, sess, signature_def, sign
     input_tensor <- signature_obj$inputs$get(tensor_input_name)
     placeholder_name <- signature_obj$inputs$get(tensor_input_name)$name
 
-    if (length(tensor_input_names) == 1) {
+    if (is.null(names(instance)) && length(tensor_input_names) == 1) {
       input_instance <- instance[[1]]
     }
     else if (!tensor_input_name %in% names(instance)) {

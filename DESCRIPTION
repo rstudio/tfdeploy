@@ -15,11 +15,13 @@ LazyData: true
 Imports:
   cloudml,
   httpuv,
+  httr,
   jsonlite,
   swagger,
   tensorflow
 Suggests:
   pixels,
+  processx,
   testthat
 Remotes:
   rstudio/tensorflow,

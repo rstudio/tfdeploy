@@ -24,7 +24,12 @@ wait_for_server <- function(url) {
     stop("Failed to connect to server: ", url)
 }
 
-test_serve_predict <- function(instances, model, signature_name) {
+predict_savedmodel.serve_test_predictionservice <- function(
+  instances,
+  model,
+  signature_name = "serving_default",
+  ...) {
+
   full_path <- normalizePath(model)
 
   output_log <- tempfile()
@@ -54,19 +59,9 @@ test_serve_predict <- function(instances, model, signature_name) {
 
   wait_for_server(url)
 
-  results <- predict_savedmodel(
+  predict_savedmodel(
     instances,
     url = url,
     type = "webapi")
 
-  expect_true(!is.null(results$predictions))
-  expect_true(!is.null(results$predictions[[1]]))
-}
-
-predict_savedmodel.serve_test_predictionservice <- function(
-  instances,
-  model,
-  signature_name = "serving_default",
-  ...) {
-  test_serve_predict(instances, model, signature_name)
 }

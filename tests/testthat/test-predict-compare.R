@@ -62,6 +62,10 @@ test_that("mnist tensorflow model predictions across services are equivalent", {
     export = list(
       model = system.file("models/tensorflow-mnist", package = "tfdeploy"),
       type = "export"
+    ),
+    serve = list(
+      model = system.file("models/tensorflow-mnist", package = "tfdeploy"),
+      type = "serve_test"
     )
   )
 
@@ -83,6 +87,10 @@ test_that("mnist keras model predictions across services are equivalent", {
     export = list(
       model = "models/keras-mnist",
       type = "export"
+    ),
+    serve = list(
+      model = "models/keras-mnist",
+      type = "serve_test"
     )
   )
 
@@ -104,6 +112,10 @@ test_that("multiple tensorflow inputs and outputs model predictions across servi
     export = list(
       model = "models/tensorflow-multiple",
       type = "export"
+    ),
+    serve = list(
+      model = "models/tensorflow-multiple",
+      type = "serve_test"
     )
   )
 
@@ -127,6 +139,10 @@ test_that("multiple keras inputs and outputs model predictions across services a
     export = list(
       model = "models/keras-multiple",
       type = "export"
+    ),
+    serve = list(
+      model = "models/keras-multiple",
+      type = "serve_test"
     )
   )
 

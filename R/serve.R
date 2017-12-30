@@ -103,18 +103,18 @@ serve_invalid_request <- function(message = NULL) {
 
 serve_handlers <- function(host, port) {
   list(
-    "^/swagger.json" = function(req, sess, signature_def) {
+    "^/swagger.json" = function(req, sess, graph) {
       list(
         status = 200L,
         headers = list(
           "Content-Type" = paste0(serve_content_type("json"), "; charset=UTF-8")
         ),
         body = charToRaw(enc2utf8(
-          swagger_from_signature_def(signature_def)
+          swagger_from_signature_def(graph$signature_def)
         ))
       )
     },
-    "^/$" = function(req, sess, signature_def) {
+    "^/$" = function(req, sess, graph) {
       serve_static_file_response(
         "swagger",
         "dist/index.html",
@@ -124,10 +124,10 @@ serve_handlers <- function(host, port) {
         )
       )
     },
-    "^/[^/]*$" = function(req, sess, signature_def) {
+    "^/[^/]*$" = function(req, sess, graph) {
       serve_static_file_response("swagger", file.path("dist", req$PATH_INFO))
     },
-    "^/api/[^/]*/predict" = function(req, sess, signature_def) {
+    "^/api/[^/]*/predict" = function(req, sess, graph) {
       signature_name <- strsplit(req$PATH_INFO, "/")[[1]][[3]]
 
       json_raw <- req$rook.input$read()
@@ -137,10 +137,11 @@ serve_handlers <- function(host, port) {
         simplifyMatrix = FALSE
       )
 
-      result <- predict_savedmodel_export(
-        instances = json_req$instances,
+      result <- predict_savedmodel(
+        json_req$instances,
+        graph,
+        type = "graph",
         sess = sess,
-        signature_def = signature_def,
         signature_name = signature_name
       )
 
@@ -154,7 +155,7 @@ serve_handlers <- function(host, port) {
         ))
       )
     },
-    ".*" = function(req, signature_def) {
+    ".*" = function(req, sess, graph) {
       stop("Invalid path.")
     }
   )
@@ -164,7 +165,6 @@ serve_run <- function(model_dir, host, port, start, browse) {
   with_new_session(function(sess) {
 
     graph <- load_savedmodel(sess, model_dir)
-    signature_def <- graph$signature_def
 
     if (browse) utils::browseURL(paste0("http://", host, ":", port))
 
@@ -177,7 +177,7 @@ serve_run <- function(model_dir, host, port, start, browse) {
       call = function(req) {
         tryCatch({
           matches <- sapply(names(handlers), function(e) grepl(e, req$PATH_INFO))
-          handlers[matches][[1]](req, sess, signature_def)
+          handlers[matches][[1]](req, sess, graph)
         }, error = function(e) {
           serve_invalid_request(e$message)
         })

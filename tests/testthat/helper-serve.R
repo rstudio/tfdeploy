@@ -1,0 +1,72 @@
+server_success <- function(url) {
+  tryCatch({
+    httr::GET(url)
+    TRUE
+  }, error = function(e) {
+    FALSE
+  })
+}
+
+retry <- function(do, times = 1, message = NULL, sleep = 1) {
+  if (!is.function(do))
+    stop("The 'do' parameter must be a function.")
+
+  while (!identical(do(), TRUE) && times > 0) {
+    times <- times - 1
+    Sys.sleep(sleep)
+  }
+
+  times > 0
+}
+
+wait_for_server <- function(url) {
+  if (!retry(function() server_success(url), 5))
+    stop("Failed to connect to server: ", url)
+}
+
+test_serve_predict <- function(instances, model, signature_name) {
+  full_path <- normalizePath(model)
+
+  output_log <- tempfile()
+
+  process <- processx::process$new(
+    command = system2("which", "RScript", stdout = TRUE),
+    args = c(
+      "-e",
+      paste0(
+        "library(tfdeploy); ",
+        "serve_savedmodel('",
+        full_path,
+        "', port = 9090)"
+      ),
+      "--vanilla"
+    ),
+    stdout = output_log
+  )
+
+  on.exit(expr = process$kill(), add = TRUE)
+
+  url <- paste0(
+    "http://127.0.0.1:9090/api/",
+    signature_name,
+    "/predict/"
+  )
+
+  wait_for_server(url)
+
+  results <- predict_savedmodel(
+    instances,
+    url = url,
+    type = "webapi")
+
+  expect_true(!is.null(results$predictions))
+  expect_true(!is.null(results$predictions[[1]]))
+}
+
+predict_savedmodel.serve_test_predictionservice <- function(
+  instances,
+  model,
+  signature_name = "serving_default",
+  ...) {
+  test_serve_predict(instances, model, signature_name)
+}

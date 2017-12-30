@@ -20,13 +20,13 @@ test_serve_predict <- function(instances, model) {
     stdout = output_log
   )
 
-  Sys.sleep(3)
+  on.exit(expr = process$kill(), add = TRUE)
+
+  Sys.sleep(5)
 
   results <- predict_savedmodel(
     instances,
     type = "webapi")
-
-  process$kill()
 
   expect_true(!is.null(results$predictions))
   expect_true(!is.null(results$predictions[[1]]))

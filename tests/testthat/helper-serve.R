@@ -34,8 +34,12 @@ predict_savedmodel.serve_test_predictionservice <- function(
 
   output_log <- tempfile()
 
+  rscript <- system2("which", "Rscript", stdout = TRUE)
+  if (length(rscript) == 0)
+    stop("Failed to find Rscript")
+
   process <- processx::process$new(
-    command = system2("which", "RScript", stdout = TRUE),
+    command = rscript,
     args = c(
       "-e",
       paste0(

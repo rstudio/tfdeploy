@@ -44,13 +44,7 @@ predict_single_savedmodel_export <- function(instance, sess, signature_def, sign
       feed_dict[[placeholder_name]] <- input_instance
     }
 
-    # models created using the data libraries will create an input
-    # tensor that supports multiple entries. MINST would be (-1, 784)
-    # instead of just (784). This is to optimize prediction performance, but
-    # since we feed one at a time, this is currently ignored.
-    is_multi_instance_tensor <-
-      input_tensor$tensor_shape$dim$`__len__`() > 0 &&
-      input_tensor$tensor_shape$dim[[0]]$size == -1
+    is_multi_instance_tensor <- tensor_is_multi_instance(input_tensor)
 
     if (is_multi_instance_tensor) {
       if (is.null(dim(feed_dict[[placeholder_name]])))

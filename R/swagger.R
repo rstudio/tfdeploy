@@ -44,7 +44,7 @@ swagger_path <- function(signature_name, signature_id) {
           description = unbox(paste0("Prediction instances for '", signature_name, "'")),
           required = unbox(TRUE),
           schema = list(
-            "$ref" = unbox(paste0("#/definitions/Instances", signature_id))
+            "$ref" = unbox(paste0("#/definitions/Type", signature_id))
           )
         )
       ),
@@ -132,6 +132,8 @@ swagger_input_tensor_def <- function(signature_entry, tensor_input_name) {
   tensor_input_dim <- tensor_input$tensor_shape$dim
   tensor_input_dim_len <- tensor_input_dim$`__len__`()
 
+  is_multi_instance_tensor <- tensor_is_multi_instance(tensor_input)
+
   properties_def <- list(
     b64 = list(
       type = unbox("string"),
@@ -153,7 +155,11 @@ swagger_input_tensor_def <- function(signature_entry, tensor_input_name) {
   )
 
   if (tensor_input_dim_len > 0) {
-    for (idx in seq_len(tensor_input_dim_len - 1)) {
+    dim_seq <- seq_len(tensor_input_dim_len - 1)
+    if (is_multi_instance_tensor)
+      dim_seq <- dim_seq[-1]
+
+    for (idx in dim_seq) {
       swagger_type_def <- list(
         type = unbox("array"),
         items = swagger_type_def
@@ -187,8 +193,11 @@ swagger_def <- function(signature_entry, signature_id) {
     type = unbox("object"),
     properties = list(
       instances = list(
-        type = unbox("object"),
-        properties = swagger_input_defs
+        type = unbox("array"),
+        items = list(
+          type = unbox("object"),
+          properties = swagger_input_defs
+        )
       )
     )
   )
@@ -200,7 +209,7 @@ swagger_defs <- function(signature_def) {
     swagger_def(signature_def$get(defs_names[[defs_index]]), defs_index)
   })
   names(defs_values) <- lapply(seq_along(defs_names), function(def_idx) {
-    paste0("Instances", def_idx)
+    paste0("Type", def_idx)
   })
 
   list(

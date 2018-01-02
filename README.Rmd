@@ -30,7 +30,7 @@ model_path <- system.file("models/tensorflow-mnist/", package = "tfdeploy")
 `tfdeploy` provides a [GoogleML](https://cloud.google.com/ml-engine/docs/prediction-overview) compatible local R server that provides a web API to the the SavedModel using
 `serve_savedmodel()`:
 
-```{r eval=FALSE}
+```{r eval=F}
 serve_savedmodel(model_path)
 ```
 
@@ -39,7 +39,7 @@ serve_savedmodel(model_path)
 ### Deployment Client
 
 `tfdeploy` provides a client capable of performing predictions over a SavedModel
-for local or remote prediction services A prediction over a local model can 
+for local or remote prediction. A prediction over a local model can 
 be performed using `predict_savedmodel()`:
 
 ```{r}

@@ -26,7 +26,7 @@ serve_savedmodel(model_path)
 
 ### Deployment Client
 
-`tfdeploy` provides a client capable of performing predictions over a SavedModel for local or remote prediction services A prediction over a local model can be performed using `predict_savedmodel()`:
+`tfdeploy` provides a client capable of performing predictions over a SavedModel for local or remote prediction. A prediction over a local model can be performed using `predict_savedmodel()`:
 
 ``` r
 predict_savedmodel(rep(0, 784), model_path)
@@ -34,7 +34,7 @@ predict_savedmodel(rep(0, 784), model_path)
 
     ## $predictions
     ##                                                                           scores
-    ## 1 0.0557, 0.1143, 0.0904, 0.0587, 0.0820, 0.2934, 0.0713, 0.1516, 0.0191, 0.0635
+    ## 1 0.0546, 0.1139, 0.0884, 0.0610, 0.0807, 0.2974, 0.0721, 0.1485, 0.0189, 0.0645
 
 We can make use of the `pixels` HTMLWidget to manually collect a vector of pixels and perform a prediction over the model:
 

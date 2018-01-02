@@ -7,89 +7,36 @@ library(tensorflow)
 knitr::opts_chunk$set(eval = TRUE)
 ```
 
-## Overview
-
 The first step towards deploying a trained model is to export this model from
-TensorFlow. This guide demostrates how to export models from: TensorFlow,
-tfestimators and keras.
+TensorFlow. This guide demostrates how to export SavedModels from: TensorFlow,
+tfestimators and keras using `export_savedmodel()`
 
 ## Exporting from TensorFlow
 
-One can train MNIST as described by [MNIST For ML Beginners](https://tensorflow.rstudio.com/tensorflow/articles/tutorial_mnist_beginners.html) and track
-the model's inputs and outputs named `x` and `y` under that particular article. For convinience, we can
-run instead:
+Exporting a SavedModel from TensorFlow requires input and output tensors to be
+passed to `export_savedmodel()`.
 
-```{r}
-library(tensorflow)
-library(tfserve)
+For instance, one can train MNIST as described by [MNIST For ML Beginners](https://tensorflow.rstudio.com/tensorflow/articles/tutorial_mnist_beginners.html), track
+the model's inputs and outputs named `x` and `y` under that particular article and
+call `export_savedmodel()` as follows:
 
-sess <- tf$Session()
-mnist_model <- mnist_train(sess)
+```{r eval=F}
+export_savedmodel(sess, "tensorflow-mnist", inputs = list(images = x), outputs = list(scores = y))
 ```
 
-Once trained, the model can be saved with [SavedModelBuilder](https://www.tensorflow.org/api_docs/python/tf/saved_model/builder/SavedModelBuilder).
+For convinience, a sample training script is included in `tfdeploy` to train and
+export this MNIST model as follows:
 
 ```{r}
-if (dir.exists("trained")) unlink("trained", recursive = TRUE)
-
-model_path <- file.path("trained/tensorflow-mnist/1")
-
-builder <- tf$saved_model$builder$SavedModelBuilder(model_path)
-builder$save()
-
-dir(model_path, recursive = TRUE)
-```
-
-However, saving the model is not sufficient when using Tensorflow Serving, see [Serving a Tensorflow Model](https://www.tensorflow.org/serving/serving_basic).
-
-Instead, we need to create a signature for the model, which will require references to the
-input and output Tensors for the model which we retrieved from the model:
-
-```{r}
-mnist_model
-```
-
-with them, we can use the following convenience function to retrieve the signature for the model:
-
-```{r}
-signature <- mnist_signature(mnist_model$input, mnist_model$output)
-```
-
-This signature can be used in combination with `SavedModelBuilder.add_meta_graph_and_variables` to
-provide a model usable with Tensorflow Serving:
-
-```{r}
-
-tfserve_save <- function(sess, model_path, signature, overwrite = FALSE) {
-  if (overwrite && dir.exists(model_path)) unlink(model_path, recursive = TRUE)
-  builder <- tf$saved_model$builder$SavedModelBuilder(model_path)
-
-  if (!is.null(signature)) {
-    legacy_init_op <- tf$group(tf$tables_initializer(), name = "legacy_init_op")
-
-    builder$add_meta_graph_and_variables(
-      sess,
-      list(
-        tf$python$saved_model$tag_constants$SERVING
-      ),
-      signature_def_map = signature,
-      legacy_init_op = legacy_init_op
-    )
-  }
-
-  builder$save()
-}
-
-tfserve_save(sess, model_path, signature, overwrite = TRUE)
-
-dir(model_path, recursive = TRUE)
+tfruns::training_run(system.file("models/tensorflow-mnist.R", package = "tfdeploy"))
+dir("tensorflow-mnist", recursive = TRUE)
 ```
 
 ## Exporting from TFEstimators
 
 A sample model using the `mtcars` data frame is trained using `tfestimators`.  The resulting model is the one that will be saved to disk. To train, we can follow the TensorFlow estimators [Quick Start](https://tensorflow.rstudio.com/tfestimators/); or for convenienve, run:
 
-```{r}
+```{r eval=F}
 library(tfestimators)
 
 mtcars_train <- function () {
@@ -120,7 +67,7 @@ model <- mtcars_train()
 
 The `export_savemodel()` will create the **pb** file and the **variables** folder
 
-```{r}
+```{r eval=F}
 # Create an input spec
 input_spec <- regressor_parse_example_spec(feature_columns = feature_columns( 
                                              column_numeric("disp", "cyl")
@@ -151,7 +98,7 @@ First train a `keras` model as described under [R interface to Keras](https://te
 > [keras/issues/7720](https://github.com/fchollet/keras/issues/7720),
 > [/tensorflow/serving/issues/310](https://github.com/tensorflow/serving/issues/310)).
 
-```{r}
+```{r eval=F}
 library(keras)
 tf$reset_default_graph()
 
@@ -162,7 +109,7 @@ model <- mnist_train_keras(epochs = 1)
 
 Then save using `export_savedmodel()` as follows:
 
-```{r}
+```{r eval=F}
 export_savedmodel(model, "trained/keras-mnist/1")
 
 dir(model_path, recursive = TRUE)

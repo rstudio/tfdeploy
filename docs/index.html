@@ -74,8 +74,8 @@
     
 <div class="contents">
 
-<p><code>tfdeploy</code> provies tools for deploying TensorFlow SavedModels into local and remove services.</p>
-<p>SavedModels can be trained using <code>tensorflow</code>, <code>keras</code> or <code>tfestimators</code> and exported using <code>export_savedmodel()</code>; or using any other TensorFlow tool that exports them using then <a href="https://www.tensorflow.org/api_docs/python/tf/train/Saver">tf.train.Saver</a> interface.</p>
+<p><code>tfdeploy</code> provies tools for deploying TensorFlow SavedModels into local and remote services.</p>
+<p>SavedModels can be trained using <code>tensorflow</code>, <code>keras</code> or <code>tfestimators</code> and exported using <code>export_savedmodel()</code> or using any other TensorFlow tool that exports them using then <a href="https://www.tensorflow.org/api_docs/python/tf/train/Saver">tf.train.Saver</a> interface.</p>
 <p>To get started, you can also use one of the pretrained models included in this package:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tfdeploy)
 model_path &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">"models/tensorflow-mnist/"</span>, <span class="dt">package =</span> <span class="st">"tfdeploy"</span>)</code></pre></div>
@@ -95,7 +95,7 @@ model_path &lt;-<span class="st"> </span><span class="kw">system.file</span>(<sp
 <pre><code>## $predictions
 ##                                                                           scores
 ## 1 0.0546, 0.1139, 0.0884, 0.0610, 0.0807, 0.2974, 0.0721, 0.1485, 0.0189, 0.0645</code></pre>
-<p>We can make use of the <code>pixels</code> HTMLWidget to manually collect a vector of pixels and perform a prediction over the model:</p>
+<p>We can make use of the <a href="https://CRAN.R-project.org/package=pixels">pixels</a> HTMLWidget to manually collect a vector of pixels and perform a prediction over the model:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/predict_savedmodel.html">predict_savedmodel</a></span>(pixels<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/pixels/topics/get_pixels">get_pixels</a></span>(), model_path)</code></pre></div>
 <p>To run a prediction against a service running <code><a href="reference/serve_savedmodel.html">serve_savedmodel()</a></code> or a compatible webapi we run:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/predict_savedmodel.html">predict_savedmodel</a></span>(
@@ -103,7 +103,7 @@ model_path &lt;-<span class="st"> </span><span class="kw">system.file</span>(<sp
   <span class="dt">url =</span> <span class="st">"&lt;service-url&gt;"</span>,
   <span class="dt">type =</span> <span class="st">"webapi"</span>
 )</code></pre></div>
-<p>Predictions over CloudML models are accessed using:</p>
+<p>Predictions over models deployed on the <a href="https://cloud.google.com/ml-engine/">Google Cloud Machine Learning Engine</a> can be easily accessed by running:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/predict_savedmodel.html">predict_savedmodel</a></span>(
   pixels<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/pixels/topics/get_pixels">get_pixels</a></span>(),
   <span class="dt">model =</span> <span class="st">"&lt;model&gt;"</span>,

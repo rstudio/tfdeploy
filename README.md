@@ -3,9 +3,9 @@ tfdeploy: Deploys TensorFlow Models
 
 [![Build Status](https://travis-ci.org/rstudio/tfdeploy.svg?branch=master)](https://travis-ci.org/rstudio/tfdeploy)
 
-`tfdeploy` provies tools for deploying TensorFlow SavedModels into local and remove services.
+`tfdeploy` provies tools for deploying TensorFlow SavedModels into local and remote services.
 
-SavedModels can be trained using `tensorflow`, `keras` or `tfestimators` and exported using `export_savedmodel()`; or using any other TensorFlow tool that exports them using then [tf.train.Saver](https://www.tensorflow.org/api_docs/python/tf/train/Saver) interface.
+SavedModels can be trained using `tensorflow`, `keras` or `tfestimators` and exported using `export_savedmodel()` or using any other TensorFlow tool that exports them using then [tf.train.Saver](https://www.tensorflow.org/api_docs/python/tf/train/Saver) interface.
 
 To get started, you can also use one of the pretrained models included in this package:
 
@@ -38,7 +38,7 @@ predict_savedmodel(rep(0, 784), model_path)
     ##                                                                           scores
     ## 1 0.0546, 0.1139, 0.0884, 0.0610, 0.0807, 0.2974, 0.0721, 0.1485, 0.0189, 0.0645
 
-We can make use of the `pixels` HTMLWidget to manually collect a vector of pixels and perform a prediction over the model:
+We can make use of the [pixels](https://CRAN.R-project.org/package=pixels) HTMLWidget to manually collect a vector of pixels and perform a prediction over the model:
 
 ``` r
 predict_savedmodel(pixels::get_pixels(), model_path)
@@ -54,7 +54,7 @@ predict_savedmodel(
 )
 ```
 
-Predictions over CloudML models are accessed using:
+Predictions over models deployed on the [Google Cloud Machine Learning Engine](https://cloud.google.com/ml-engine/) can be easily accessed by running:
 
 ``` r
 predict_savedmodel(

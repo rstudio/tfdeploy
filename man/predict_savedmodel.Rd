@@ -2,7 +2,7 @@
 % Please edit documentation in R/predict-interface.R
 \name{predict_savedmodel}
 \alias{predict_savedmodel}
-\title{Predicts over a Saved Model}
+\title{Predict using a SavedModel}
 \usage{
 predict_savedmodel(instances, model = NULL, type = c("export", "cloudml",
   "webapi", "graph"),

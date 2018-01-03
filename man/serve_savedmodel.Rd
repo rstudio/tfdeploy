@@ -2,7 +2,7 @@
 % Please edit documentation in R/serve.R
 \name{serve_savedmodel}
 \alias{serve_savedmodel}
-\title{Serve a TensorFlow SavedModel}
+\title{Serve a SavedModel}
 \usage{
 serve_savedmodel(model_dir, host = "127.0.0.1", port = 8089,
   daemonized = FALSE)

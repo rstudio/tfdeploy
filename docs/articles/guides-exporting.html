@@ -42,21 +42,12 @@
       <a href="../articles/guides-exporting.html">Exporting Models</a>
     </li>
     <li>
-      <a href="../articles/guides-tensorflow-serving.html">Using TensorFlow Serving</a>
+      <a href="../articles/guides-tensorflow-serving.html">TensorFlow Serving</a>
     </li>
   </ul>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Reference
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../reference/index.html">Functions</a>
-    </li>
-  </ul>
+  <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -85,145 +76,48 @@
     
     
 <div class="contents">
-<div id="overview" class="section level2">
+<p>The first step towards deploying a trained model is to export this model from TensorFlow. This guide demostrates how to export SavedModels from: TensorFlow, tfestimators and keras using <code>export_savedmodel()</code></p>
+<div id="tensorflow" class="section level2">
 <h2 class="hasAnchor">
-<a href="#overview" class="anchor"></a>Overview</h2>
-<p>The first step towards deploying a trained model is to export this model from TensorFlow. This guide demostrates how to export models from: TensorFlow, tfestimators and keras.</p>
+<a href="#tensorflow" class="anchor"></a>TensorFlow</h2>
+<p>Exporting a SavedModel using the core TensorFlow API requires input and output tensors to be passed to <code>export_savedmodel()</code>.</p>
+<p>For instance, one can train MNIST as described by <a href="https://tensorflow.rstudio.com/tensorflow/articles/tutorial_mnist_beginners.html">MNIST For ML Beginners</a>, track the model’s inputs and outputs named <code>x</code> and <code>y</code> under that particular article and call <code>export_savedmodel()</code> as follows:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">export_savedmodel</span>(
+  sess,
+  <span class="st">"tensorflow-mnist"</span>,
+  <span class="dt">inputs =</span> <span class="kw">list</span>(<span class="dt">images =</span> x),
+  <span class="dt">outputs =</span> <span class="kw">list</span>(<span class="dt">scores =</span> y)
+)</code></pre></div>
+<p>For convinience, a sample training script is included in <code>tfdeploy</code> to train and export this MNIST model as follows:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tfruns<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/tfruns/topics/training_run">training_run</a></span>(
+  <span class="kw">system.file</span>(<span class="st">"models/tensorflow-mnist.R"</span>, <span class="dt">package =</span> <span class="st">"tfdeploy"</span>)
+)</code></pre></div>
 </div>
-<div id="exporting-from-tensorflow" class="section level2">
+<div id="estimators" class="section level2">
 <h2 class="hasAnchor">
-<a href="#exporting-from-tensorflow" class="anchor"></a>Exporting from TensorFlow</h2>
-<p>One can train MNIST as described by <a href="https://tensorflow.rstudio.com/tensorflow/articles/tutorial_mnist_beginners.html">MNIST For ML Beginners</a> and track the model’s inputs and outputs named <code>x</code> and <code>y</code> under that particular article. For convinience, we can run instead:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tensorflow)
-<span class="kw">library</span>(tfserve)
-
-sess &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Session</span>()
-mnist_model &lt;-<span class="st"> </span><span class="kw">mnist_train</span>(sess)</code></pre></div>
-<p>Once trained, the model can be saved with <a href="https://www.tensorflow.org/api_docs/python/tf/saved_model/builder/SavedModelBuilder">SavedModelBuilder</a>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">if</span> (<span class="kw">dir.exists</span>(<span class="st">"trained"</span>)) <span class="kw">unlink</span>(<span class="st">"trained"</span>, <span class="dt">recursive =</span> <span class="ot">TRUE</span>)
-
-model_path &lt;-<span class="st"> </span><span class="kw">file.path</span>(<span class="st">"trained/tensorflow-mnist/1"</span>)
-
-builder &lt;-<span class="st"> </span>tf<span class="op">$</span>saved_model<span class="op">$</span>builder<span class="op">$</span><span class="kw">SavedModelBuilder</span>(model_path)
-builder<span class="op">$</span><span class="kw">save</span>()</code></pre></div>
-<pre><code>## [1] "trained/tensorflow-mnist/1/saved_model.pb"</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dir</span>(model_path, <span class="dt">recursive =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<pre><code>## [1] "saved_model.pb"</code></pre>
-<p>However, saving the model is not sufficient when using Tensorflow Serving, see <a href="https://www.tensorflow.org/serving/serving_basic">Serving a Tensorflow Model</a>.</p>
-<p>Instead, we need to create a signature for the model, which will require references to the input and output Tensors for the model which we retrieved from the model:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mnist_model</code></pre></div>
-<pre><code>## $input
-## Tensor("Placeholder:0", shape=(?, 784), dtype=float32)
-## 
-## $output
-## Tensor("Softmax:0", shape=(?, 10), dtype=float32)</code></pre>
-<p>with them, we can use the following convenience function to retrieve the signature for the model:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">signature &lt;-<span class="st"> </span><span class="kw">mnist_signature</span>(mnist_model<span class="op">$</span>input, mnist_model<span class="op">$</span>output)</code></pre></div>
-<p>This signature can be used in combination with <code>SavedModelBuilder.add_meta_graph_and_variables</code> to provide a model usable with Tensorflow Serving:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tfserve_save &lt;-<span class="st"> </span><span class="cf">function</span>(sess, model_path, signature, <span class="dt">overwrite =</span> <span class="ot">FALSE</span>) {
-  <span class="cf">if</span> (overwrite <span class="op">&amp;&amp;</span><span class="st"> </span><span class="kw">dir.exists</span>(model_path)) <span class="kw">unlink</span>(model_path, <span class="dt">recursive =</span> <span class="ot">TRUE</span>)
-  builder &lt;-<span class="st"> </span>tf<span class="op">$</span>saved_model<span class="op">$</span>builder<span class="op">$</span><span class="kw">SavedModelBuilder</span>(model_path)
-
-  <span class="cf">if</span> (<span class="op">!</span><span class="kw">is.null</span>(signature)) {
-    legacy_init_op &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">group</span>(tf<span class="op">$</span><span class="kw">tables_initializer</span>(), <span class="dt">name =</span> <span class="st">"legacy_init_op"</span>)
-
-    builder<span class="op">$</span><span class="kw">add_meta_graph_and_variables</span>(
-      sess,
-      <span class="kw">list</span>(
-        tf<span class="op">$</span>python<span class="op">$</span>saved_model<span class="op">$</span>tag_constants<span class="op">$</span>SERVING
-      ),
-      <span class="dt">signature_def_map =</span> signature,
-      <span class="dt">legacy_init_op =</span> legacy_init_op
-    )
-  }
-
-  builder<span class="op">$</span><span class="kw">save</span>()
-}
-
-<span class="kw">tfserve_save</span>(sess, model_path, signature, <span class="dt">overwrite =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<pre><code>## [1] "trained/tensorflow-mnist/1/saved_model.pb"</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dir</span>(model_path, <span class="dt">recursive =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<pre><code>## [1] "saved_model.pb"                         
-## [2] "variables/variables.data-00000-of-00001"
-## [3] "variables/variables.index"</code></pre>
+<a href="#estimators" class="anchor"></a>Estimators</h2>
+<p>A sample model using the <code>mtcars</code> data frame is trained using <code>tfestimators</code>. The resulting model is the one that will be saved to disk. To train, we can follow the TensorFlow estimators <a href="https://tensorflow.rstudio.com/tfestimators/">Quick Start</a> followed by running:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">export_savedmodel</span>(
+  model,
+  <span class="st">"tfestimators-mtcars"</span>
+)</code></pre></div>
+<p>For convinience, a sample training script is included in <code>tfdeploy</code> to train and export this <code>mtcars</code> model as follows:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tfruns<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/tfruns/topics/training_run">training_run</a></span>(
+  <span class="kw">system.file</span>(<span class="st">"models/tfestimators-mtcars.R"</span>, <span class="dt">package =</span> <span class="st">"tfdeploy"</span>)
+)</code></pre></div>
 </div>
-<div id="exporting-from-tfestimators" class="section level2">
+<div id="keras" class="section level2">
 <h2 class="hasAnchor">
-<a href="#exporting-from-tfestimators" class="anchor"></a>Exporting from TFEstimators</h2>
-<p>A sample model using the <code>mtcars</code> data frame is trained using <code>tfestimators</code>. The resulting model is the one that will be saved to disk. To train, we can follow the TensorFlow estimators <a href="https://tensorflow.rstudio.com/tfestimators/">Quick Start</a>; or for convenienve, run:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tfestimators)
-
-mtcars_train &lt;-<span class="st"> </span><span class="cf">function</span> () {
-  mtcars_input_fn &lt;-<span class="st"> </span><span class="cf">function</span>(data) {
-    <span class="kw"><a href="http://www.rdocumentation.org/packages/tfestimators/topics/input_fn">input_fn</a></span>(data,
-             <span class="dt">features =</span> <span class="kw">c</span>(<span class="st">"disp"</span>, <span class="st">"cyl"</span>),
-             <span class="dt">response =</span> <span class="st">"mpg"</span>)
-  }
-
-  cols &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/tfestimators/topics/feature_columns">feature_columns</a></span>(
-    <span class="kw"><a href="http://www.rdocumentation.org/packages/tfestimators/topics/column_numeric">column_numeric</a></span>(<span class="st">"disp"</span>),
-    <span class="kw"><a href="http://www.rdocumentation.org/packages/tfestimators/topics/column_numeric">column_numeric</a></span>(<span class="st">"cyl"</span>)
-  )
-
-  model &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/tfestimators/topics/linear_estimators">linear_regressor</a></span>(<span class="dt">feature_columns =</span> cols)
-
-  indices &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(mtcars), <span class="dt">size =</span> <span class="fl">0.80</span> <span class="op">*</span><span class="st"> </span><span class="kw">nrow</span>(mtcars))
-  train &lt;-<span class="st"> </span>mtcars[indices, ]
-  test  &lt;-<span class="st"> </span>mtcars[<span class="op">-</span>indices, ]
-
-  model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/tfestimators/topics/reexports">train</a></span>(<span class="kw">mtcars_input_fn</span>(train))
-
-  model
-}
-
-model &lt;-<span class="st"> </span><span class="kw">mtcars_train</span>()</code></pre></div>
-<p>The <code>export_savemodel()</code> will create the <strong>pb</strong> file and the <strong>variables</strong> folder</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Create an input spec</span>
-input_spec &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/tfestimators/topics/regressor_parse_example_spec">regressor_parse_example_spec</a></span>(<span class="dt">feature_columns =</span> <span class="kw"><a href="http://www.rdocumentation.org/packages/tfestimators/topics/feature_columns">feature_columns</a></span>( 
-                                             <span class="kw"><a href="http://www.rdocumentation.org/packages/tfestimators/topics/column_numeric">column_numeric</a></span>(<span class="st">"disp"</span>, <span class="st">"cyl"</span>)
-                                           ),
-                                           <span class="dt">label_key =</span> <span class="st">"input"</span>,
-                                           <span class="dt">label_dtype =</span> tf<span class="op">$</span>string)
-
-<span class="co"># Parse the spec as an input receiver </span>
-input_receiver &lt;-<span class="st"> </span>tf<span class="op">$</span>estimator<span class="op">$</span>export<span class="op">$</span><span class="kw">build_parsing_serving_input_receiver_fn</span>(input_spec)
-
-<span class="kw"><a href="http://www.rdocumentation.org/packages/tfestimators/topics/reexports">export_savedmodel</a></span>(model, 
-                  <span class="dt">export_dir_base =</span> <span class="st">"trained/tfestimators-mtcars"</span>,
-                  <span class="dt">serving_input_receiver_fn =</span> input_receiver)
-
-model_folder &lt;-<span class="st"> </span><span class="kw">list.files</span>()[<span class="dv">1</span>]
-
-<span class="kw">dir</span>(model_path, <span class="dt">recursive =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<pre><code>## [1] "saved_model.pb"                         
-## [2] "variables/variables.data-00000-of-00001"
-## [3] "variables/variables.index"</code></pre>
-</div>
-<div id="exporting-from-keras" class="section level2">
-<h2 class="hasAnchor">
-<a href="#exporting-from-keras" class="anchor"></a>Exporting from Keras</h2>
-<p>First train a <code>keras</code> model as described under <a href="https://tensorflow.rstudio.com/keras/">R interface to Keras</a>, for convinience, run instead:</p>
-<blockquote>
-<p>Notice <code>set_learning_phase(TRUE)</code> to prevent ‘You must feed a value for placeholder tensor ’dropout_1/keras_learning_phase’ while serving set learning phase (see <a href="https://stackoverflow.com/questions/42025660/keras-set-learning-phase-for-dropout-when-saving-tensorflow-session">stackoverflow.com/q/42025660</a>, <a href="https://github.com/fchollet/keras/issues/2310">keras/issues/2310</a>, <a href="https://github.com/fchollet/keras/issues/7720">keras/issues/7720</a>, <a href="https://github.com/tensorflow/serving/issues/310">/tensorflow/serving/issues/310</a>).</p>
-</blockquote>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(keras)
-tf<span class="op">$</span><span class="kw">reset_default_graph</span>()
-
-<span class="kw"><a href="http://www.rdocumentation.org/packages/keras/topics/backend">backend</a></span>()<span class="op">$</span><span class="kw">set_learning_phase</span>(<span class="ot">TRUE</span>)
-
-model &lt;-<span class="st"> </span><span class="kw">mnist_train_keras</span>(<span class="dt">epochs =</span> <span class="dv">1</span>)</code></pre></div>
-<pre><code>## $loss
-## [1] 0.2248618
-## 
-## $acc
-## [1] 0.9344</code></pre>
-<p>Then save using <code><a href="http://www.rdocumentation.org/packages/keras/topics/reexports">export_savedmodel()</a></code> as follows:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="http://www.rdocumentation.org/packages/keras/topics/reexports">export_savedmodel</a></span>(model, <span class="st">"trained/keras-mnist/1"</span>)</code></pre></div>
-<pre><code>## [1] "trained/keras-mnist/1/saved_model.pb"</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dir</span>(model_path, <span class="dt">recursive =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<pre><code>## [1] "saved_model.pb"                         
-## [2] "variables/variables.data-00000-of-00001"
-## [3] "variables/variables.index"</code></pre>
+<a href="#keras" class="anchor"></a>Keras</h2>
+<p>To export from Keras, first train a <code>keras</code> model as described under <a href="https://tensorflow.rstudio.com/keras/">R interface to Keras</a>, set <code>backend()$set_learning_phase(TRUE)</code> before training and then export this model as follows:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">export_savedmodel</span>(
+  model,
+  <span class="st">"keras-mnist"</span>
+)</code></pre></div>
+<p>For convinience, a sample training script is included in <code>tfdeploy</code> to train and export this MNIST model as follows:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tfruns<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/tfruns/topics/training_run">training_run</a></span>(
+  <span class="kw">system.file</span>(<span class="st">"models/keras-mnist.R"</span>, <span class="dt">package =</span> <span class="st">"tfdeploy"</span>)
+)</code></pre></div>
 </div>
 </div>
   </div>
@@ -233,10 +127,9 @@ model &lt;-<span class="st"> </span><span class="kw">mnist_train_keras</span>(<s
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#overview">Overview</a></li>
-      <li><a href="#exporting-from-tensorflow">Exporting from TensorFlow</a></li>
-      <li><a href="#exporting-from-tfestimators">Exporting from TFEstimators</a></li>
-      <li><a href="#exporting-from-keras">Exporting from Keras</a></li>
+<li><a href="#tensorflow">TensorFlow</a></li>
+      <li><a href="#estimators">Estimators</a></li>
+      <li><a href="#keras">Keras</a></li>
       </ul>
 </div>
       </div>

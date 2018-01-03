@@ -42,21 +42,12 @@
       <a href="articles/guides-exporting.html">Exporting Models</a>
     </li>
     <li>
-      <a href="articles/guides-tensorflow-serving.html">Using TensorFlow Serving</a>
+      <a href="articles/guides-tensorflow-serving.html">TensorFlow Serving</a>
     </li>
   </ul>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Reference
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="reference/index.html">Functions</a>
-    </li>
-  </ul>
+  <a href="reference/index.html">Reference</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -94,17 +85,31 @@ model_path &lt;-<span class="st"> </span><span class="kw">system.file</span>(<sp
 <p><code>tfdeploy</code> provides a <a href="https://cloud.google.com/ml-engine/docs/prediction-overview">GoogleML</a> compatible local R server that provides a web API to the the SavedModel using <code><a href="reference/serve_savedmodel.html">serve_savedmodel()</a></code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/serve_savedmodel.html">serve_savedmodel</a></span>(model_path)</code></pre></div>
 <p><img src="tools/readme/swagger.png" width="500"></p>
+<p>This local webapi can be accessed with <code>curl</code>, <code>httr</code>, <code>jsonlite</code>, etc. or using the <code><a href="reference/predict_savedmodel.html">predict_savedmodel()</a></code> deployment client.</p>
 </div>
 <div id="deployment-client" class="section level3">
 <h3 class="hasAnchor">
 <a href="#deployment-client" class="anchor"></a>Deployment Client</h3>
-<p><code>tfdeploy</code> provides a client capable of performing predictions over a SavedModel for local or remote prediction services A prediction over a local model can be performed using <code><a href="reference/predict_savedmodel.html">predict_savedmodel()</a></code>:</p>
+<p><code>tfdeploy</code> provides a client capable of performing predictions over a SavedModel for local or remote models. A prediction over a local model can be performed using <code><a href="reference/predict_savedmodel.html">predict_savedmodel()</a></code> as follows:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/predict_savedmodel.html">predict_savedmodel</a></span>(<span class="kw">rep</span>(<span class="dv">0</span>, <span class="dv">784</span>), model_path)</code></pre></div>
 <pre><code>## $predictions
 ##                                                                           scores
-## 1 0.0557, 0.1143, 0.0904, 0.0587, 0.0820, 0.2934, 0.0713, 0.1516, 0.0191, 0.0635</code></pre>
+## 1 0.0546, 0.1139, 0.0884, 0.0610, 0.0807, 0.2974, 0.0721, 0.1485, 0.0189, 0.0645</code></pre>
 <p>We can make use of the <code>pixels</code> HTMLWidget to manually collect a vector of pixels and perform a prediction over the model:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/predict_savedmodel.html">predict_savedmodel</a></span>(pixels<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/pixels/topics/get_pixels">get_pixels</a></span>(), model_path)</code></pre></div>
+<p>To run a prediction against a service running <code><a href="reference/serve_savedmodel.html">serve_savedmodel()</a></code> or a compatible webapi we run:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/predict_savedmodel.html">predict_savedmodel</a></span>(
+  pixels<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/pixels/topics/get_pixels">get_pixels</a></span>(),
+  <span class="dt">url =</span> <span class="st">"&lt;service-url&gt;"</span>,
+  <span class="dt">type =</span> <span class="st">"webapi"</span>
+)</code></pre></div>
+<p>Predictions over CloudML models are accessed using:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/predict_savedmodel.html">predict_savedmodel</a></span>(
+  pixels<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/pixels/topics/get_pixels">get_pixels</a></span>(),
+  <span class="dt">model =</span> <span class="st">"&lt;model&gt;"</span>,
+  <span class="dt">version =</span> <span class="st">"&lt;version&gt;"</span>,
+  <span class="dt">type =</span> <span class="st">"cloudml"</span>
+)</code></pre></div>
 <p><img src="tools/readme/mnist-digits.gif" width="400"></p>
 </div>
 </div>

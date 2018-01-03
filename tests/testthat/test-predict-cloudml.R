@@ -53,3 +53,12 @@ test_that("can predict keras with multiple tensors model in cloudml", {
     "tfdeploy",
     "keras_multiple")
 })
+
+test_that("can predict tfestimators model in cloudml", {
+  test_cloudml_predict(
+    list(
+      list(disp = 100, cyl = 6)
+    ),
+    "tfdeploy",
+    "tfestimators_mtcars")
+})

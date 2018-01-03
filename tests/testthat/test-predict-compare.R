@@ -155,3 +155,35 @@ test_that("multiple keras inputs and outputs model predictions across services a
 
   test_compare_services(service_defs, instances_entries)
 })
+
+test_that("tfestimators model predictions across services are equivalent", {
+  service_defs <- list(
+    cloudml = list(
+      model = "tfdeploy",
+      version = "tfestimators_mtcars",
+      type = "cloudml"
+    ),
+    export = list(
+      model = "models/tfestimators-mtcars/1514949872/",
+      type = "export",
+      signature_name = "predict"
+    ),
+    serve = list(
+      model = "models/tfestimators-mtcars/1514949872/",
+      type = "serve_test",
+      signature_name = "predict"
+    )
+  )
+
+  instances_entries <- list(
+    tensorflow_mnist_simple = list(
+      list(disp = 100, cyl = 6)
+    ),
+    tensorflow_mnist_double = list(
+      list(disp = 100, cyl = 6),
+      list(disp = 100, cyl = 6)
+    )
+  )
+
+  test_compare_services(service_defs, instances_entries)
+})

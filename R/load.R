@@ -17,6 +17,14 @@ find_savedmodel <- function(path) {
     path
 }
 
+#' Load a SavedModel
+#'
+#' Loads a SavedModel using the given TensorFlow session and
+#' returns the model's graph.
+#'
+#' @param sess The TensorFlow session.
+#' @param model_dir The path to the exported model, as a string.
+#'
 #' @export
 load_savedmodel <- function(sess, model_dir = NULL) {
   model_dir <- find_savedmodel(model_dir)

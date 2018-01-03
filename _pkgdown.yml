@@ -12,12 +12,10 @@ navbar:
       menu:
         - text: "Exporting Models"
           href: articles/guides-exporting.html
-        - text: "Using TensorFlow Serving"
+        - text: "TensorFlow Serving"
           href: articles/guides-tensorflow-serving.html
     - text: "Reference"
-      menu:
-        - text: "Functions"
-          href: reference/index.html
+      href: reference/index.html
   right:
    - icon: fa-github
      href: https://github.com/rstudio/tfdeploy
@@ -25,7 +23,6 @@ navbar:
 reference:
   - title: "Operations"
     contents:
+      - load_savedmodel
+      - predict_savedmodel
       - serve_savedmodel
-  - title: "Examples"
-    contents:
-      - mnist_train_save

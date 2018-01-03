@@ -1,4 +1,4 @@
-#' Predicts over a Saved Model
+#' Predict using a SavedModel
 #'
 #' Runs a prediction over a saved model file, local service or cloudml model.
 #'

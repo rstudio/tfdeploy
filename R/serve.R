@@ -1,4 +1,4 @@
-#' Serve a TensorFlow SavedModel
+#' Serve a SavedModel
 #'
 #' Serve a TensorFlow SavedModel as a local web api under
 #' \url{http://localhost:8089}.

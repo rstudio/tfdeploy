@@ -1,4 +1,3 @@
-library(tfdeploy)
 library(cloudml)
 
 sysenv_file <- function(name, destination) {

@@ -11,106 +11,71 @@ The first step towards deploying a trained model is to export this model from
 TensorFlow. This guide demostrates how to export SavedModels from: TensorFlow,
 tfestimators and keras using `export_savedmodel()`
 
-## Exporting from TensorFlow
+## TensorFlow
 
-Exporting a SavedModel from TensorFlow requires input and output tensors to be
-passed to `export_savedmodel()`.
+Exporting a SavedModel using the core TensorFlow API requires input and output
+tensors to be passed to `export_savedmodel()`.
 
 For instance, one can train MNIST as described by [MNIST For ML Beginners](https://tensorflow.rstudio.com/tensorflow/articles/tutorial_mnist_beginners.html), track
 the model's inputs and outputs named `x` and `y` under that particular article and
 call `export_savedmodel()` as follows:
 
 ```{r eval=F}
-export_savedmodel(sess, "tensorflow-mnist", inputs = list(images = x), outputs = list(scores = y))
+export_savedmodel(
+  sess,
+  "tensorflow-mnist",
+  inputs = list(images = x),
+  outputs = list(scores = y)
+)
 ```
 
 For convinience, a sample training script is included in `tfdeploy` to train and
 export this MNIST model as follows:
 
-```{r}
-tfruns::training_run(system.file("models/tensorflow-mnist.R", package = "tfdeploy"))
-dir("tensorflow-mnist", recursive = TRUE)
+```{r eval=F}
+tfruns::training_run(
+  system.file("models/tensorflow-mnist.R", package = "tfdeploy")
+)
 ```
 
-## Exporting from TFEstimators
+## Estimators
 
-A sample model using the `mtcars` data frame is trained using `tfestimators`.  The resulting model is the one that will be saved to disk. To train, we can follow the TensorFlow estimators [Quick Start](https://tensorflow.rstudio.com/tfestimators/); or for convenienve, run:
+A sample model using the `mtcars` data frame is trained using `tfestimators`.  The resulting model is the one that will be saved to disk. To train, we can follow the TensorFlow estimators [Quick Start](https://tensorflow.rstudio.com/tfestimators/)
+followed by running:
 
 ```{r eval=F}
-library(tfestimators)
-
-mtcars_train <- function () {
-  mtcars_input_fn <- function(data) {
-    input_fn(data,
-             features = c("disp", "cyl"),
-             response = "mpg")
-  }
-
-  cols <- feature_columns(
-    column_numeric("disp"),
-    column_numeric("cyl")
-  )
-
-  model <- linear_regressor(feature_columns = cols)
-
-  indices <- sample(1:nrow(mtcars), size = 0.80 * nrow(mtcars))
-  train <- mtcars[indices, ]
-  test  <- mtcars[-indices, ]
-
-  model %>% train(mtcars_input_fn(train))
-
-  model
-}
-
-model <- mtcars_train()
+export_savedmodel(
+  model,
+  "tfestimators-mtcars"
+)
 ```
 
-The `export_savemodel()` will create the **pb** file and the **variables** folder
+For convinience, a sample training script is included in `tfdeploy` to train and
+export this `mtcars` model as follows:
 
 ```{r eval=F}
-# Create an input spec
-input_spec <- regressor_parse_example_spec(feature_columns = feature_columns( 
-                                             column_numeric("disp", "cyl")
-                                           ),
-                                           label_key = "input",
-                                           label_dtype = tf$string)
-
-# Parse the spec as an input receiver 
-input_receiver <- tf$estimator$export$build_parsing_serving_input_receiver_fn(input_spec)
-
-export_savedmodel(model, 
-                  export_dir_base = "trained/tfestimators-mtcars",
-                  serving_input_receiver_fn = input_receiver)
-
-model_folder <- list.files()[1]
-
-dir(model_path, recursive = TRUE)
+tfruns::training_run(
+  system.file("models/tfestimators-mtcars.R", package = "tfdeploy")
+)
 ```
 
-## Exporting from Keras
+## Keras
 
-First train a `keras` model as described under [R interface to Keras](https://tensorflow.rstudio.com/keras/), for convinience, run instead:
-
-> Notice `set_learning_phase(TRUE)` to prevent 'You must feed a value for
-> placeholder tensor 'dropout_1/keras_learning_phase' while serving set learning
-> phase (see [stackoverflow.com/q/42025660](https://stackoverflow.com/questions/42025660/keras-set-learning-phase-for-dropout-when-saving-tensorflow-session),
-> [keras/issues/2310](https://github.com/fchollet/keras/issues/2310), 
-> [keras/issues/7720](https://github.com/fchollet/keras/issues/7720),
-> [/tensorflow/serving/issues/310](https://github.com/tensorflow/serving/issues/310)).
+To export from Keras, first train a `keras` model as described under [R interface to Keras](https://tensorflow.rstudio.com/keras/),
+set `backend()$set_learning_phase(TRUE)` before training and then export this model as follows:
 
 ```{r eval=F}
-library(keras)
-tf$reset_default_graph()
-
-backend()$set_learning_phase(TRUE)
-
-model <- mnist_train_keras(epochs = 1)
+export_savedmodel(
+  model,
+  "keras-mnist"
+)
 ```
 
-Then save using `export_savedmodel()` as follows:
+For convinience, a sample training script is included in `tfdeploy` to train and
+export this MNIST model as follows:
 
 ```{r eval=F}
-export_savedmodel(model, "trained/keras-mnist/1")
-
-dir(model_path, recursive = TRUE)
+tfruns::training_run(
+  system.file("models/keras-mnist.R", package = "tfdeploy")
+)
 ```

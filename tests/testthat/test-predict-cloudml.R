@@ -1,18 +1,28 @@
 context("Predict CloudML Model")
 
 test_cloudml_predict <- function(instances, model, version) {
+
   results <- cloudml::cloudml_predict(
     instances,
     model,
     version)
 
-  jsonlite::write_json(
-    list(instances = instances),
+  asjson <- getOption("cloudml.prediction.diagnose")
+  options(cloudml.prediction.diagnose = TRUE)
+  on.exit(options(cloudml.prediction.diagnose = asjson))
+
+  diagnose_result <- cloudml::cloudml_predict(
+    instances,
+    model,
+    version)
+
+  writeLines(
+    paste(diagnose_result$request, collapse = "\n"),
     paste0("requests/", version, "_request.json")
   )
 
-  jsonlite::write_json(
-    results,
+  writeLines(
+    diagnose_result$response,
     paste0("requests/", version, "_response.json")
   )
 

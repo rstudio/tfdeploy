@@ -1,40 +1,28 @@
 predict_single_savedmodel_export <- function(instance, sess, signature_def, signature_name) {
   if (!is.list(instance)) instance <- list(instance)
 
-  signature_names <- signature_def$keys()
-  if (!signature_name %in% signature_names) {
-    stop(
-      "Signature '", signature_name, "' not available in model signatures. ",
-      "Available signatures: ", paste(signature_names, collapse = ","), ".")
-  }
+  tensor_boundaries <- tensor_get_boundaries(sess$graph, signature_def, signature_name)
 
-  signature_obj <- signature_def$get(signature_name)
+  signature_output_names <- names(tensor_boundaries$signatures$outputs)
+  signature_inputs_names <- names(tensor_boundaries$signatures$inputs)
+  signature_inputs <- tensor_boundaries$signatures$inputs
+  tensor_outputs <- tensor_boundaries$tensors$outputs
 
-  tensor_input_names <- signature_obj$inputs$keys()
-  if (length(tensor_input_names) == 0) {
-    stop("Signature '", signature_name, "' contains no inputs.")
-  }
-
-  tensor_output_names <- signature_obj$outputs$keys()
-
-  fetches_list <- lapply(seq_along(tensor_output_names), function(fetch_idx) {
-    sess$graph$get_tensor_by_name(
-      signature_obj$outputs$get(tensor_output_names[[fetch_idx]])$name
-    )
-  })
+  fetches_list <- tensor_outputs
+  names(fetches_list) <- signature_output_names
 
   feed_dict <- list()
-  for (tensor_input_name in tensor_input_names) {
-    input_tensor <- signature_obj$inputs$get(tensor_input_name)
-    placeholder_name <- signature_obj$inputs$get(tensor_input_name)$name
+  for (signature_input_name in signature_inputs_names) {
+    signature_input <- signature_inputs[[signature_input_name]]
+    placeholder_name <- signature_input$name
 
-    if (is.null(names(instance)) && length(tensor_input_names) == 1) {
+    if (is.null(names(instance)) && length(signature_inputs_names) == 1) {
       input_instance <- instance[[1]]
     }
-    else if (!tensor_input_name %in% names(instance)) {
-      stop("Input '", tensor_input_name, "' found in model but missing in prediciton instance.")
+    else if (!signature_input_name %in% names(instance)) {
+      stop("Input '", signature_input_name, "' found in model but missing in prediciton instance.")
     } else {
-      input_instance <- instance[[tensor_input_name]]
+      input_instance <- instance[[signature_input_name]]
     }
 
     if (is.list(input_instance) && "b64" %in% names(input_instance)) {
@@ -44,7 +32,7 @@ predict_single_savedmodel_export <- function(instance, sess, signature_def, sign
       feed_dict[[placeholder_name]] <- input_instance
     }
 
-    is_multi_instance_tensor <- tensor_is_multi_instance(input_tensor)
+    is_multi_instance_tensor <- tensor_is_multi_instance(signature_input)
 
     if (is_multi_instance_tensor) {
       if (is.null(dim(feed_dict[[placeholder_name]])))
@@ -64,11 +52,11 @@ predict_single_savedmodel_export <- function(instance, sess, signature_def, sign
     feed_dict = feed_dict
   )
 
-  names(result) <- tensor_output_names
+  names(result) <- signature_output_names
 
   if (is_multi_instance_tensor) {
-    for (tensor_output_name in tensor_output_names) {
-      dim(result[[tensor_output_name]]) <- dim(result[[tensor_output_name]])[-1]
+    for (signature_output_name in signature_output_names) {
+      dim(result[[signature_output_name]]) <- dim(result[[signature_output_name]])[-1]
     }
   }
 

@@ -1,0 +1,23 @@
+optimize_savedmodel <- function(
+  model_dir = NULL,
+  optimized_file = "savedmodel.tflite",
+  signature_name = "serving_default") {
+
+  if (tf$VERSION < "1.5.0")
+    stop("TensorFlow Lite requires TensorFlow 1.5 or later.")
+
+  with_new_session(function(sess) {
+    graph <- load_savedmodel(sess, model_dir)
+
+    tensor_boundaries <- tensor_get_boundaries(sess$graph, graph$signature_def, signature_name)
+
+    tflite_model <- tf$contrib$lite$toco_convert(
+      graph$graph_def,
+      tensor_boundaries$tensors$inputs,
+      tensor_boundaries$tensors$outputs
+    )
+
+    builtins <- reticulate::import_builtins()
+    builtins$open(optimized_file, "wb")$write(tflite_model)
+  })
+}

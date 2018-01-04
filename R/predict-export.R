@@ -2,7 +2,7 @@
 predict_savedmodel.export_predictionservice <- function(
   instances,
   model = NULL,
-  signature_name = tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY,
+  signature_name = "serving_default",
   ...) {
   with_new_session(function(sess) {
 

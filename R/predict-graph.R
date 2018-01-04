@@ -108,7 +108,7 @@ predict_savedmodel.graph_predictionservice <- function(
   instances,
   model = NULL,
   service,
-  signature_name = tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY,
+  signature_name = "serving_default",
   sess,
   ...) {
 

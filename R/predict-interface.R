@@ -15,7 +15,7 @@ predict_savedmodel <- function(
   instances,
   model = NULL,
   type = c("export", "cloudml", "webapi", "graph"),
-  signature_name = tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY,
+  signature_name = "serving_default",
   ...) {
   class(instances) <- paste0(type, "_predictionservice")
   UseMethod("predict_savedmodel", instances)

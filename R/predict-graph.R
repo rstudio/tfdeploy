@@ -52,11 +52,9 @@ predict_single_savedmodel_export <- function(instance, sess, signature_def, sign
     feed_dict = feed_dict
   )
 
-  names(result) <- signature_output_names
-
   if (is_multi_instance_tensor) {
-    for (signature_output_name in signature_output_names) {
-      dim(result[[signature_output_name]]) <- dim(result[[signature_output_name]])[-1]
+    for (result_name in names(result)) {
+      dim(result[[result_name]]) <- dim(result[[result_name]])[-1]
     }
   }
 

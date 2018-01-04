@@ -5,9 +5,7 @@
 \title{Predict using a SavedModel}
 \usage{
 predict_savedmodel(instances, model = NULL, type = c("export", "cloudml",
-  "webapi", "graph"),
-  signature_name = tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY,
-  ...)
+  "webapi", "graph"), signature_name = "serving_default", ...)
 }
 \arguments{
 \item{instances}{A list of prediction instances to be passed as input tensors

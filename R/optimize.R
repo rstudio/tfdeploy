@@ -1,3 +1,4 @@
+#' @export
 optimize_savedmodel <- function(
   model_dir = NULL,
   optimized_file = "savedmodel.tflite",
@@ -13,8 +14,8 @@ optimize_savedmodel <- function(
 
     tflite_model <- tf$contrib$lite$toco_convert(
       graph$graph_def,
-      tensor_boundaries$tensors$inputs,
-      tensor_boundaries$tensors$outputs
+      unlist(tensor_boundaries$tensors$inputs, use.names = FALSE),
+      unlist(tensor_boundaries$tensors$outputs, use.names = FALSE)
     )
 
     builtins <- reticulate::import_builtins()

@@ -42,8 +42,8 @@ test_that("can predict tensorflow with multiple tensors model in local serve", {
 test_that("can predict keras with multiple tensors model in local serve", {
   test_serve_predict(
     instances = list(
-      list(input1 = "a", input2 = "b"),
-      list(input1 = "a", input2 = "b")
+      list(input1 = 1, input2 = 2),
+      list(input1 = 3, input2 = 4)
     ),
     model = "models/keras-multiple"
   )

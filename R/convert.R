@@ -1,8 +1,11 @@
 #' @export
-optimize_savedmodel <- function(
+convert_savedmodel <- function(
   model_dir = NULL,
   optimized_file = "savedmodel.tflite",
   signature_name = "serving_default") {
+
+  if (!identical(tools::file_ext(optimized_file), "tflite"))
+    stop("Use 'tflite' extensions to convert to TensorFlow light.")
 
   if (tf$VERSION < "1.5.0")
     stop("TensorFlow Lite requires TensorFlow 1.5 or later.")

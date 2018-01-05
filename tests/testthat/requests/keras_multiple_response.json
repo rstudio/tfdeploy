@@ -1,1 +1,13 @@
-{"predictions":[{"output1":["a","b"],"output2":["b","a"]},{"output1":["a","b"],"output2":["b","a"]}]}
+{
+  "predictions": [
+    {
+      "output1": 3.0,
+      "output2": 3.0
+    },
+    {
+      "output1": 7.0,
+      "output2": 7.0
+    }
+  ]
+}
+

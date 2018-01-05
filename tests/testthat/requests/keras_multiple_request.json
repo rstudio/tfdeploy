@@ -1,1 +1,2 @@
-{"instances":[{"input1":["a"],"input2":["b"]},{"input1":["a"],"input2":["b"]}]}
+{"input1":1,"input2":2}
+{"input1":3,"input2":4}

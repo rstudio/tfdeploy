@@ -147,10 +147,13 @@ test_that("multiple keras inputs and outputs model predictions across services a
   )
 
   instances_entries <- list(
-    tensorflow_mnist_simple = list(list(input1 = "a", input2 = "b")),
+    tensorflow_mnist_simple = list(
+      list(input1 = 1, input2 = 2)
+    ),
     tensorflow_mnist_double = list(
-      list(input1 = "a", input2 = "b"),
-      list(input1 = "a", input2 = "b"))
+      list(input1 = 1, input2 = 2),
+      list(input1 = 3, input2 = 4)
+    )
   )
 
   test_compare_services(service_defs, instances_entries)

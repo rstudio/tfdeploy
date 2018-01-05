@@ -21,7 +21,11 @@ convert_savedmodel <- function(
       unlist(tensor_boundaries$tensors$outputs, use.names = FALSE)
     )
 
-    builtins <- reticulate::import_builtins()
-    builtins$open(optimized_file, "wb")$write(tflite_model)
+    py <- reticulate::import_builtins()
+
+    with(py$open(optimized_file, "wb") %as% file, {
+      file$write(tflite_model)
+      file$flush()
+    })
   })
 }

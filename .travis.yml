@@ -15,9 +15,7 @@ cache:
     - $HOME/.cache/pip
 
 before_script:
-  - pip2.7 install --upgrade --ignore-installed --user travis pip setuptools wheel virtualenv
-  - R CMD INSTALL .
-  - R -e 'tensorflow::install_tensorflow()'
+  - source scripts/travis_install.sh
 
 script:
   - |

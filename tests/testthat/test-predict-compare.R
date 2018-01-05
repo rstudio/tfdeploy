@@ -1,6 +1,10 @@
 context("Compare Predictions")
 
-test_compare_services <- function(service_defs, instances_entries) {
+test_relax_json <- function(e) {
+  jsonlite::fromJSON(jsonlite::toJSON(e, auto_unbox = TRUE))
+}
+
+test_compare_services <- function(service_defs, instances_entries, relaxed = FALSE) {
   for (instances_index in seq_along(instances_entries)) {
     services_results <- lapply(service_defs, function(service_def) {
       service_def$instances <- instances_entries[[instances_index]]
@@ -15,6 +19,11 @@ test_compare_services <- function(service_defs, instances_entries) {
 
       first_prediction <- first_prediction[order(colnames(first_prediction))]
       other_prediction <- other_prediction[order(colnames(other_prediction))]
+
+      if (relaxed) {
+        first_prediction <- test_relax_json(first_prediction)
+        other_prediction <- test_relax_json(other_prediction)
+      }
 
       all_equal <- all.equal(
         first_prediction,
@@ -188,5 +197,11 @@ test_that("tfestimators model predictions across services are equivalent", {
     )
   )
 
-  test_compare_services(service_defs, instances_entries)
+  # tfestimator models in cloudml are what I argue incorrectly returned as:
+  # [{"predictions":[6.626]},{"predictions":[6.626]}]
+  # instead of
+  # [{"predictions":6.626},{"predictions":6.626}]
+  # therefore, we relax the comparisson here to allow auto_unbox
+
+  test_compare_services(service_defs, instances_entries, relaxed = TRUE)
 })

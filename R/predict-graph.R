@@ -75,8 +75,13 @@ predict_savedmodel_export <- function(instances, sess, signature_def, signature_
     )
 
     for (r in names(result)) {
-      if (is.null(entries[[r]])) entries[[r]] <- list()
-      entries[[r]][[length(entries[[r]]) + 1]] <- result[[r]]
+      use_list <- length(result[[r]]) > 1
+
+      if (is.null(entries[[r]])) entries[[r]] <- if (use_list) list() else NULL
+      if (use_list)
+        entries[[r]][[length(entries[[r]]) + 1]] <- result[[r]]
+      else
+        entries[[r]] <- c(entries[[r]], result[[r]])
     }
   }
 
@@ -115,6 +120,6 @@ predict_savedmodel.graph_predictionservice <- function(
   results <- list(predictions = predictions)
 
   jsonlite::fromJSON(
-    jsonlite::toJSON(results, auto_unbox = TRUE)
+    jsonlite::toJSON(results)
   )
 }

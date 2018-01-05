@@ -115,6 +115,6 @@ predict_savedmodel.graph_predictionservice <- function(
   results <- list(predictions = predictions)
 
   jsonlite::fromJSON(
-    jsonlite::toJSON(results)
+    jsonlite::toJSON(results, auto_unbox = TRUE)
   )
 }

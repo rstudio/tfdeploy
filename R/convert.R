@@ -10,6 +10,12 @@ convert_savedmodel <- function(
   if (tf$VERSION < "1.5.0")
     stop("TensorFlow Lite requires TensorFlow 1.5 or later.")
 
+  # Workaround for https://github.com/tensorflow/tensorflow/pull/15890
+  py_tempfile <- reticulate::import("tempfile")
+  py_subprocess <- reticulate::import("subprocess")
+  tf$contrib$lite$tempfile <- py_tempfile
+  tf$contrib$lite$subprocess <- py_subprocess
+
   with_new_session(function(sess) {
     graph <- load_savedmodel(sess, model_dir)
 

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Predict using a SavedModel — predict_savedmodel • tfdeploy</title>
+<title>Converts a SavedModel — convert_savedmodel • tfdeploy</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -92,40 +92,44 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Predict using a SavedModel</h1>
+    <h1>Converts a SavedModel</h1>
     </div>
 
     
-    <p>Runs a prediction over a saved model file, local service or cloudml model.</p>
+    <p>Converts a TensorFlow SavedModel into a TensorFlow Lite model optmized
+for mobile platforms.</p>
     
 
-    <pre class="usage"><span class='fu'>predict_savedmodel</span>(<span class='no'>instances</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"export"</span>, <span class='st'>"cloudml"</span>,
-  <span class='st'>"webapi"</span>, <span class='st'>"graph"</span>), <span class='kw'>signature_name</span> <span class='kw'>=</span> <span class='st'>"serving_default"</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>convert_savedmodel</span>(<span class='kw'>model_dir</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>target</span> <span class='kw'>=</span> <span class='st'>"savedmodel.tflite"</span>,
+  <span class='kw'>signature_name</span> <span class='kw'>=</span> <span class='st'>"serving_default"</span>, <span class='kw'>inference_type</span> <span class='kw'>=</span> <span class='st'>"FLOAT"</span>,
+  <span class='kw'>quantized_input_stats</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>drop_control_dependency</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>instances</th>
-      <td><p>A list of prediction instances to be passed as input tensors
-to the service. Even for single predictions, a list with one entry is expected.</p></td>
+      <th>model_dir</th>
+      <td><p>The path to the exported model, as a string.</p></td>
     </tr>
     <tr>
-      <th>model</th>
-      <td><p>The model as a local path, REST url, CloudML name or graph object.</p></td>
-    </tr>
-    <tr>
-      <th>type</th>
-      <td><p>The type of object performing the prediction. Valid values
-are <code>cloudml</code>, <code>export</code>, <code>webapi</code> and <code>graph</code>.</p></td>
+      <th>target</th>
+      <td><p>The conversion targer, currently only <code>'.tflite'</code>
+extensions supported to perform TensorFlow lite conversion.</p></td>
     </tr>
     <tr>
       <th>signature_name</th>
       <td><p>The named entry point to use in the model for prediction.</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>Additional arguments, currently not in use.</p></td>
+      <th>quantized_input_stats</th>
+      <td><p>For each member of input_tensors the mean and
+std deviation of training data. Only needed <code>inference_type</code> is
+<code>"QUANTIZED_UINT8"</code>.</p></td>
+    </tr>
+    <tr>
+      <th>drop_control_dependency:</th>
+      <td><p>Drops control dependencies silently. This is
+due to tf lite not supporting control dependencies.</p></td>
     </tr>
     </table>
     

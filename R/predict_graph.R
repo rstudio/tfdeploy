@@ -94,11 +94,17 @@ predict_savedmodel_export <- function(instances, sess, signature_def, signature_
   predictions
 }
 
+#' Predict using a Loaded SavedModel
+#'
+#' Performs a prediction using a SavedModel model already loaded using
+#' \code{load_savedmodel()}.
+#'
+#' @param sess The active TensorFlow session.
+#'
 #' @export
-predict_savedmodel.graph_predictionservice <- function(
+predict_savedmodel.graph_prediction <- function(
   instances,
   model = NULL,
-  service,
   signature_name = "serving_default",
   sess,
   ...) {

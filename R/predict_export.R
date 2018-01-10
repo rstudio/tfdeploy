@@ -1,5 +1,9 @@
+#' Predict using an Exported SavedModel
+#'
+#' Performs a prediction using a locally exported SavedModel.
+#'
 #' @export
-predict_savedmodel.export_predictionservice <- function(
+predict_savedmodel.export_prediction <- function(
   instances,
   model = NULL,
   signature_name = "serving_default",

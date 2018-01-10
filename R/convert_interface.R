@@ -1,14 +1,13 @@
 #' Converts a SavedModel
 #'
-#' Converts a TensorFlow SavedModel into a other model formats.
+#' Converts a TensorFlow SavedModel into other model formats.
 #'
 #' @param model_dir The path to the exported model, as a string.
 #'
-#' @param format The target format for the converted model. Valid values
-#'   are \code{tflite}.
+#' @param format The target format for the converted model. Currently only
+#'   \code{tflite}.
 #'
-#' @param target The conversion target, currently only \code{'.tflite'}
-#'   extensions supported to perform TensorFlow lite conversion.
+#' @param target The target path for the converted model.
 #'
 #' @param signature_name The named entry point to use in the model for prediction.
 #'
@@ -23,8 +22,29 @@ convert_savedmodel <- function(
   signature_name = "serving_default",
   ...
 ) {
-  class(instances) <- paste0(format, "_conversion")
+  class(model_dir) <- paste0(format, "_conversion")
   UseMethod("convert_savedmodel", model_dir)
 }
 
+#' Converts a HDF5 Model
+#'
+#' Converts a HDF5 model into other model formats.
+#'
+#' @param model_dir The path to the exported model, as a string.
+#'
+#' @param format The target format for the converted model. Currently only
+#'   \code{kerasjs}.
+#'
+#' @param target The target path for the converted model.
+#'
+#' @export
+convert_hdf5model <- function(
+  model_dir = NULL,
+  format = c("kerasjs"),
+  target = paste("model", format, sep = "."),
+  ...
+) {
+  class(model_dir) <- paste0(format, "_conversion")
+  UseMethod("convert_savedmodel", model_dir)
+}
 

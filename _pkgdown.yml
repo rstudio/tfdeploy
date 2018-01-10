@@ -23,6 +23,7 @@ navbar:
 reference:
   - title: "Operations"
     contents:
+      - convert_hdf5model
       - convert_savedmodel
       - load_savedmodel
       - predict_savedmodel

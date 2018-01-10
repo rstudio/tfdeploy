@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Predict using a SavedModel — predict_savedmodel • tfdeploy</title>
+<title>Predict using a Web API — predict_savedmodel.webapi_prediction • tfdeploy</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -92,49 +92,23 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Predict using a SavedModel</h1>
+    <h1>Predict using a Web API</h1>
     </div>
 
     
-    <p>Runs a prediction over a saved model file, local service or cloudml model.</p>
+    <p>Performs a prediction using a Web API providing a SavedModel.</p>
     
 
-    <pre class="usage"><span class='fu'>predict_savedmodel</span>(<span class='no'>instances</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"export"</span>, <span class='st'>"cloudml"</span>,
-  <span class='st'>"webapi"</span>, <span class='st'>"graph"</span>), <span class='kw'>signature_name</span> <span class='kw'>=</span> <span class='st'>"serving_default"</span>, <span class='no'>...</span>)</pre>
-    
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>instances</th>
-      <td><p>A list of prediction instances to be passed as input tensors
-to the service. Even for single predictions, a list with one entry is expected.</p></td>
-    </tr>
-    <tr>
-      <th>model</th>
-      <td><p>The model as a local path, REST url, CloudML name or graph object.</p></td>
-    </tr>
-    <tr>
-      <th>type</th>
-      <td><p>The type of object performing the prediction. Valid values
-are <code>cloudml</code>, <code>export</code>, <code>webapi</code> and <code>graph</code>.</p></td>
-    </tr>
-    <tr>
-      <th>signature_name</th>
-      <td><p>The named entry point to use in the model for prediction.</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>Additional arguments specific to each model.</p></td>
-    </tr>
-    </table>
-    
+    <pre class="usage"><span class='co'># S3 method for webapi_prediction</span>
+<span class='fu'><a href='predict_savedmodel.html'>predict_savedmodel</a></span>(<span class='no'>instances</span>,
+  <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"http://127.0.0.1:8089/api/serving_default/predict/"</span>,
+  <span class='kw'>signature_name</span> <span class='kw'>=</span> <span class='st'>"serving_default"</span>, <span class='no'>...</span>)</pre>
+        
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
                 </ul>
 
   </div>

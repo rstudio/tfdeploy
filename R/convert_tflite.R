@@ -5,7 +5,7 @@
 #' @inheritParams convert_savedmodel
 #'
 #' @param inference_type: Currently must be \code{"FLOAT"} or
-#' \code{"QUANTIZED_UINT8}"}.
+#' \code{"QUANTIZED_UINT8"}.
 #'
 #' @param quantized_input_stats For each member of input_tensors the mean and
 #' std deviation of training data. Only needed \code{inference_type} is

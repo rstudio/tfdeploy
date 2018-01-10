@@ -12,8 +12,7 @@
 \arguments{
 \item{model_dir}{The path to the exported model, as a string.}
 
-\item{target}{The conversion target, currently only \code{'.tflite'}
-extensions supported to perform TensorFlow lite conversion.}
+\item{target}{The target path for the converted model.}
 
 \item{signature_name}{The named entry point to use in the model for prediction.}
 
@@ -23,6 +22,9 @@ std deviation of training data. Only needed \code{inference_type} is
 
 \item{...}{Additional arguments. See \code{?convert_savedmodel.tflite_conversion}
 for additional options.}
+
+\item{inference_type:}{Currently must be \code{"FLOAT"} or
+\code{"QUANTIZED_UINT8"}.}
 
 \item{drop_control_dependency:}{Drops control dependencies silently. This is
 due to tf lite not supporting control dependencies.}

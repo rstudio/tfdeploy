@@ -11,11 +11,10 @@ convert_savedmodel(model_dir = NULL, format = c("tflite"),
 \arguments{
 \item{model_dir}{The path to the exported model, as a string.}
 
-\item{format}{The target format for the converted model. Valid values
-are \code{tflite}.}
+\item{format}{The target format for the converted model. Currently only
+\code{tflite}.}
 
-\item{target}{The conversion target, currently only \code{'.tflite'}
-extensions supported to perform TensorFlow lite conversion.}
+\item{target}{The target path for the converted model.}
 
 \item{signature_name}{The named entry point to use in the model for prediction.}
 
@@ -23,5 +22,5 @@ extensions supported to perform TensorFlow lite conversion.}
 for additional options.}
 }
 \description{
-Converts a TensorFlow SavedModel into a other model formats.
+Converts a TensorFlow SavedModel into other model formats.
 }

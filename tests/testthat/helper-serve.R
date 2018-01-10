@@ -65,7 +65,7 @@ predict_savedmodel.serve_test_prediction <- function(
 
   predict_savedmodel(
     instances,
-    url = url,
+    model = url,
     type = "webapi")
 
 }

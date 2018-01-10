@@ -1,14 +1,8 @@
-#' Converts a SavedModel
+#' Convert to TensorFlow Lite
 #'
-#' Converts a TensorFlow SavedModel into a TensorFlow Lite model optmized
-#' for mobile platforms.
+#' Converts a model to TensorFlow Lite.
 #'
-#' @param model_dir The path to the exported model, as a string.
-#'
-#' @param target The conversion targer, currently only \code{'.tflite'}
-#' extensions supported to perform TensorFlow lite conversion.
-#'
-#' @param signature_name The named entry point to use in the model for prediction.
+#' @inheritParams convert_savedmodel
 #'
 #' @param inference_type: Currently must be \code{"FLOAT"} or
 #' \code{"QUANTIZED_UINT8}"}.
@@ -21,13 +15,14 @@
 #' due to tf lite not supporting control dependencies.
 #'
 #' @export
-convert_savedmodel <- function(
+convert_savedmodel.tflite_conversion <- function(
   model_dir = NULL,
   target = "savedmodel.tflite",
   signature_name = "serving_default",
   inference_type = "FLOAT",
   quantized_input_stats = NULL,
-  drop_control_dependency = TRUE
+  drop_control_dependency = TRUE,
+  ...
 ) {
 
   if (!identical(tools::file_ext(target), "tflite"))

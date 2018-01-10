@@ -1,3 +1,15 @@
+#' Converts a SavedModel
+#'
+#' Converts a TensorFlow SavedModel into a TensorFlow Lite model optmized
+#' for mobile platforms.
+#'
+#' @param model_dir The path to the exported model, as a string.
+#'
+#' @param target The conversion targer, currently only \code{'.tflite'}
+#' extensions supported to perform TensorFlow lite conversion.
+#'
+#' @param signature_name The named entry point to use in the model for prediction.
+#'
 #' @param inference_type: Currently must be \code{"FLOAT"} or
 #' \code{"QUANTIZED_UINT8}"}.
 #'
@@ -11,14 +23,14 @@
 #' @export
 convert_savedmodel <- function(
   model_dir = NULL,
-  optimized_file = "savedmodel.tflite",
+  target = "savedmodel.tflite",
   signature_name = "serving_default",
   inference_type = "FLOAT",
   quantized_input_stats = NULL,
   drop_control_dependency = TRUE
 ) {
 
-  if (!identical(tools::file_ext(optimized_file), "tflite"))
+  if (!identical(tools::file_ext(target), "tflite"))
     stop("Use 'tflite' extensions to convert to TensorFlow light.")
 
   if (tf$VERSION < "1.5.0")
@@ -56,7 +68,7 @@ convert_savedmodel <- function(
 
     py <- reticulate::import_builtins()
 
-    with(py$open(optimized_file, "wb") %as% file, {
+    with(py$open(target, "wb") %as% file, {
       file$write(tflite_model)
       file$flush()
     })

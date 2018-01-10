@@ -24,7 +24,7 @@ wait_for_server <- function(url) {
     stop("Failed to connect to server: ", url)
 }
 
-predict_savedmodel.serve_test_predictionservice <- function(
+predict_savedmodel.serve_test_prediction <- function(
   instances,
   model,
   signature_name = "serving_default",

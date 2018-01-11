@@ -30,7 +30,7 @@ convert_savedmodel <- function(
 #'
 #' Converts a HDF5 model into other model formats.
 #'
-#' @param model_dir The path to the exported model, as a string.
+#' @param model_name The path to the HDF5 exported model, as a string.
 #'
 #' @param format The target format for the converted model. Currently only
 #'   \code{kerasjs}.
@@ -39,12 +39,12 @@ convert_savedmodel <- function(
 #'
 #' @export
 convert_hdf5model <- function(
-  model_dir = NULL,
+  model_name = NULL,
   format = c("kerasjs"),
-  target = paste("model", format, sep = "."),
+  target = NULL,
   ...
 ) {
-  class(model_dir) <- paste0(format, "_conversion")
-  UseMethod("convert_savedmodel", model_dir)
+  class(model_name) <- paste0(format, "_conversion")
+  UseMethod("convert_hdf5model", model_name)
 }
 

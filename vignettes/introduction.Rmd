@@ -33,9 +33,103 @@ The R interface to TensorFlow includes a variety of tools designed to make expor
 
 - Deploy your model using TensorFlow Serving, CloudML, or RStudio Connect.
 
-Below we'll walk through an end-to-end example using a model trained with keras package. After that we'll describe in more depth the specific requirements and various options associated with exporting models. Finally, we'll cover the various deployment options and provide links to additional documentation. 
+## Getting Started
 
-## Keras Example
+Begin by installing the **tfdeploy** package from GitHub as follows:
+
+```{r}
+devtools::install_github("rstudio/tfdeploy")
+```
+
+Next we'll walk through an end-to-end example using a model trained with keras package. After that we'll describe in more depth the specific requirements and various options associated with exporting models. Finally, we'll cover the various deployment options and provide links to additional documentation. 
+
+### Keras Example
+
+We'll use a Keras model that recognizes handwritten digits from the [MNIST](https://en.wikipedia.org/wiki/MNIST_database) dataset as an example. MNIST consists of 28 x 28 grayscale images of handwritten digits like these:
+
+<img style="width: 50%;" src="images/MNIST.png">
+
+The dataset also includes labels for each image, telling us which digit it is. For example, the labels for the above images are 5, 0, 4, and 1.
+
+Here's the complete source code for the model:
+
+```{r}
+library(keras)
+
+# load data
+c(c(x_train, y_train), c(x_test, y_test)) %<-% dataset_mnist()
+
+# reshape and rescale
+x_train <- array_reshape(x_train, dim = c(nrow(x_train), 784)) / 255
+x_test <- array_reshape(x_test, dim = c(nrow(x_test), 784)) / 255
+
+# one-hot encode response
+y_train <- to_categorical(y_train, 10)
+y_test <- to_categorical(y_test, 10)
+
+# define and compile model
+model <- keras_model_sequential()
+model %>%
+  layer_dense(units = 256, activation = 'relu', input_shape = c(784),
+              name = "image") %>%
+  layer_dense(units = 128, activation = 'relu') %>%
+  layer_dense(units = 10, activation = 'softmax',
+              name = "prediction") %>%
+  compile(
+    loss = 'categorical_crossentropy',
+    optimizer = optimizer_rmsprop(),
+    metrics = c('accuracy')
+  )
+
+# train model
+history <- model %>% fit(
+  x_train, y_train,
+  epochs = 30, batch_size = 128,
+  validation_split = 0.2
+)
+```
+
+Note that we have given the first and last layers names ("image" and "prediction" respectively). You should always provide sensible names for your input and output layers when creating Keras models which you plan on deploying. 
+
+#### Exporting the Model
+
+After training, the next step is to export the model as a TensorFlow SavedModel using the `export_savedmodel()` function:
+
+```{r}
+library(tfdeploy)
+export_savedmodel(model, "savedmodel")
+```
+
+This will create a "savedmodel" directory that contains a saved version of your MNIST model. You can view the graph of your model using TensorBoard with the `view_savedmodel()` function:
+
+```{r}
+view_savedmodel("savedmodel")
+```
+
+#### Local Server
+
+The **tfdeploy** package includes a local server which you can use to test the HTTP/REST interace to your model before deploying them. To serve a model locally, use the `serve_savedmodel()` function:
+
+```{r}
+serve_savedmodel("savedmodel")
+```
+
+If you navigate to <http://localhost:8089> you'll see a web page that describes the REST interace to your model:
+
+![](images/swagger.png){width=80% .illustration}
+
+Note that the HTTP interface provided by the local server is compatible with the HTTP interface provided by [CloudML](https://cloud.google.com/ml-engine/docs/prediction-overview) and RStudio Connect so it suitable for local testing before deployment.
+
+You can also try calling the model from another R session using the `predict_savedmodel()` function. Here we'll pass a vector full of zeros so we won't expect the prediction to mean much!
+
+```{r}
+predict_savedmodel(
+  rep(0, 784), # blank image 
+  "http://localhost:8089/serving_default/predict", 
+  type = "webapi"
+)
+```
+
 
 ## Model Export
 

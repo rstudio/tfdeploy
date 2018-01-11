@@ -1,43 +1,40 @@
 library(keras)
 
-mnist <- dataset_mnist()
+# load data
+c(c(x_train, y_train), c(x_test, y_test)) %<-% dataset_mnist()
 
-x_train <- mnist$train$x
-y_train <- mnist$train$y
-x_test <- mnist$test$x
-y_test <- mnist$test$y
+# reshape and rescale
+x_train <- array_reshape(x_train, dim = c(nrow(x_train), 784)) / 255
+x_test <- array_reshape(x_test, dim = c(nrow(x_test), 784)) / 255
 
-# reshape
-dim(x_train) <- c(nrow(x_train), 784)
-dim(x_test) <- c(nrow(x_test), 784)
-
-# rescale
-x_train <- x_train / 255
-x_test <- x_test / 255
-
+# one-hot encode response
 y_train <- to_categorical(y_train, 10)
 y_test <- to_categorical(y_test, 10)
 
+# define and compile model
 model <- keras_model_sequential()
 model %>%
-  layer_dense(units = 256, activation = 'relu', input_shape = c(784)) %>%
+  layer_dense(units = 256, activation = 'relu', input_shape = c(784),
+              name = "image") %>%
   layer_dense(units = 128, activation = 'relu') %>%
-  layer_dense(units = 10, activation = 'softmax', name = "output")
+  layer_dense(units = 10, activation = 'softmax',
+              name = "prediction") %>%
+  compile(
+    loss = 'categorical_crossentropy',
+    optimizer = optimizer_rmsprop(),
+    metrics = c('accuracy')
+  )
 
-model %>% compile(
-  loss = 'categorical_crossentropy',
-  optimizer = optimizer_rmsprop(),
-  metrics = c('accuracy')
-)
-
-epochs <- 3
-model %>% fit(
+# train model
+history <- model %>% fit(
   x_train, y_train,
-  epochs = epochs, batch_size = 128,
+  epochs = 30, batch_size = 128,
   validation_split = 0.2
 )
 
-model %>% keras::evaluate(x_test, y_test) %>% print()
-
+# save model
 unlink("keras-mnist", recursive = TRUE)
 export_savedmodel(model, "keras-mnist")
+
+
+

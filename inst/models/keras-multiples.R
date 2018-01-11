@@ -14,4 +14,3 @@ model <- keras_model(
 unlink("keras-multiple", recursive = TRUE)
 
 export_savedmodel(model, "keras-multiple")
-save_model_hdf5(model, "keras-multiple/keras-multiple.hdf5")

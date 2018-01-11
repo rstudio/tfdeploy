@@ -20,8 +20,15 @@ retry <- function(do, times = 1, message = NULL, sleep = 1) {
 }
 
 wait_for_server <- function(url) {
-  if (!retry(function() server_success(url), 5))
-    stop("Failed to connect to server: ", url)
+  start <- Sys.time()
+  if (!retry(function() server_success(url), 10))
+    stop(
+      "Failed to connect to server: ",
+      url,
+      " after ",
+      round(as.numeric(Sys.time() - start), 2),
+      " secs."
+    )
 }
 
 predict_savedmodel.serve_test_prediction <- function(

@@ -26,7 +26,7 @@ wait_for_server <- function(url) {
       "Failed to connect to server: ",
       url,
       " after ",
-      round(as.numeric(Sys.time() - x), 2),
+      round(as.numeric(Sys.time() - start), 2),
       " secs."
     )
 }

@@ -9,8 +9,7 @@
 #' @param daemonized Makes 'httpuv' server daemonized so R interactive sessions
 #'   are not blocked to handle requests. To terminate a daemonized server, call
 #'   'httpuv::stopDaemonizedServer()' with the handle returned from this call.
-#' @param swagger Should a \url{https://swagger.io} landing page be
-#'   made available?
+#' @param browse Launch browser with serving landing page?
 #'
 #' @examples
 #' \dontrun{
@@ -50,10 +49,10 @@ serve_savedmodel <- function(
   host = "127.0.0.1",
   port = 8089,
   daemonized = FALSE,
-  swagger = TRUE
+  browse = !daemonized
   ) {
   httpuv_start <- if (daemonized) httpuv::startDaemonizedServer else httpuv::runServer
-  serve_run(model_dir, host, port, httpuv_start, !daemonized && interactive(), swagger)
+  serve_run(model_dir, host, port, httpuv_start, browse && interactive())
 }
 
 serve_content_type <- function(file_path) {
@@ -114,7 +113,7 @@ serve_empty_page <- function(req, sess, graph) {
   )
 }
 
-serve_handlers <- function(host, port, swagger) {
+serve_handlers <- function(host, port) {
   handlers <- list(
     "^/swagger.json" = function(req, sess, graph) {
       list(
@@ -144,14 +143,18 @@ serve_handlers <- function(host, port, swagger) {
       signature_name <- strsplit(req$PATH_INFO, "/")[[1]][[3]]
 
       json_raw <- req$rook.input$read()
-      json_req <- jsonlite::fromJSON(
-        rawToChar(json_raw),
-        simplifyDataFrame = FALSE,
-        simplifyMatrix = FALSE
-      )
+
+      instances <- list()
+      if (length(json_raw) > 0) {
+        instances <- jsonlite::fromJSON(
+          rawToChar(json_raw),
+          simplifyDataFrame = FALSE,
+          simplifyMatrix = FALSE
+        )$instances
+      }
 
       result <- predict_savedmodel(
-        json_req$instances,
+        instances,
         graph,
         type = "graph",
         sess = sess,
@@ -173,7 +176,7 @@ serve_handlers <- function(host, port, swagger) {
     }
   )
 
-  if (identical(swagger, FALSE)) {
+  if (!getOption("tfdeploy.swagger", default = TRUE)) {
     handlers[["^/swagger.json"]] <- serve_empty_page
     handlers[["^/$"]] <- serve_empty_page
   }
@@ -192,7 +195,7 @@ message_serve_start <- function(host, port, graph) {
   }
 }
 
-serve_run <- function(model_dir, host, port, start, browse, swagger) {
+serve_run <- function(model_dir, host, port, start, browse) {
   with_new_session(function(sess) {
 
     graph <- load_savedmodel(sess, model_dir)
@@ -201,7 +204,7 @@ serve_run <- function(model_dir, host, port, start, browse, swagger) {
 
     if (browse) utils::browseURL(paste0("http://", host, ":", port))
 
-    handlers <- serve_handlers(host, port, swagger)
+    handlers <- serve_handlers(host, port)
 
     start(host, port, list(
       onHeaders = function(req) {

@@ -423,11 +423,16 @@ See the [Deploying Models](https://tensorflow.rstudio.com/tools/cloudml/articles
 
 ### RStudio Connect
 
+[RStudio Connect](https://www.rstudio.com/products/connect/) is a server publishing platform for applications, reports, and APIs created with R. 
 
-
-
+An upcoming version of RStudio Connect will include support for hosting TensorFlow SavedModels, using the same REST interface as is supported by the local server and CloudML.
 
 ### TensorFlow Serving
+
+[TensorFlow Serving](https://www.tensorflow.org/serving) is an open-source library and server implementation that allows you to serve TensorFlow SavedModels using a [gRPC interface](https://grpc.io/).
+
+Once you have exported a TensorFlow model using `export_savedmodel()` it's straightforward to deploy it using TensorFlow Serving. See the documentation at <https://www.tensorflow.org/serving> for additional details.
+
 
 
 

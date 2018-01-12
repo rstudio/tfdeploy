@@ -375,7 +375,6 @@ preds <- predict_savedmodel(
 
 There are a variety of ways to deploy a TensorFlow SavedModel, each of which are described below. Of the 4 methods described, 3 of them (the local server, CloudML, and RStudio Connect) all share the same REST interface, which is described in detail here: <https://cloud.google.com/ml-engine/docs/v1/predict-request>.
 
-
 ### Local Server
 
 The first place you are likely to "deploy" a SavedModel is on your local system, for the purpose of testing and refining the prediction API. The `serve_savedmodel()` function runs a local server that serves your model:

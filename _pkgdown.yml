@@ -8,12 +8,6 @@ navbar:
   left:
     - text: "Home"
       href: index.html
-    - text: "Guides"
-      menu:
-        - text: "Exporting Models"
-          href: articles/guides-exporting.html
-        - text: "TensorFlow Serving"
-          href: articles/guides-tensorflow-serving.html
     - text: "Reference"
       href: reference/index.html
   right:

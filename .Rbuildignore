@@ -7,4 +7,6 @@
 ^README.Rmd$
 ^.*\MNIST-data$
 ^.travis.R$
+^images$
 runs$
+

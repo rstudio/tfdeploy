@@ -161,10 +161,23 @@ serve_handlers <- function(host, port) {
   )
 }
 
+message_serve_start <- function(host, port, graph) {
+  hostname <- paste("http://", host, ":", port, sep = "")
+
+  message()
+  message("Starting server under ", hostname, " with the following API entry points:")
+
+  for (signature_name in graph$signature_def$keys()) {
+    message("  ", hostname, "/api/", signature_name, "/predict/")
+  }
+}
+
 serve_run <- function(model_dir, host, port, start, browse) {
   with_new_session(function(sess) {
 
     graph <- load_savedmodel(sess, model_dir)
+
+    message_serve_start(host, port, graph)
 
     if (browse) utils::browseURL(paste0("http://", host, ":", port))
 

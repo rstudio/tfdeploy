@@ -139,8 +139,8 @@ serve_handlers <- function(host, port) {
     "^/[^/]*$" = function(req, sess, graph) {
       serve_static_file_response("swagger", file.path("dist", req$PATH_INFO))
     },
-    "^/api/[^/]*/predict" = function(req, sess, graph) {
-      signature_name <- strsplit(req$PATH_INFO, "/")[[1]][[3]]
+    "^/[^/]+/predict" = function(req, sess, graph) {
+      signature_name <- strsplit(req$PATH_INFO, "/")[[1]][[2]]
 
       json_raw <- req$rook.input$read()
 
@@ -191,7 +191,7 @@ message_serve_start <- function(host, port, graph) {
   message("Starting server under ", hostname, " with the following API entry points:")
 
   for (signature_name in graph$signature_def$keys()) {
-    message("  ", hostname, "/api/", signature_name, "/predict/")
+    message("  ", hostname, "/", signature_name, "/predict/")
   }
 }
 

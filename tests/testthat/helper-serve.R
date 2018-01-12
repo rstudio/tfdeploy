@@ -63,7 +63,7 @@ predict_savedmodel.serve_test_prediction <- function(
   on.exit(expr = process$kill(), add = TRUE)
 
   url <- paste0(
-    "http://127.0.0.1:9090/api/",
+    "http://127.0.0.1:9090/",
     signature_name,
     "/predict/"
   )

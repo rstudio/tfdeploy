@@ -19,7 +19,7 @@ swagger_header <- function() {
       version = unbox("1.0.0"),
       title = unbox("TensorFlow Model")
     ),
-    basePath = unbox("/api"),
+    basePath = unbox("/"),
     schemes = list(
       unbox("http")
     )

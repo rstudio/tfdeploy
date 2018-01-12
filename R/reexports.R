@@ -1,3 +1,5 @@
+#' @importFrom magrittr %>%
+magrittr::`%>%`
 
 #' @importFrom tensorflow export_savedmodel
 #' @export

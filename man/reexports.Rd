@@ -3,6 +3,8 @@
 \docType{import}
 \name{reexports}
 \alias{reexports}
+\alias{\%>\%}
+\alias{reexports}
 \alias{export_savedmodel}
 \alias{reexports}
 \alias{view_savedmodel}
@@ -13,6 +15,8 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
+  \item{magrittr}{\code{\link[magrittr]{\%>\%}}}
+
   \item{tensorflow}{\code{\link[tensorflow]{export_savedmodel}}, \code{\link[tensorflow]{view_savedmodel}}}
 }}
 

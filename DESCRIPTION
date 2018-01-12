@@ -19,6 +19,7 @@ Imports:
   httpuv,
   httr,
   jsonlite,
+  magrittr,
   reticulate,
   swagger,
   tensorflow

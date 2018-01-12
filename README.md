@@ -22,6 +22,9 @@ model_path <- system.file("models/tensorflow-mnist/", package = "tfdeploy")
 serve_savedmodel(model_path)
 ```
 
+    Starting server under http://127.0.0.1:8089 with the following API entry points:
+      http://127.0.0.1:8089/api/serving_default/predict/
+
 <img src="tools/readme/swagger.png" width=500 />
 
 ### Deployment Client
@@ -47,5 +50,5 @@ predict_savedmodel(pixels::get_pixels(), model_path)
 To run a prediction against a service running `serve_savedmodel()` or a compatible webapi we run:
 
 ``` r
-predict_savedmodel(pixels::get_pixels(), model_path)
+predict_savedmodel(pixels::get_pixels(), type = "webapi")
 ```

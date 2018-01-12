@@ -10,11 +10,10 @@ predict_savedmodel.webapi_prediction <- function(
   ...) {
 
   httr::POST(
-    url = model,
     body = list(
       instances = instances
     ),
     encode = "json"
-  ) %>% httr::content(as = "text") %>% jsonlite::fromJSON()
+  ) %>% httr::content(as = "text") %>% parse_predictions()
 
 }

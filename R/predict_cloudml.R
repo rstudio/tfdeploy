@@ -12,6 +12,9 @@ predict_savedmodel.cloudml_prediction <- function(
   model = NULL,
   signature_name = "serving_default",
   version = NULL,
+  tidy = TRUE,
   ...) {
-  cloudml::cloudml_predict(instances, name = model, version = version)
+  cloudml::cloudml_predict(instances, name = model, version = version) %>%
+    jsonlite::toJSON() %>%
+    parse_predictions(tidy)
 }

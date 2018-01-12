@@ -143,14 +143,18 @@ serve_handlers <- function(host, port) {
       signature_name <- strsplit(req$PATH_INFO, "/")[[1]][[3]]
 
       json_raw <- req$rook.input$read()
-      json_req <- jsonlite::fromJSON(
+
+      instances <- list()
+      if (length(json_raw) > 0) {
+        instances <- jsonlite::fromJSON(
           rawToChar(json_raw),
           simplifyDataFrame = FALSE,
           simplifyMatrix = FALSE
-      )
+        )$instances
+      }
 
       result <- predict_savedmodel(
-        json_req$instances,
+        instances,
         graph,
         type = "graph",
         sess = sess,

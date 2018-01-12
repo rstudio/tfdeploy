@@ -7,6 +7,7 @@
 .Ruserdata
 # Example code in package build process
 *-Ex.R
+.DS_Store
 # RStudio files
 .Rproj.user
 # produced vignettes

@@ -117,17 +117,15 @@ serve_empty_page <- function(req, sess, graph) {
 serve_handlers <- function(host, port, swagger) {
   handlers <- list(
     "^/swagger.json" = function(req, sess, graph) {
-      if (identical(options$swagger, TRUE)) {
-        list(
-          status = 200L,
-          headers = list(
-            "Content-Type" = paste0(serve_content_type("json"), "; charset=UTF-8")
-          ),
-          body = charToRaw(enc2utf8(
-            swagger_from_signature_def(graph$signature_def)
-          ))
-        )
-      }
+      list(
+        status = 200L,
+        headers = list(
+          "Content-Type" = paste0(serve_content_type("json"), "; charset=UTF-8")
+        ),
+        body = charToRaw(enc2utf8(
+          swagger_from_signature_def(graph$signature_def)
+        ))
+      )
     },
     "^/$" = function(req, sess, graph) {
       serve_static_file_response(

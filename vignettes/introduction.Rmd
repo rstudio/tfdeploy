@@ -201,7 +201,6 @@ preds <- predict_savedmodel(
 ```
 
 
-
 You could also call the model from another langague entirely since the interface is just HTTP and REST. For example, if the following JSON is submitted to the endpoint as a request body it will return predictions:
 
 ```text
@@ -222,6 +221,7 @@ You could also call the model from another langague entirely since the interface
 }
 ```
 
+Additional details on the JSON schema used for the REST interface is provided in the [Model Deployment] section below.
 
 #### Remote Deployment
 
@@ -373,23 +373,61 @@ preds <- predict_savedmodel(
 
 ## Model Deployment
 
+There are a variety of ways to deploy a TensorFlow SavedModel, each of which are described below. Of the 4 methods described, 3 of them (the local server, CloudML, and RStudio Connect) all share the same REST interface, which is described in detail here: <https://cloud.google.com/ml-engine/docs/v1/predict-request>.
+
+
 ### Local Server
 
+The first place you are likely to "deploy" a SavedModel is on your local system, for the purpose of testing and refining the prediction API. The `serve_savedmodel()` function runs a local server that serves your model:
 
+```{r}
+serve_savedmodel("savedmodel")
+```
+<pre style="background-color: transparent; margin: 0 !important; padding: 0 !important;"><code style="color: rgb(196,27,6); background-color: transparent;">Starting server under http://127.0.0.1:8089 with the following API entry points:
+  http://127.0.0.1:8089/api/serving_default/predict/
+
+</code></pre>
+
+The REST API used by the local server is based on the [CloudML predict request API](https://cloud.google.com/ml-engine/docs/v1/predict-request).
 
 If you navigate to <http://localhost:8089> you'll see a web page that describes the REST interace to your model:
 
 ![](images/swagger.png){width=80% .illustration}
 
-Note that the HTTP interface provided by the local server is compatible with the HTTP interface provided by [CloudML](https://cloud.google.com/ml-engine/docs/prediction-overview) and RStudio Connect so it suitable for local testing before deployment.
+You can request predictions remotely from any language or environment using this REST API. You can also call the `predict_savedmodel()` function from R:
 
-### TensorFlow Serving
-
+```{r}
+predict_savedmodel(
+  input_data,
+  "http://localhost:8089/api/serving_default/predict", 
+  type = "webapi"
+)
+```
 
 ### CloudML
 
+You can deploy TensorFlow SavedModels to Google's [CloudML](https://cloud.google.com/ml-engine/) service using functions from the [cloudml](https://tensorflow.rstudio.com/tools/cloudml/) package. For example:
+
+```{r}
+library(cloudml)
+cloudml_deploy("savedmodel", name = "keras_mnist")
+```
+
+You can generate predictions using the `cloudml_predict()` function:
+
+```{r}
+cloudml_predict(test_images, name = "keras_mnist")
+```
+
+See the [Deploying Models](https://tensorflow.rstudio.com/tools/cloudml/articles/deployment.html) article on the CloudML package website for additional details.
 
 ### RStudio Connect
+
+
+
+
+
+### TensorFlow Serving
 
 
 

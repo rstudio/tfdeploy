@@ -5,7 +5,7 @@
 \title{Serve a SavedModel}
 \usage{
 serve_savedmodel(model_dir, host = "127.0.0.1", port = 8089,
-  daemonized = FALSE)
+  daemonized = FALSE, swagger = TRUE)
 }
 \arguments{
 \item{model_dir}{The path to the exported model, as a string.}
@@ -17,6 +17,9 @@ serve_savedmodel(model_dir, host = "127.0.0.1", port = 8089,
 \item{daemonized}{Makes 'httpuv' server daemonized so R interactive sessions
 are not blocked to handle requests. To terminate a daemonized server, call
 'httpuv::stopDaemonizedServer()' with the handle returned from this call.}
+
+\item{swagger}{Should a \url{https://swagger.io} landing page be
+made available?}
 }
 \description{
 Serve a TensorFlow SavedModel as a local web api under

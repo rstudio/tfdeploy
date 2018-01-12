@@ -9,6 +9,8 @@
 #' @param daemonized Makes 'httpuv' server daemonized so R interactive sessions
 #'   are not blocked to handle requests. To terminate a daemonized server, call
 #'   'httpuv::stopDaemonizedServer()' with the handle returned from this call.
+#' @param swagger Should a \url{https://swagger.io} landing page be
+#'   made available?
 #'
 #' @examples
 #' \dontrun{
@@ -47,10 +49,11 @@ serve_savedmodel <- function(
   model_dir,
   host = "127.0.0.1",
   port = 8089,
-  daemonized = FALSE
+  daemonized = FALSE,
+  swagger = TRUE
   ) {
   httpuv_start <- if (daemonized) httpuv::startDaemonizedServer else httpuv::runServer
-  serve_run(model_dir, host, port, httpuv_start, !daemonized && interactive())
+  serve_run(model_dir, host, port, httpuv_start, !daemonized && interactive(), swagger)
 }
 
 serve_content_type <- function(file_path) {
@@ -101,18 +104,30 @@ serve_invalid_request <- function(message = NULL) {
   )
 }
 
-serve_handlers <- function(host, port) {
+serve_empty_page <- function(req, sess, graph) {
   list(
+    status = 200L,
+    headers = list(
+      "Content-Type" = "text/html"
+    ),
+    body = "<html></html>"
+  )
+}
+
+serve_handlers <- function(host, port, swagger) {
+  handlers <- list(
     "^/swagger.json" = function(req, sess, graph) {
-      list(
-        status = 200L,
-        headers = list(
-          "Content-Type" = paste0(serve_content_type("json"), "; charset=UTF-8")
-        ),
-        body = charToRaw(enc2utf8(
-          swagger_from_signature_def(graph$signature_def)
-        ))
-      )
+      if (identical(options$swagger, TRUE)) {
+        list(
+          status = 200L,
+          headers = list(
+            "Content-Type" = paste0(serve_content_type("json"), "; charset=UTF-8")
+          ),
+          body = charToRaw(enc2utf8(
+            swagger_from_signature_def(graph$signature_def)
+          ))
+        )
+      }
     },
     "^/$" = function(req, sess, graph) {
       serve_static_file_response(
@@ -159,6 +174,13 @@ serve_handlers <- function(host, port) {
       stop("Invalid path.")
     }
   )
+
+  if (identical(swagger, FALSE)) {
+    handlers[["^/swagger.json"]] <- serve_empty_page
+    handlers[["^/$"]] <- serve_empty_page
+  }
+
+  handlers
 }
 
 message_serve_start <- function(host, port, graph) {
@@ -172,7 +194,7 @@ message_serve_start <- function(host, port, graph) {
   }
 }
 
-serve_run <- function(model_dir, host, port, start, browse) {
+serve_run <- function(model_dir, host, port, start, browse, swagger) {
   with_new_session(function(sess) {
 
     graph <- load_savedmodel(sess, model_dir)
@@ -181,7 +203,7 @@ serve_run <- function(model_dir, host, port, start, browse) {
 
     if (browse) utils::browseURL(paste0("http://", host, ":", port))
 
-    handlers <- serve_handlers(host, port)
+    handlers <- serve_handlers(host, port, swagger)
 
     start(host, port, list(
       onHeaders = function(req) {

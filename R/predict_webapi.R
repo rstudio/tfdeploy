@@ -15,6 +15,8 @@ predict_savedmodel.webapi_prediction <- function(
       instances = instances
     ),
     encode = "json"
-  ) %>% httr::content(as = "text") %>% jsonlite::fromJSON()
+  ) %>% httr::content(as = "text") %>%
+    jsonlite::fromJSON(simplifyDataFrame = FALSE) %>%
+    structure(class = "savedmodel_predictions")
 
 }

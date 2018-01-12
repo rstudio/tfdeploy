@@ -62,36 +62,16 @@ predict_single_savedmodel_export <- function(instance, sess, signature_def, sign
 }
 
 predict_savedmodel_export <- function(instances, sess, signature_def, signature_name) {
-  # to provide the matching cloudml JSON structure, we use a dataframe
-  predictions <- data.frame(instance_id = rep(0, length(instances)))
 
-  entries <- list()
-  for (instance in instances) {
-    result <- predict_single_savedmodel_export(
+  lapply(instances, function(instance) {
+    predict_single_savedmodel_export(
       instance = instance,
       sess = sess,
       signature_def = signature_def,
       signature_name = signature_name
     )
+  })
 
-    for (r in names(result)) {
-      use_list <- length(result[[r]]) > 1
-
-      if (is.null(entries[[r]])) entries[[r]] <- if (use_list) list() else NULL
-      if (use_list)
-        entries[[r]][[length(entries[[r]]) + 1]] <- result[[r]]
-      else
-        entries[[r]] <- c(entries[[r]], result[[r]])
-    }
-  }
-
-  for (e in names(entries)) {
-    predictions[[e]] <- entries[[e]]
-  }
-
-  predictions$instance_id <- NULL
-
-  predictions
 }
 
 #' Predict using a Loaded SavedModel
@@ -125,7 +105,5 @@ predict_savedmodel.graph_prediction <- function(
 
   results <- list(predictions = predictions)
 
-  jsonlite::fromJSON(
-    jsonlite::toJSON(results)
-  )
+  structure(results, class = "savedmodel_predictions")
 }

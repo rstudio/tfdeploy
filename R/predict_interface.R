@@ -25,3 +25,15 @@ predict_savedmodel <- function(
   class(instances) <- paste0(type, "_prediction")
   UseMethod("predict_savedmodel", instances)
 }
+
+#' @export
+print.savedmodel_predictions <- function(x, ...) {
+  predictions <- x$predictions
+  for (index in seq_along(predictions)) {
+    prediction <- predictions[[index]]
+    if (length(predictions) > 1)
+      message("Prediction ", index, ":")
+
+    print(prediction)
+  }
+}

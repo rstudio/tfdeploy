@@ -5,3 +5,8 @@ with_new_session <- function(f) {
 
   f(sess)
 }
+
+append_predictions_class <- function(x) {
+  class(x) <- c(class(x), "savedmodel_predictions")
+  x
+}

@@ -17,7 +17,7 @@ predict_savedmodel.export_prediction <- function(
       type = "graph",
       signature_name = signature_name,
       sess = sess
-    ) %>% structure(class = "savedmodel_predictions")
+    ) %>% append_predictions_class()
 
   })
 }

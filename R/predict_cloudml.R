@@ -14,5 +14,5 @@ predict_savedmodel.cloudml_prediction <- function(
   version = NULL,
   ...) {
   cloudml::cloudml_predict(instances, name = model, version = version) %>%
-    structure(class = "savedmodel_predictions")
+    append_predictions_class()
 }

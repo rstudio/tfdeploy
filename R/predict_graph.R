@@ -103,7 +103,6 @@ predict_savedmodel.graph_prediction <- function(
     signature_name = signature_name
   )
 
-  results <- list(predictions = predictions)
-
-  structure(results, class = "savedmodel_predictions")
+  list(predictions = predictions) %>%
+    append_predictions_class()
 }

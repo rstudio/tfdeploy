@@ -35,7 +35,6 @@ accuracy <- tf$reduce_mean(tf$cast(correct_prediction, tf$float32))
 
 sess$run(accuracy, feed_dict=dict(x = mnist$test$images, y_ = mnist$test$labels))
 
-unlink("tensorflow-mnist", recursive = TRUE)
 export_savedmodel(
   sess,
   "tensorflow-mnist",

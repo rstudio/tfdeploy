@@ -33,8 +33,4 @@ history <- model %>% fit(
 )
 
 # save model
-unlink("keras-mnist", recursive = TRUE)
 export_savedmodel(model, "keras-mnist")
-
-
-

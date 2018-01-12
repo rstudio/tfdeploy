@@ -11,6 +11,4 @@ model <- keras_model(
   outputs = c(output1, output2)
 )
 
-unlink("keras-multiple", recursive = TRUE)
-
 export_savedmodel(model, "keras-multiple")

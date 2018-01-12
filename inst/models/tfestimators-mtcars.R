@@ -18,5 +18,4 @@ test  <- mtcars[-indices, ]
 
 model %>% train(mtcars_input_fn(train, num_epochs = 10))
 
-unlink("tfestimators-mtcars", recursive = TRUE)
 export_savedmodel(model, "tfestimators-mtcars")

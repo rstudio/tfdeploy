@@ -10,7 +10,6 @@ input2 <- tf$placeholder(tf$string)
 output1 <- tf$string_join(inputs = c("Input1: ", input1, "!"))
 output2 <- tf$string_join(inputs = c("Input2: ", input2, "!"))
 
-unlink("tensorflow-multiple", recursive = TRUE)
 export_savedmodel(
   sess,
   "tensorflow-multiple",

@@ -210,11 +210,5 @@ test_that("tfestimators model predictions across services are equivalent", {
     )
   )
 
-  # tfestimator models in cloudml are what I argue incorrectly returned as:
-  # [{"predictions":[6.626]},{"predictions":[6.626]}]
-  # instead of
-  # [{"predictions":6.626},{"predictions":6.626}]
-  # therefore, we relax the comparisson here to allow auto_unbox
-
-  test_compare_services(service_defs, instances_entries, relaxed = TRUE)
+  test_compare_services(service_defs, instances_entries)
 })

@@ -4,7 +4,7 @@
 \alias{predict_savedmodel.graph_prediction}
 \title{Predict using a Loaded SavedModel}
 \usage{
-\method{predict_savedmodel}{graph_prediction}(instances,
+\method{predict_savedmodel}{graph_prediction}(instances, model,
   signature_name = "serving_default", sess, ...)
 }
 \arguments{

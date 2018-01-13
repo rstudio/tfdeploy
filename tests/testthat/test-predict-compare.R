@@ -4,6 +4,18 @@ test_relax_json <- function(e) {
   jsonlite::fromJSON(jsonlite::toJSON(e, auto_unbox = TRUE))
 }
 
+arrays_to_vectors <- function(e) {
+  for (i in seq_along(e)) {
+    if (data.class(e[[i]]) == "array")
+      e[[i]] <- as.vector(e[[i]])
+    else if (is.list(e[[i]])) {
+      e[[i]] <- arrays_to_vectors(e[[i]])
+    }
+  }
+
+  e
+}
+
 test_compare_services <- function(service_defs, instances_entries, relaxed = FALSE) {
   for (instances_index in seq_along(instances_entries)) {
     services_results <- lapply(service_defs, function(service_def) {
@@ -26,9 +38,10 @@ test_compare_services <- function(service_defs, instances_entries, relaxed = FAL
       }
 
       all_equal <- all.equal(
-        first_prediction,
-        other_prediction,
-        tolerance = 1e-3
+        arrays_to_vectors(first_prediction),
+        (other_prediction),
+        tolerance = 1e-3,
+        check.attributes = FALSE
       )
 
       if (!identical(all_equal, TRUE)) {

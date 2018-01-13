@@ -4,8 +4,7 @@
 \alias{predict_savedmodel.webapi_prediction}
 \title{Predict using a Web API}
 \usage{
-\method{predict_savedmodel}{webapi_prediction}(instances,
-  model = "http://127.0.0.1:8089/api/serving_default/predict/",
+\method{predict_savedmodel}{webapi_prediction}(instances, model,
   signature_name = "serving_default", ...)
 }
 \description{

@@ -10,7 +10,7 @@ test_that("can predict mnist model from a local file", {
   )
 
   expect_equal(
-    length(results$predictions$scores[[1]]),
+    length(results$predictions[[1]]$scores),
     10
   )
 })

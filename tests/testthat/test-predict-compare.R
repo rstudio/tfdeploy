@@ -1,9 +1,5 @@
 context("Compare Predictions")
 
-test_relax_json <- function(e) {
-  jsonlite::fromJSON(jsonlite::toJSON(e, auto_unbox = TRUE))
-}
-
 arrays_to_vectors <- function(e) {
   for (i in seq_along(e)) {
     if (data.class(e[[i]]) == "array")
@@ -16,7 +12,7 @@ arrays_to_vectors <- function(e) {
   e
 }
 
-test_compare_services <- function(service_defs, instances_entries, relaxed = FALSE) {
+test_compare_services <- function(service_defs, instances_entries) {
   for (instances_index in seq_along(instances_entries)) {
     services_results <- lapply(service_defs, function(service_def) {
       service_def$instances <- instances_entries[[instances_index]]
@@ -29,13 +25,9 @@ test_compare_services <- function(service_defs, instances_entries, relaxed = FAL
       first_prediction <- first$predictions
       other_prediction <- services_results[[idx_result]]$predictions
 
-      first_prediction <- first_prediction[order(colnames(first_prediction))]
-      other_prediction <- other_prediction[order(colnames(other_prediction))]
-
-      if (relaxed) {
-        first_prediction <- test_relax_json(first_prediction)
-        other_prediction <- test_relax_json(other_prediction)
-      }
+      order_names <- function(e) e[order(names(e))]
+      first_prediction <- lapply(first_prediction, order_names)
+      other_prediction <- lapply(other_prediction, order_names)
 
       all_equal <- all.equal(
         arrays_to_vectors(first_prediction),

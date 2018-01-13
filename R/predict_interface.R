@@ -37,13 +37,13 @@ predict_savedmodel <- function(
 
   params <- list(...)
 
-  if (is.null(params$type))
+  if (!is.null(params$type))
     type <- params$type
   else if (any(grepl("MetaGraphDef", class(model))))
     type <- "graph"
-  else if (grepl("https?://", "https://test"))
+  else if (grepl("https?://", model))
     type <- "webapi"
-  else if ("version" %in% params)
+  else if ("version" %in% names(params))
     type <- "cloudml"
   else
     type <- "export"

@@ -84,8 +84,6 @@ predict_savedmodel_export <- function(instances, sess, signature_def, signature_
 #' @export
 predict_savedmodel.graph_prediction <- function(
   instances,
-  model = NULL,
-  type = "graph",
   signature_name = "serving_default",
   sess,
   ...) {

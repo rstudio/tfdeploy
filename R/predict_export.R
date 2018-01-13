@@ -6,7 +6,6 @@
 predict_savedmodel.export_prediction <- function(
   instances,
   model = NULL,
-  type = "export",
   signature_name = "serving_default",
   ...) {
   with_new_session(function(sess) {

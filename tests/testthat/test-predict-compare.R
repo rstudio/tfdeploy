@@ -17,7 +17,6 @@ test_compare_services <- function(service_defs, instances_entries) {
     services_results <- lapply(names(service_defs), function(service_name) {
       service_def <- service_defs[[service_name]]
       service_def$instances <- instances_entries[[instances_index]]
-      service_def$type <- service_name
       do.call("predict_savedmodel", service_def)
     })
 

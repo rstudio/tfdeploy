@@ -39,7 +39,7 @@ test_compare_services <- function(service_defs, instances_entries, relaxed = FAL
 
       all_equal <- all.equal(
         arrays_to_vectors(first_prediction),
-        (other_prediction),
+        arrays_to_vectors(other_prediction),
         tolerance = 1e-3,
         check.attributes = FALSE
       )

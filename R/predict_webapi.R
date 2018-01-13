@@ -6,6 +6,7 @@
 predict_savedmodel.webapi_prediction <- function(
   instances,
   model = "http://127.0.0.1:8089/serving_default/predict/",
+  type = "webapi",
   signature_name = "serving_default",
   ...) {
 

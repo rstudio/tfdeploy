@@ -10,6 +10,7 @@
 predict_savedmodel.cloudml_prediction <- function(
   instances,
   model = NULL,
+  type = "cloudml",
   signature_name = "serving_default",
   version = NULL,
   ...) {

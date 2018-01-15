@@ -35,7 +35,7 @@
 #'
 #' @seealso [export_savedmodel()], [serve_savedmodel()], [load_savedmodel()]
 #'
-#' #' @examples
+#' @examples
 #' \dontrun{
 #' # perform prediction based on an existing model
 #' tfdeploy::predict_savedmodel(

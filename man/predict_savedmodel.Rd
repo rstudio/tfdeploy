@@ -40,10 +40,7 @@ and \code{\link[=predict_savedmodel.cloudml_prediction]{predict_savedmodel.cloud
 \description{
 Runs a prediction over a saved model file, local service or cloudml model.
 }
-\seealso{
-\code{\link[=export_savedmodel]{export_savedmodel()}}, \code{\link[=serve_savedmodel]{serve_savedmodel()}}, \code{\link[=load_savedmodel]{load_savedmodel()}}
-
-#' @examples
+\examples{
 \dontrun{
 # perform prediction based on an existing model
 tfdeploy::predict_savedmodel(
@@ -51,4 +48,8 @@ tfdeploy::predict_savedmodel(
   system.file("models/tensorflow-mnist", package = "tfdeploy")
 )
 }
+
+}
+\seealso{
+\code{\link[=export_savedmodel]{export_savedmodel()}}, \code{\link[=serve_savedmodel]{serve_savedmodel()}}, \code{\link[=load_savedmodel]{load_savedmodel()}}
 }

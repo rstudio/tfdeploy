@@ -11,4 +11,4 @@ model <- keras_model(
   outputs = c(output1, output2)
 )
 
-export_savedmodel(model, "keras-multiple")
+export_savedmodel(model, "keras-multiple", as_text = TRUE)

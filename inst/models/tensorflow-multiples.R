@@ -14,4 +14,5 @@ export_savedmodel(
   sess,
   "tensorflow-multiple",
   inputs = list(i1 = input1, i2 = input2),
-  outputs = list(o1 = output1, o2 = output2))
+  outputs = list(o1 = output1, o2 = output2),
+  as_text = TRUE)

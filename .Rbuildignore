@@ -9,5 +9,4 @@
 ^.travis.R$
 ^images$
 runs$
-tests/testthat/models/*$
 ^scripts$

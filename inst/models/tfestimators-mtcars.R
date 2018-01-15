@@ -18,4 +18,4 @@ test  <- mtcars[-indices, ]
 
 model %>% train(mtcars_input_fn(train, num_epochs = 10))
 
-export_savedmodel(model, "tfestimators-mtcars")
+export_savedmodel(model, "tfestimators-mtcars", as_text = TRUE)

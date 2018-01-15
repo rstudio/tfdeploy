@@ -22,7 +22,6 @@ meta_graphs {
           allowed_values {
             list {
               type: DT_HALF
-              type: DT_BFLOAT16
               type: DT_FLOAT
               type: DT_DOUBLE
               type: DT_UINT8
@@ -76,9 +75,6 @@ meta_graphs {
               type: DT_QUINT8
               type: DT_QINT32
               type: DT_HALF
-              type: DT_UINT32
-              type: DT_UINT64
-              type: DT_BFLOAT16
             }
           }
         }
@@ -123,9 +119,6 @@ meta_graphs {
               type: DT_QUINT8
               type: DT_QINT32
               type: DT_HALF
-              type: DT_UINT32
-              type: DT_UINT64
-              type: DT_BFLOAT16
             }
           }
         }
@@ -305,7 +298,6 @@ meta_graphs {
           allowed_values {
             list {
               type: DT_HALF
-              type: DT_BFLOAT16
               type: DT_FLOAT
               type: DT_DOUBLE
               type: DT_UINT8
@@ -329,7 +321,7 @@ meta_graphs {
         name: "Fill"
         input_arg {
           name: "dims"
-          type_attr: "index_type"
+          type: DT_INT32
         }
         input_arg {
           name: "value"
@@ -342,19 +334,6 @@ meta_graphs {
         attr {
           name: "T"
           type: "type"
-        }
-        attr {
-          name: "index_type"
-          type: "type"
-          default_value {
-            type: DT_INT32
-          }
-          allowed_values {
-            list {
-              type: DT_INT32
-              type: DT_INT64
-            }
-          }
         }
       }
       op {
@@ -377,7 +356,6 @@ meta_graphs {
           allowed_values {
             list {
               type: DT_HALF
-              type: DT_BFLOAT16
               type: DT_FLOAT
               type: DT_DOUBLE
               type: DT_UINT8
@@ -413,7 +391,6 @@ meta_graphs {
             list {
               type: DT_INT32
               type: DT_INT64
-              type: DT_BFLOAT16
               type: DT_FLOAT
               type: DT_DOUBLE
             }
@@ -451,7 +428,6 @@ meta_graphs {
           allowed_values {
             list {
               type: DT_HALF
-              type: DT_BFLOAT16
               type: DT_FLOAT
               type: DT_DOUBLE
               type: DT_COMPLEX64
@@ -494,7 +470,6 @@ meta_graphs {
           allowed_values {
             list {
               type: DT_HALF
-              type: DT_BFLOAT16
               type: DT_FLOAT
               type: DT_DOUBLE
               type: DT_INT32
@@ -524,7 +499,6 @@ meta_graphs {
           allowed_values {
             list {
               type: DT_HALF
-              type: DT_BFLOAT16
               type: DT_FLOAT
               type: DT_DOUBLE
               type: DT_INT32
@@ -574,9 +548,6 @@ meta_graphs {
               type: DT_QUINT8
               type: DT_QINT32
               type: DT_HALF
-              type: DT_UINT32
-              type: DT_UINT64
-              type: DT_BFLOAT16
             }
           }
         }
@@ -633,7 +604,6 @@ meta_graphs {
           allowed_values {
             list {
               type: DT_HALF
-              type: DT_BFLOAT16
               type: DT_FLOAT
               type: DT_DOUBLE
               type: DT_UINT8
@@ -665,7 +635,6 @@ meta_graphs {
           allowed_values {
             list {
               type: DT_HALF
-              type: DT_BFLOAT16
               type: DT_FLOAT
               type: DT_DOUBLE
               type: DT_INT32
@@ -768,9 +737,6 @@ meta_graphs {
               type: DT_QUINT8
               type: DT_QINT32
               type: DT_HALF
-              type: DT_UINT32
-              type: DT_UINT64
-              type: DT_BFLOAT16
             }
           }
         }
@@ -814,7 +780,6 @@ meta_graphs {
           }
           allowed_values {
             list {
-              type: DT_BFLOAT16
               type: DT_FLOAT
               type: DT_DOUBLE
               type: DT_INT32
@@ -843,7 +808,6 @@ meta_graphs {
           allowed_values {
             list {
               type: DT_HALF
-              type: DT_BFLOAT16
               type: DT_FLOAT
               type: DT_DOUBLE
               type: DT_UINT8
@@ -874,7 +838,6 @@ meta_graphs {
           allowed_values {
             list {
               type: DT_HALF
-              type: DT_BFLOAT16
               type: DT_FLOAT
               type: DT_DOUBLE
               type: DT_INT32
@@ -1032,7 +995,6 @@ meta_graphs {
           allowed_values {
             list {
               type: DT_HALF
-              type: DT_BFLOAT16
               type: DT_FLOAT
               type: DT_DOUBLE
             }
@@ -1084,7 +1046,6 @@ meta_graphs {
           allowed_values {
             list {
               type: DT_HALF
-              type: DT_BFLOAT16
               type: DT_FLOAT
               type: DT_DOUBLE
               type: DT_UINT8
@@ -1139,9 +1100,6 @@ meta_graphs {
               type: DT_QUINT8
               type: DT_QINT32
               type: DT_HALF
-              type: DT_UINT32
-              type: DT_UINT64
-              type: DT_BFLOAT16
             }
           }
         }
@@ -1224,8 +1182,8 @@ meta_graphs {
       }
     }
     tags: "serve"
-    tensorflow_version: "1.5.0-dev20180103"
-    tensorflow_git_version: "v1.3.0-rc1-6714-g136697e"
+    tensorflow_version: "1.4.0"
+    tensorflow_git_version: "v1.4.0-rc1-11-g130a514"
   }
   graph_def {
     node {
@@ -1969,7 +1927,7 @@ meta_graphs {
       }
     }
     node {
-      name: "gradients/grad_ys_0"
+      name: "gradients/Const"
       op: "Const"
       attr {
         key: "_output_shapes"
@@ -2002,7 +1960,7 @@ meta_graphs {
       name: "gradients/Fill"
       op: "Fill"
       input: "gradients/Shape"
-      input: "gradients/grad_ys_0"
+      input: "gradients/Const"
       attr {
         key: "T"
         value {
@@ -2016,12 +1974,6 @@ meta_graphs {
             shape {
             }
           }
-        }
-      }
-      attr {
-        key: "index_type"
-        value {
-          type: DT_INT32
         }
       }
     }
@@ -2216,6 +2168,14 @@ meta_graphs {
       name: "gradients/Mean_grad/Const"
       op: "Const"
       attr {
+        key: "_class"
+        value {
+          list {
+            s: "loc:@gradients/Mean_grad/Shape_1"
+          }
+        }
+      }
+      attr {
         key: "_output_shapes"
         value {
           list {
@@ -2266,6 +2226,14 @@ meta_graphs {
         }
       }
       attr {
+        key: "_class"
+        value {
+          list {
+            s: "loc:@gradients/Mean_grad/Shape_1"
+          }
+        }
+      }
+      attr {
         key: "_output_shapes"
         value {
           list {
@@ -2284,6 +2252,14 @@ meta_graphs {
     node {
       name: "gradients/Mean_grad/Const_1"
       op: "Const"
+      attr {
+        key: "_class"
+        value {
+          list {
+            s: "loc:@gradients/Mean_grad/Shape_1"
+          }
+        }
+      }
       attr {
         key: "_output_shapes"
         value {
@@ -2335,6 +2311,14 @@ meta_graphs {
         }
       }
       attr {
+        key: "_class"
+        value {
+          list {
+            s: "loc:@gradients/Mean_grad/Shape_1"
+          }
+        }
+      }
+      attr {
         key: "_output_shapes"
         value {
           list {
@@ -2353,6 +2337,14 @@ meta_graphs {
     node {
       name: "gradients/Mean_grad/Maximum/y"
       op: "Const"
+      attr {
+        key: "_class"
+        value {
+          list {
+            s: "loc:@gradients/Mean_grad/Shape_1"
+          }
+        }
+      }
       attr {
         key: "_output_shapes"
         value {
@@ -2392,6 +2384,14 @@ meta_graphs {
         }
       }
       attr {
+        key: "_class"
+        value {
+          list {
+            s: "loc:@gradients/Mean_grad/Shape_1"
+          }
+        }
+      }
+      attr {
         key: "_output_shapes"
         value {
           list {
@@ -2410,6 +2410,14 @@ meta_graphs {
         key: "T"
         value {
           type: DT_INT32
+        }
+      }
+      attr {
+        key: "_class"
+        value {
+          list {
+            s: "loc:@gradients/Mean_grad/Shape_1"
+          }
         }
       }
       attr {
@@ -2834,12 +2842,6 @@ meta_graphs {
             shape {
             }
           }
-        }
-      }
-      attr {
-        key: "index_type"
-        value {
-          type: DT_INT32
         }
       }
     }
@@ -4557,7 +4559,7 @@ meta_graphs {
             dtype: DT_STRING
             tensor_shape {
             }
-            string_val: "_temp_56792fde1a474ea89f1a02e75cff4059/part"
+            string_val: "_temp_991934126f8f43e3a5c1fd6850938fb4/part"
           }
         }
       }
@@ -4622,7 +4624,6 @@ meta_graphs {
     node {
       name: "save/ShardedFilename/shard"
       op: "Const"
-      device: "/device:CPU:0"
       attr {
         key: "_output_shapes"
         value {
@@ -4656,7 +4657,6 @@ meta_graphs {
       input: "save/StringJoin"
       input: "save/ShardedFilename/shard"
       input: "save/num_shards"
-      device: "/device:CPU:0"
       attr {
         key: "_output_shapes"
         value {
@@ -4670,7 +4670,6 @@ meta_graphs {
     node {
       name: "save/SaveV2/tensor_names"
       op: "Const"
-      device: "/device:CPU:0"
       attr {
         key: "_output_shapes"
         value {
@@ -4708,7 +4707,6 @@ meta_graphs {
     node {
       name: "save/SaveV2/shape_and_slices"
       op: "Const"
-      device: "/device:CPU:0"
       attr {
         key: "_output_shapes"
         value {
@@ -4751,7 +4749,6 @@ meta_graphs {
       input: "save/SaveV2/shape_and_slices"
       input: "Variable"
       input: "Variable_1"
-      device: "/device:CPU:0"
       attr {
         key: "dtypes"
         value {
@@ -4767,7 +4764,6 @@ meta_graphs {
       op: "Identity"
       input: "save/ShardedFilename"
       input: "^save/SaveV2"
-      device: "/device:CPU:0"
       attr {
         key: "T"
         value {
@@ -4797,7 +4793,6 @@ meta_graphs {
       op: "Pack"
       input: "save/ShardedFilename"
       input: "^save/control_dependency"
-      device: "/device:CPU:0"
       attr {
         key: "N"
         value {
@@ -4834,7 +4829,6 @@ meta_graphs {
       op: "MergeV2Checkpoints"
       input: "save/MergeV2Checkpoints/checkpoint_prefixes"
       input: "save/Const"
-      device: "/device:CPU:0"
       attr {
         key: "delete_old_dirs"
         value {
@@ -4848,7 +4842,6 @@ meta_graphs {
       input: "save/Const"
       input: "^save/control_dependency"
       input: "^save/MergeV2Checkpoints"
-      device: "/device:CPU:0"
       attr {
         key: "T"
         value {

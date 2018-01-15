@@ -9,9 +9,39 @@ load_savedmodel(sess, model_dir = NULL)
 \arguments{
 \item{sess}{The TensorFlow session.}
 
-\item{model_dir}{The path to the exported model, as a string.}
+\item{model_dir}{The path to the exported model, as a string. Defaults to
+a "savedmodel" path or the latest training run.}
 }
 \description{
 Loads a SavedModel using the given TensorFlow session and
 returns the model's graph.
+}
+\details{
+Loading a model improves performance over multiple \code{predict_savedmodel()}
+calls.
+}
+\examples{
+\dontrun{
+# start session
+sess <- tensorflow::tf$Session()
+
+# preload an existing model into a TensorFlow session
+graph <- tfdeploy::load_savedmodel(
+  sess,
+  system.file("models/tensorflow-mnist", package = "tfdeploy")
+)
+
+# perform prediction based on a pre-loaded model
+tfdeploy::predict_savedmodel(
+  list(rep(9, 784)),
+  graph
+)
+
+# close session
+sess$close()
+}
+
+}
+\seealso{
+\code{\link[=export_savedmodel]{export_savedmodel()}}, \code{\link[=predict_savedmodel]{predict_savedmodel()}}
 }

@@ -5,7 +5,7 @@
 \title{Predict using a CloudML SavedModel}
 \usage{
 \method{predict_savedmodel}{cloudml_prediction}(instances, model,
-  signature_name = "serving_default", version = NULL, ...)
+  version = NULL, ...)
 }
 \arguments{
 \item{instances}{A list of prediction instances to be passed as input tensors
@@ -25,14 +25,20 @@ A \code{type} parameter can be specified to explicitly choose the type model
 performing the prediction. Valid values are \code{cloudml}, \code{export},
 \code{webapi} and \code{graph}.}
 
-\item{signature_name}{The named entry point to use in the model for prediction.}
-
 \item{version}{The version of the CloudML model.}
 
 \item{...}{See \code{\link[=predict_savedmodel.export_prediction]{predict_savedmodel.export_prediction()}},
 \code{\link[=predict_savedmodel.graph_prediction]{predict_savedmodel.graph_prediction()}},
 \code{\link[=predict_savedmodel.webapi_prediction]{predict_savedmodel.webapi_prediction()}}
-and \code{\link[=predict_savedmodel.cloudml_prediction]{predict_savedmodel.cloudml_prediction()}} for additional options.}
+and \code{\link[=predict_savedmodel.cloudml_prediction]{predict_savedmodel.cloudml_prediction()}} for additional options.
+
+#' @section Implementations:
+\itemize{
+\item \code{\link[=predict_savedmodel.export_prediction]{predict_savedmodel.export_prediction()}}
+\item \code{\link[=predict_savedmodel.graph_prediction]{predict_savedmodel.graph_prediction()}}
+\item \code{\link[=predict_savedmodel.webapi_prediction]{predict_savedmodel.webapi_prediction()}}]
+\item \code{\link[=predict_savedmodel.cloudml_prediction]{predict_savedmodel.cloudml_prediction()}}
+}}
 }
 \description{
 Performs a prediction using a CloudML model.

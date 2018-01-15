@@ -33,7 +33,7 @@ test_compare_services <- function(service_defs, instances_entries) {
       all_equal <- all.equal(
         arrays_to_vectors(first_prediction),
         arrays_to_vectors(other_prediction),
-        tolerance = 1e-3,
+        tolerance = 1e-2,
         check.attributes = FALSE
       )
 
@@ -178,7 +178,7 @@ test_that("tfestimators model predictions across services are equivalent", {
   service_defs <- list(
     cloudml = list(
       model = "tfdeploy",
-      version = "tfestimators_mtcars",
+      version = "tfestimators_mtcars"
     ),
     export = list(
       model = "models/tfestimators-mtcars/1514949872/",

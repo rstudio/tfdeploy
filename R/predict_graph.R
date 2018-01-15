@@ -1,7 +1,7 @@
-predict_single_savedmodel_export <- function(instance, sess, signature_def, signature_name) {
+predict_single_savedmodel_export <- function(instance, sess, graph, signature_def, signature_name) {
   if (!is.list(instance)) instance <- list(instance)
 
-  tensor_boundaries <- tensor_get_boundaries(sess$graph, signature_def, signature_name)
+  tensor_boundaries <- tensor_get_boundaries(graph, signature_def, signature_name)
 
   signature_output_names <- names(tensor_boundaries$signatures$outputs)
   signature_inputs_names <- names(tensor_boundaries$signatures$inputs)
@@ -61,12 +61,13 @@ predict_single_savedmodel_export <- function(instance, sess, signature_def, sign
   result
 }
 
-predict_savedmodel_export <- function(instances, sess, signature_def, signature_name) {
+predict_savedmodel_export <- function(instances, sess, graph, signature_def, signature_name) {
 
   lapply(instances, function(instance) {
     predict_single_savedmodel_export(
       instance = instance,
       sess = sess,
+      graph = graph,
       signature_def = signature_def,
       signature_name = signature_name
     )
@@ -103,6 +104,7 @@ predict_savedmodel.graph_prediction <- function(
   predictions <- predict_savedmodel_export(
     instances = instances,
     sess = sess,
+    graph = model,
     signature_def = signature_def,
     signature_name = signature_name
   )

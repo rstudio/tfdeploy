@@ -1,7 +1,7 @@
 predict_single_savedmodel_export <- function(instance, sess, graph, signature_def, signature_name) {
   if (!is.list(instance)) instance <- list(instance)
 
-  tensor_boundaries <- tensor_get_boundaries(graph, signature_def, signature_name)
+  tensor_boundaries <- tensor_get_boundaries(sess$graph, signature_def, signature_name)
 
   signature_output_names <- names(tensor_boundaries$signatures$outputs)
   signature_inputs_names <- names(tensor_boundaries$signatures$inputs)

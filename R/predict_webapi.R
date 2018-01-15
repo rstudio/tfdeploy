@@ -2,11 +2,12 @@
 #'
 #' Performs a prediction using a Web API providing a SavedModel.
 #'
+#' @inheritParams predict_savedmodel
+#'
 #' @export
 predict_savedmodel.webapi_prediction <- function(
   instances,
   model,
-  signature_name = "serving_default",
   ...) {
 
   httr::POST(

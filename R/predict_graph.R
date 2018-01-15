@@ -79,14 +79,18 @@ predict_savedmodel_export <- function(instances, sess, signature_def, signature_
 #' Performs a prediction using a SavedModel model already loaded using
 #' \code{load_savedmodel()}.
 #'
+#' @inheritParams predict_savedmodel
+#'
 #' @param sess The active TensorFlow session.
+#'
+#' @param signature_name The named entry point to use in the model for prediction.
 #'
 #' @export
 predict_savedmodel.graph_prediction <- function(
   instances,
   model,
-  signature_name = "serving_default",
   sess,
+  signature_name = "serving_default",
   ...) {
 
   if (grep("MetaGraphDef", class(model)) == 0)

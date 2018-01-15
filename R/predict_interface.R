@@ -2,6 +2,8 @@
 #'
 #' Runs a prediction over a saved model file, local service or cloudml model.
 #'
+#' @inheritParams predict_savedmodel
+#'
 #' @param instances A list of prediction instances to be passed as input tensors
 #'   to the service. Even for single predictions, a list with one entry is expected.
 #'
@@ -19,20 +21,33 @@
 #'   performing the prediction. Valid values are \code{cloudml}, \code{export},
 #'   \code{webapi} and \code{graph}.
 #'
-#' @param signature_name The named entry point to use in the model for prediction.
-#'
 #' @param ... See [predict_savedmodel.export_prediction()],
 #'   [predict_savedmodel.graph_prediction()],
 #'   [predict_savedmodel.webapi_prediction()]
 #'   and [predict_savedmodel.cloudml_prediction()] for additional options.
 #'
+#' #' @section Implementations:
+#'
+#'   - [predict_savedmodel.export_prediction()]
+#'   - [predict_savedmodel.graph_prediction()]
+#'   - [predict_savedmodel.webapi_prediction()]]
+#'   - [predict_savedmodel.cloudml_prediction()]
+#'
 #' @seealso [export_savedmodel()], [serve_savedmodel()], [load_savedmodel()]
+#'
+#' #' @examples
+#' \dontrun{
+#' # perform prediction based on an existing model
+#' tfdeploy::predict_savedmodel(
+#'   list(rep(9, 784)),
+#'   system.file("models/tensorflow-mnist", package = "tfdeploy")
+#' )
+#' }
 #'
 #' @export
 predict_savedmodel <- function(
   instances,
   model,
-  signature_name = "serving_default",
   ...) {
 
   params <- list(...)

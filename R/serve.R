@@ -11,35 +11,14 @@
 #'   'httpuv::stopDaemonizedServer()' with the handle returned from this call.
 #' @param browse Launch browser with serving landing page?
 #'
+#' @seealso [export_savedmodel()]
+#'
 #' @examples
 #' \dontrun{
-#'
-#' library(tensorflow)
-#' sess <- tf$Session()
-#'
-#' # (1) Train MNIST model.
-#'
-#' # (2) Save model with signature.
-#'
-#' model_dir <- "trained"
-#' builder <- tf$saved_model$builder$SavedModelBuilder(model_dir)
-#' builder$add_meta_graph_and_variables(
-#'   sess,
-#'   list(
-#'     tf$python$saved_model$tag_constants$SERVING
-#'   ),
-#'   signature_def_map = list(
-#'     serving_default = tf$saved_model$signature_def_utils$build_signature_def(
-#'       inputs = list(images = tf$saved_model$utils$build_tensor_info(x)),
-#'       outputs = list(scores = tf$saved_model$utils$build_tensor_info(y))
-#'     )
-#'   )
+#' # serve an existing model over a web interface
+#' tfdeploy::serve_savedmodel(
+#'   system.file("models/tensorflow-mnist", package = "tfdeploy")
 #' )
-#' builder$save()
-#'
-#' # (3) Serve saved model.
-#'
-#' serve_savedmodel(model_dir)
 #' }
 #' @importFrom httpuv runServer
 #' @import swagger

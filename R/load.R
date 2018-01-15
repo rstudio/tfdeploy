@@ -22,11 +22,42 @@ find_savedmodel <- function(path) {
 #' Loads a SavedModel using the given TensorFlow session and
 #' returns the model's graph.
 #'
+#' Loading a model improves performance over multiple \code{predict_savedmodel()}
+#' calls.
+#'
 #' @param sess The TensorFlow session.
-#' @param model_dir The path to the exported model, as a string.
+#'
+#' @param model_dir The path to the exported model, as a string. Defaults to
+#'   a "savedmodel" path or the latest training run.
+#'
+#' @seealso [export_savedmodel()], [predict_savedmodel()]
+#'
+#' @examples
+#' \dontrun{
+#' # start session
+#' sess <- tensorflow::tf$Session()
+#'
+#' # preload an existing model into a TensorFlow session
+#' graph <- tfdeploy::load_savedmodel(
+#'   sess,
+#'   system.file("models/tensorflow-mnist", package = "tfdeploy")
+#' )
+#'
+#' # perform prediction based on a pre-loaded model
+#' tfdeploy::predict_savedmodel(
+#'   list(rep(9, 784)),
+#'   graph
+#' )
+#'
+#' # close session
+#' sess$close()
+#' }
 #'
 #' @export
-load_savedmodel <- function(sess, model_dir = NULL) {
+load_savedmodel <- function(
+  sess,
+  model_dir = NULL
+) {
   model_dir <- find_savedmodel(model_dir)
 
   tf$reset_default_graph()

@@ -2,6 +2,10 @@
 #'
 #' Performs a prediction using a locally exported SavedModel.
 #'
+#' @inheritParams predict_savedmodel
+#'
+#' @param signature_name The named entry point to use in the model for prediction.
+#'
 #' @export
 predict_savedmodel.export_prediction <- function(
   instances,

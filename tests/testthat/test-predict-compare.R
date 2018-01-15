@@ -33,7 +33,7 @@ test_compare_services <- function(service_defs, instances_entries) {
       all_equal <- all.equal(
         arrays_to_vectors(first_prediction),
         arrays_to_vectors(other_prediction),
-        tolerance = 1e-2,
+        tolerance = 1e-1,
         check.attributes = FALSE
       )
 

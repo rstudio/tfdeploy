@@ -23,7 +23,7 @@ test_that("can predict tensorflow mnist model in local serve", {
 test_that("can predict keras mnist model in local serve", {
   test_serve_predict(
     instances = list(
-      list(dense_1_input = rep(0, 784))
+      list(image_input = rep(0, 784))
     ),
     model = "models/keras-mnist"
   )

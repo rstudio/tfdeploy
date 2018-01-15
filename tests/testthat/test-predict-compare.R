@@ -110,8 +110,8 @@ test_that("mnist keras model predictions across services are equivalent", {
   )
 
   instances_entries <- list(
-    tensorflow_mnist_simple = list(list(dense_1_input = rep(0, 784))),
-    tensorflow_mnist_double = list(list(dense_1_input = rep(0, 784)), list(dense_1_input = rep(0, 784)))
+    tensorflow_mnist_simple = list(list(image_input = rep(0, 784))),
+    tensorflow_mnist_double = list(list(image_input = rep(0, 784)), list(image_input = rep(0, 784)))
   )
 
   test_compare_services(service_defs, instances_entries)
@@ -181,11 +181,11 @@ test_that("tfestimators model predictions across services are equivalent", {
       version = "tfestimators_mtcars"
     ),
     export = list(
-      model = "models/tfestimators-mtcars/1514949872/",
+      model = "models/tfestimators-mtcars/",
       signature_name = "predict"
     ),
     serve = list(
-      model = "models/tfestimators-mtcars/1514949872/",
+      model = "models/tfestimators-mtcars/",
       type = "serve_test",
       signature_name = "predict"
     )

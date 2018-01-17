@@ -55,6 +55,9 @@
   <a href="../index.html">Home</a>
 </li>
 <li>
+  <a href="../articles/saved-models-from-R.html">Using Saved Models from R</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
@@ -96,17 +99,54 @@ returns the model's graph.</p>
     </tr>
     <tr>
       <th>model_dir</th>
-      <td><p>The path to the exported model, as a string.</p></td>
+      <td><p>The path to the exported model, as a string. Defaults to
+a "savedmodel" path or the latest training run.</p></td>
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
+    <p>Loading a model improves performance over multiple <code><a href='predict_savedmodel.html'>predict_savedmodel()</a></code>
+calls.</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <p><code><a href='http://www.rdocumentation.org/packages/tensorflow/topics/export_savedmodel'>export_savedmodel()</a></code>, <code><a href='predict_savedmodel.html'>predict_savedmodel()</a></code></p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+<span class='co'># start session</span>
+<span class='no'>sess</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>tensorflow</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/tensorflow/topics/tf'>tf</a></span>$<span class='fu'>Session</span>()
+
+<span class='co'># preload an existing model into a TensorFlow session</span>
+<span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>tfdeploy</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/tfdeploy/topics/load_savedmodel'>load_savedmodel</a></span>(
+  <span class='no'>sess</span>,
+  <span class='fu'>system.file</span>(<span class='st'>"models/tensorflow-mnist"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"tfdeploy"</span>)
+)
+
+<span class='co'># perform prediction based on a pre-loaded model</span>
+<span class='kw pkg'>tfdeploy</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/tfdeploy/topics/predict_savedmodel'>predict_savedmodel</a></span>(
+  <span class='fu'>list</span>(<span class='fu'>rep</span>(<span class='fl'>9</span>, <span class='fl'>784</span>)),
+  <span class='no'>graph</span>
+)
+
+<span class='co'># close session</span>
+<span class='no'>sess</span>$<span class='fu'>close</span>()
+<span class='co'># }</span><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#see-also">See also</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

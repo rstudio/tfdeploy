@@ -55,6 +55,9 @@
   <a href="../index.html">Home</a>
 </li>
 <li>
+  <a href="../articles/saved-models-from-R.html">Using Saved Models from R</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
@@ -86,7 +89,7 @@
     
 
     <pre class="usage"><span class='fu'>serve_savedmodel</span>(<span class='no'>model_dir</span>, <span class='kw'>host</span> <span class='kw'>=</span> <span class='st'>"127.0.0.1"</span>, <span class='kw'>port</span> <span class='kw'>=</span> <span class='fl'>8089</span>,
-  <span class='kw'>daemonized</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>swagger</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+  <span class='kw'>daemonized</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>browse</span> <span class='kw'>=</span> !<span class='no'>daemonized</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -110,48 +113,31 @@ are not blocked to handle requests. To terminate a daemonized server, call
 'httpuv::stopDaemonizedServer()' with the handle returned from this call.</p></td>
     </tr>
     <tr>
-      <th>swagger</th>
-      <td><p>Should a <a href='https://swagger.io'>https://swagger.io</a> landing page be
-made available?</p></td>
+      <th>browse</th>
+      <td><p>Launch browser with serving landing page?</p></td>
     </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <p><code><a href='http://www.rdocumentation.org/packages/tensorflow/topics/export_savedmodel'>export_savedmodel()</a></code></p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='fu'>library</span>(<span class='no'>tensorflow</span>)
-<span class='no'>sess</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>Session</span>()
-
-<span class='co'># (1) Train MNIST model.</span>
-
-<span class='co'># (2) Save model with signature.</span>
-
-<span class='no'>model_dir</span> <span class='kw'>&lt;-</span> <span class='st'>"trained"</span>
-<span class='no'>builder</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='no'>saved_model</span>$<span class='no'>builder</span>$<span class='fu'>SavedModelBuilder</span>(<span class='no'>model_dir</span>)
-<span class='no'>builder</span>$<span class='fu'>add_meta_graph_and_variables</span>(
-  <span class='no'>sess</span>,
-  <span class='fu'>list</span>(
-    <span class='no'>tf</span>$<span class='no'>python</span>$<span class='no'>saved_model</span>$<span class='no'>tag_constants</span>$<span class='no'>SERVING</span>
-  ),
-  <span class='kw'>signature_def_map</span> <span class='kw'>=</span> <span class='fu'>list</span>(
-    <span class='kw'>serving_default</span> <span class='kw'>=</span> <span class='no'>tf</span>$<span class='no'>saved_model</span>$<span class='no'>signature_def_utils</span>$<span class='fu'>build_signature_def</span>(
-      <span class='kw'>inputs</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>images</span> <span class='kw'>=</span> <span class='no'>tf</span>$<span class='no'>saved_model</span>$<span class='no'>utils</span>$<span class='fu'>build_tensor_info</span>(<span class='no'>x</span>)),
-      <span class='kw'>outputs</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>scores</span> <span class='kw'>=</span> <span class='no'>tf</span>$<span class='no'>saved_model</span>$<span class='no'>utils</span>$<span class='fu'>build_tensor_info</span>(<span class='no'>y</span>))
-    )
-  )
+<span class='co'># serve an existing model over a web interface</span>
+<span class='kw pkg'>tfdeploy</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/tfdeploy/topics/serve_savedmodel'>serve_savedmodel</a></span>(
+  <span class='fu'>system.file</span>(<span class='st'>"models/tensorflow-mnist"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"tfdeploy"</span>)
 )
-<span class='no'>builder</span>$<span class='fu'>save</span>()
-
-<span class='co'># (3) Serve saved model.</span>
-
-<span class='fu'>serve_savedmodel</span>(<span class='no'>model_dir</span>)
 <span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-            
+      
+      <li><a href="#see-also">See also</a></li>
+      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

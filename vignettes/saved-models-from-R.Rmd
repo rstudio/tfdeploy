@@ -1,0 +1,92 @@
+---
+title: 'Using Saved Models from R'
+output: 
+  html_document: 
+    pandoc_args: [
+      "--columns", "1000"
+    ]
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+
+The main goal of tfdeploy is to create models in R and then export, test, and deploy those models to environments without R. However, there may be cases when it makes sense to use a saved model from R:
+
+- If another R user has saved and/or deployed a model that you would like to use for predictions from R.
+- If you want to use a saved or deployed model in a Shiny application.
+- If you want to compare predictions between a saved or deployed model and a new model that is under development.
+
+One way to use a deployed model from R would be to execute HTTP requests using a package like `httr`. For non-deployed models, it is possible to use `serve_savedmodel` - as we did for local testing - along with a tool like `httr`. However, there is an easier way to make predictions from a saved model using the `predict_savedmodel` function.
+
+## Examples
+
+Using the same MNIST model described previously, we can easily make predictions for new pre-processed images. For example, we can load the MNIST test data set and create predictions for the first 10 images:
+
+```{r}
+library(keras)
+library(tfdeploy)
+
+test <- dataset_mnist()$test$x 
+processed_test <- array_reshape(test, dim = c(nrow(test), 784)) / 255
+processed_test_list <- lapply(1:10, function(i) {processed_test[i,]})
+
+predict_savedmodel(processed_test_list, '../savedmodel/')
+```
+
+```
+Prediction 1:
+$prediction
+ [1] 3.002971e-37 8.401216e-29 2.932129e-24 4.048731e-22 0.000000e+00 9.172148e-37
+ [7] 0.000000e+00 1.000000e+00 4.337524e-31 1.772979e-17
+
+Prediction 2:
+$prediction
+ [1] 0.000000e+00 4.548326e-22 1.000000e+00 2.261879e-31 0.000000e+00 0.000000e+00
+ [7] 0.000000e+00 0.000000e+00 2.390626e-38 0.000000e+00
+ 
+ ...
+```
+
+A few things to keep in mind:
+
+1. Just like the HTTP POST requests, `predict_savedmodel` expects the new instance data to be pre-processed.
+2. `predict_savedmodel` requires the new data to be in a list, and it always returns a list. This requirement faciliates models with more complex inputs or ouputs.
+
+In the previous example we used `predict_savedmodel` with the directory, 'savedmodel', which was created with the `export_savedmodel` command. **In addition to providing a path to a saved model directory, `predict_savedmodel` can also be used with a deployed model by supplying a REST URL, a CloudML model by supplying a CloudML name and version, or by supplying a graph object loaded with `load_savedmodel`.**
+
+ The last option above references the `load_savedmodel` function. `load_savedmodel` should be used alongside of `predict_savedmodel` if you'll be calling the prediction function multiple times. `load_savedmodel` effectively caches the model graph in memory and can speed up repeated calls to `predict_savedmodel`. This caching is useful, for example, in a Shiny application where user input would drive calls to `predict_savedmodel`.
+
+
+```{r}
+# if there will only be one batch of predictions 
+predict_savedmodel(instances, 'savedmodel')
+
+# if there will be multiple batches of predictions
+sess <- tensorflow::tf$Session()
+graph <- load_savedmodel(sess, '../savedmodel')
+predict_savedmodel(instances, graph)
+# ... more work ... 
+predict_savedmodel(instances, graph)
+```
+
+
+
+# Comparing Model Representations
+
+There are a few distinct ways that a model can be represented in R. The most straightforward representation is the in-memory, R model object. This object is what is created and used while developing and training a model. 
+
+A second representation is the on-disk saved model. This representation of the model can be used by the `*_savedmodel` functions. As a special case, `load_savedmodel` creates a new R object pointing to the model graph. It is important to keep in mind that these saved models are not the full R model object. For example, you can not update or re-train a graph from a saved model.
+
+Finally, for Keras models there are 2 other representations: HDF5 files and serialized objects. Each of these represenations captures the entire in-memory R object. For example, using `save_model_hdf5` and then `load_model_hdf5` will result in a model that can be updated or retrained.
+
+### What represenation should I use? 
+
+If you are developing a model and have access to the in-memory R model object, you should use the model object for predictions using R's `predict` function.
+
+If you are developing a Keras model and would like to save the model for use in a different session, you should use the HDF5 file or serialize the model and then save it to an R data format like RDS.
+
+If you are going to deploy a model and want to test, you should export the model using `export_savedmodel` and then test with either `serve_savedmodel` and your HTTP client or `predict_savedmodel`.
+
+If you are using R and want to create predictions from a deployed or saved model, and you don't have access to the in-memory R model object, you should use `predict_savedmodel`.

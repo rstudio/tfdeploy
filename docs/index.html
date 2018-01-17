@@ -32,6 +32,9 @@
   <a href="index.html">Home</a>
 </li>
 <li>
+  <a href="articles/saved-models-from-R.html">Using Saved Models from R</a>
+</li>
+<li>
   <a href="reference/index.html">Reference</a>
 </li>
       </ul>
@@ -58,9 +61,9 @@
     
     
 <div class="contents">
-<div id="tensorflow-model-deployment-for-r" class="section level1">
+<div id="tensorflow-model-deployment-from-r" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#tensorflow-model-deployment-for-r" class="anchor"></a>TensorFlow Model Deployment for R</h1></div>
+<a href="#tensorflow-model-deployment-from-r" class="anchor"></a>TensorFlow Model Deployment from R</h1></div>
 <div id="overview" class="section level2">
 <h2 class="hasAnchor">
 <a href="#overview" class="anchor"></a>Overview</h2>
@@ -74,8 +77,8 @@
 <p>The R interface to TensorFlow includes a variety of tools designed to make exporting and serving TensorFlow models straightforward. The basic process for deploying TensorFlow models from R is as follows:</p>
 <ul>
 <li><p>Train a model using the <a href="https://tensorflow.rstudio.com/keras/">keras</a>, <a href="https://tensorflow.rstudio.com/tfestimators/">tfestimators</a>, or <a href="https://tensorflow.rstudio.com/tensorflow/">tensorflow</a> R packages.</p></li>
-<li><p>Call the <code><a href="http://www.rdocumentation.org/packages/tensorflow/topics/export_savedmodel">export_savedmodel()</a></code> function on your trained model write it to disk as a TensorFlow SavedModel.</p></li>
-<li><p>Use the <code><a href="reference/serve_savedmodel.html">serve_savedmodel()</a></code> and <code><a href="reference/predict_savedmodel.html">predict_savedmodel()</a></code> functions from the <a href="https://tensorflow.rstudio.com/tools/tfdeploy/">tfdeploy</a> package to run a local test server that supports the same REST API as CloudML and RStudio Connect.</p></li>
+<li><p>Call the <code><a href="http://www.rdocumentation.org/packages/tensorflow/topics/export_savedmodel">export_savedmodel()</a></code> function on your trained model to write it to disk as a TensorFlow SavedModel.</p></li>
+<li><p>Use the <code><a href="reference/serve_savedmodel.html">serve_savedmodel()</a></code> from the <a href="https://tensorflow.rstudio.com/tools/tfdeploy/">tfdeploy</a> package to run a local test server that supports the same REST API as CloudML and RStudio Connect.</p></li>
 <li><p>Deploy your model using TensorFlow Serving, CloudML, or RStudio Connect.</p></li>
 </ul>
 </div>
@@ -84,13 +87,13 @@
 <a href="#getting-started" class="anchor"></a>Getting Started</h2>
 <p>Begin by installing the <strong>tfdeploy</strong> package from GitHub as follows:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"rstudio/tfdeploy"</span>)</code></pre></div>
-<p>Next we’ll walk through an end-to-end example using a model trained with keras package. After that we’ll describe in more depth the specific requirements and various options associated with exporting models. Finally, we’ll cover the various deployment options and provide links to additional documentation.</p>
-<div id="keras-example" class="section level3">
+<p>First we’ll walk through an end-to-end example that: trains a Keras model with the MNIST dataset, exports the saved model, and then serves the exported model locally for predictions with a REST API. After that we’ll describe in more depth the specific requirements and various options associated with exporting models. Finally, we’ll cover the various deployment options and provide links to additional documentation.</p>
+<div id="end-to-end-example" class="section level3">
 <h3 class="hasAnchor">
-<a href="#keras-example" class="anchor"></a>Keras Example</h3>
+<a href="#end-to-end-example" class="anchor"></a>End-to-End Example</h3>
 <p>We’ll use a Keras model that recognizes handwritten digits from the <a href="https://en.wikipedia.org/wiki/MNIST_database">MNIST</a> dataset as an example. MNIST consists of 28 x 28 grayscale images of handwritten digits like these:</p>
 <p><img style="width: 50%;" src="images/MNIST.png"></p>
-<p>The dataset also includes labels for each image, telling us which digit it is. For example, the labels for the above images are 5, 0, 4, and 1.</p>
+<p>The dataset also includes labels for each image. For example, the labels for the above images are 5, 0, 4, and 1.</p>
 <p>Here’s the complete source code for the model:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(keras)
 
@@ -122,26 +125,18 @@ model <span class="op">%&gt;%</span>
 <span class="co"># train model</span>
 history &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/keras/topics/fit">fit</a></span>(
   x_train, y_train,
-  <span class="dt">epochs =</span> <span class="dv">30</span>, <span class="dt">batch_size =</span> <span class="dv">128</span>,
+  <span class="dt">epochs =</span> <span class="dv">35</span>, <span class="dt">batch_size =</span> <span class="dv">128</span>,
   <span class="dt">validation_split =</span> <span class="fl">0.2</span>
 )</code></pre></div>
-<p>Note that we have given the first and last layers names (“image” and “prediction” respectively). You should always provide sensible names for your input and output layers when creating Keras models which you plan on deploying.</p>
-<p>As a baseline, let’s predict the digits using the in-memory Keras model for the first 10 images within the test set (next, we’ll see how we can generate predictions from an exported model which requires no references to the original code used to train the model):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">preds &lt;-<span class="st"> </span><span class="kw">predict</span>(model, x_test[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>,])
-<span class="kw">round</span>(preds, <span class="dv">4</span>)</code></pre></div>
-<pre><code>        [,1]   [,2]   [,3]   [,4]   [,5]   [,6]   [,7]   [,8]   [,9]  [,10]
- [1,] 0.0160 0.0544 0.0420 0.1529 0.1236 0.4482 0.0252 0.0356 0.0579 0.0443
- [2,] 0.0164 0.0568 0.0447 0.1324 0.0926 0.5013 0.0301 0.0252 0.0587 0.0419
- [3,] 0.0135 0.0494 0.0366 0.1349 0.0893 0.5265 0.0253 0.0247 0.0557 0.0440
- [4,] 0.0196 0.0641 0.0480 0.1545 0.1416 0.4003 0.0308 0.0411 0.0583 0.0419
- [5,] 0.0163 0.0612 0.0474 0.1376 0.1595 0.4141 0.0272 0.0392 0.0549 0.0426
- [6,] 0.0136 0.0467 0.0365 0.1349 0.0849 0.5299 0.0253 0.0237 0.0585 0.0460
- [7,] 0.0136 0.0562 0.0400 0.1391 0.1513 0.4449 0.0254 0.0322 0.0545 0.0426
- [8,] 0.0145 0.0575 0.0440 0.1382 0.1568 0.4320 0.0254 0.0312 0.0521 0.0483
- [9,] 0.0157 0.0541 0.0391 0.1347 0.1064 0.4903 0.0305 0.0275 0.0610 0.0407
-[10,] 0.0159 0.0558 0.0439 0.1383 0.1706 0.4041 0.0261 0.0365 0.0611 0.0476</code></pre>
-<p>The values displayed represent the probabilties that each image is the respctive digit (so the prediction for a given image is the column with the largest probability)</p>
-<p>It’s straightfoward to generate predictions when we have access to the original R code used to train the model, but what if we want to deploy the model in an environment where R isn’t available? The next sections cover doing this with the <strong>tfdeploy</strong> package.</p>
+<p>In R, it is easy to make predictions using the the trained model and R’s <code>predict</code> function:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">preds &lt;-<span class="st"> </span><span class="kw">predict</span>(model, x_test[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>,])</code></pre></div>
+<pre><code>        [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+[1,]    0    0    0    0    0    0    0    1    0     0
+[2,]    0    0    1    0    0    0    0    0    0     0
+[3,]    0    1    0    0    0    0    0    0    0     0
+[4,]    1    0    0    0    0    0    0    0    0     0</code></pre>
+<p>Each row represents an image, each column represents a digit from 0-9, and the values represent the model’s prediction. For example, the first image is predicted to be a 7.</p>
+<p>What if we want to deploy the model in an environment where R isn’t available? The next sections cover exporting and deploying the model with the <strong>tfdeploy</strong> package.</p>
 <div id="exporting-the-model" class="section level4">
 <h4 class="hasAnchor">
 <a href="#exporting-the-model" class="anchor"></a>Exporting the Model</h4>
@@ -151,83 +146,36 @@ history &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span 
 <p>This will create a “savedmodel” directory that contains a saved version of your MNIST model. You can view the graph of your model using TensorBoard with the <code><a href="http://www.rdocumentation.org/packages/tensorflow/topics/view_savedmodel">view_savedmodel()</a></code> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="http://www.rdocumentation.org/packages/tensorflow/topics/view_savedmodel">view_savedmodel</a></span>(<span class="st">"savedmodel"</span>)</code></pre></div>
 </div>
-<div id="generating-predictions" class="section level4">
+<div id="using-the-exported-model" class="section level4">
 <h4 class="hasAnchor">
-<a href="#generating-predictions" class="anchor"></a>Generating Predictions</h4>
-<p>You can generate predictions from the exported model using the <code><a href="reference/predict_savedmodel.html">predict_savedmodel()</a></code> function. The <code><a href="reference/predict_savedmodel.html">predict_savedmodel()</a></code> requires that we pass a <code>list()</code> of instances to generate predictions for (as distinct from the <code>predict()</code> function above which could take an N-dimensional array where the first dimension represents the instances). So we first transform the 10x784 matrix of test images into a 10 element list of length 784 vectors:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">test_images &lt;-<span class="st"> </span>x_test[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>,]
-test_images &lt;-<span class="st"> </span><span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(test_images), <span class="cf">function</span>(i) test_images[i,])</code></pre></div>
-<p>Now we can call <code><a href="reference/predict_savedmodel.html">predict_savedmodel()</a></code>, passing the test images (as a list) and specifying the directory where the model was saved:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">preds &lt;-<span class="st"> </span><span class="kw"><a href="reference/predict_savedmodel.html">predict_savedmodel</a></span>(
-  test_images,
-  <span class="st">"savedmodel"</span>, 
-  <span class="dt">type =</span> <span class="st">"export"</span>
-)
-preds</code></pre></div>
-<pre><code>$predictions
-                                                                       prediction
-1  0.0160, 0.0544, 0.0420, 0.1529, 0.1236, 0.4482, 0.0252, 0.0356, 0.0579, 0.0443
-2  0.0164, 0.0568, 0.0447, 0.1324, 0.0926, 0.5013, 0.0301, 0.0252, 0.0587, 0.0419
-3  0.0135, 0.0494, 0.0366, 0.1349, 0.0893, 0.5265, 0.0253, 0.0247, 0.0557, 0.0440
-4  0.0196, 0.0641, 0.0480, 0.1545, 0.1416, 0.4003, 0.0308, 0.0411, 0.0583, 0.0419
-5  0.0163, 0.0612, 0.0474, 0.1376, 0.1595, 0.4141, 0.0272, 0.0392, 0.0549, 0.0426
-6  0.0136, 0.0467, 0.0365, 0.1349, 0.0849, 0.5299, 0.0253, 0.0237, 0.0585, 0.0460
-7  0.0136, 0.0562, 0.0400, 0.1391, 0.1513, 0.4449, 0.0254, 0.0322, 0.0545, 0.0426
-8  0.0145, 0.0575, 0.0440, 0.1382, 0.1568, 0.4320, 0.0254, 0.0312, 0.0521, 0.0483
-9  0.0157, 0.0541, 0.0391, 0.1347, 0.1064, 0.4903, 0.0305, 0.0275, 0.0610, 0.0407
-10 0.0159, 0.0558, 0.0439, 0.1383, 0.1706, 0.4041, 0.0261, 0.0365, 0.0611, 0.0476</code></pre>
-<p>Note that this function can be called without defining or loading the Keras model (in fact no reference to the code originally used to build and train the model is required). As we will see below, we can even generate predictions from other languages using an HTTP/REST interface to the model!</p>
+<a href="#using-the-exported-model" class="anchor"></a>Using the Exported Model</h4>
+<p>To test the exported model locally, use the <code>serve_savedmodel</code> function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/serve_savedmodel.html">serve_savedmodel</a></span>(<span class="st">'savedmodel'</span>, <span class="dt">browse =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<div class="figure">
+<img src="images/swagger.png" class="illustration" style="width:80.0%">
 </div>
-<div id="local-server" class="section level4">
-<h4 class="hasAnchor">
-<a href="#local-server" class="anchor"></a>Local Server</h4>
-<p>The <strong>tfdeploy</strong> package includes a local server which you can use to test the HTTP/REST interace to your model before deployment. To serve a model locally, use the <code><a href="reference/serve_savedmodel.html">serve_savedmodel()</a></code> function:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/serve_savedmodel.html">serve_savedmodel</a></span>(<span class="st">"savedmodel"</span>)</code></pre></div>
-<pre style="background-color: transparent; margin: 0 !important; padding: 0 !important;"><code style="color: rgb(196,27,6); background-color: transparent;">Starting server under http://127.0.0.1:8089 with the following API entry points:
-  http://127.0.0.1:8089/api/serving_default/predict/
-
-</code></pre>
-<p>You can now call the model from another R session using the <code><a href="reference/predict_savedmodel.html">predict_savedmodel()</a></code> function. Here we’ll actually pass a real image from the MNIST test set to <code><a href="reference/predict_savedmodel.html">predict_savedmodel()</a></code> (previously we just passed all zeros):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(keras)
-
-<span class="co"># prepare list of test images</span>
-<span class="kw">c</span>(<span class="kw">c</span>(x_train, y_train), <span class="kw">c</span>(x_test, y_test)) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/keras/topics/dataset_mnist">dataset_mnist</a></span>()
-x_test &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/keras/topics/reexports">array_reshape</a></span>(x_test, <span class="dt">dim =</span> <span class="kw">c</span>(<span class="kw">nrow</span>(x_test), <span class="dv">784</span>)) <span class="op">/</span><span class="st"> </span><span class="dv">255</span>
-test_images &lt;-<span class="st"> </span>x_test[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>,]
-test_images &lt;-<span class="st"> </span><span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(test_images), <span class="cf">function</span>(i) test_images[i,])
-
-<span class="co"># invoke webapi to generate predictions</span>
-<span class="kw">library</span>(tfdeploy)
-preds &lt;-<span class="st"> </span><span class="kw"><a href="reference/predict_savedmodel.html">predict_savedmodel</a></span>(
-  test_images,
-  <span class="st">"http://localhost:8089/api/serving_default/predict"</span>, 
-  <span class="dt">type =</span> <span class="st">"webapi"</span>
-)</code></pre></div>
-<p>You could also call the model from another langague entirely since the interface is just HTTP and REST. For example, if the following JSON is submitted to the endpoint as a request body it will return predictions:</p>
+<p>The model is served at <a href="http://localhost:8989" class="uri">http://localhost:8989</a> along with a webpage that describes the REST interface to the model. The REST interface is based on the <a href="https://cloud.google.com/ml-engine/docs/v1/predict-request">CloudML predict request API</a>.</p>
+<p>The model can be used for prediction by making HTTP POST requests. The body of the request should contain the new instances of data and the HTTP response provides the model’s predictions. <strong>The data in the request body should be pre-processed and formatted in the same way as the original training data</strong>. For MNIST, the request body could be a JSON file containing one or more pre-processed images:</p>
 <pre class="text"><code>{
   "instances": [
     {
-      "image_input": [0,0,0,...,0,0]
-    },
-    {
-      "image_input": [0,0,0,...,0,0]
-    },
-    {
-      "image_input": [0,0,0,...,0,0]
-    },
-    
-    // ...more instances
+      "image_input": [0.12,0,0.79,...,0,0]
+    }
   ]
 }</code></pre>
-<p>Additional details on the JSON schema used for the REST interface is provided in the <a href="#model-deployment">Model Deployment</a> section below.</p>
+<p>The HTTP POST request would be:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">curl</span> -X POST -H <span class="st">"Content-Type: application/json"</span> -d @new_image.json http://localhost:8089/serving_default/predict</code></pre></div>
+<p>Similar to R’s predict function, the response includes an array representing the digits 0-9. The image in <code>new_image.json</code> is predicted to be a 7:</p>
+<pre><code>{"predictions":[{"prediction":[1.3306e-24,4.9968e-26,1.8917e-23,1.7047e-21,0,8.963e-33,0,1,2.3306e-32,2.0314e-22]}]}</code></pre>
 </div>
-<div id="remote-deployment" class="section level4">
+<div id="deploying-the-model" class="section level4">
 <h4 class="hasAnchor">
-<a href="#remote-deployment" class="anchor"></a>Remote Deployment</h4>
-<p>Once you have tested your model locally you can deploy it to a server. There are a number of available options for this including <a href="#tensorflow-serving">TensorFlow Serving</a>, <a href="#cloudml">CloudML</a>, and <a href="#rstudio-connect">RStudio Connect</a>. For example, if we wanted to deploy our saved model to CloudML we could do this:</p>
+<a href="#deploying-the-model" class="anchor"></a>Deploying the Model</h4>
+<p>Once you are satisifed with local testing, the next step is to make the model available to others. There are a number of available options for this including <a href="#tensorflow-serving">TensorFlow Serving</a>, <a href="#cloudml">CloudML</a>, and <a href="#rstudio-connect">RStudio Connect</a>. For example, to deploy the saved model to CloudML we could use the cloudml package:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(cloudml)
 <span class="kw"><a href="http://www.rdocumentation.org/packages/cloudml/topics/cloudml_deploy">cloudml_deploy</a></span>(<span class="st">"savedmodel"</span>, <span class="dt">name =</span> <span class="st">"keras_mnist"</span>, <span class="dt">version =</span> <span class="st">"keras_mnist_1"</span>)</code></pre></div>
-<p>Now that we’ve walked through a simple end-to-end example, we’ll describe the processes of <a href="#model-export">Model Export</a> and <a href="#model-deployment">Model Deployment</a> in more detail.</p>
+<p>The same HTTP POST request we used to test the model locally can be used to generate predictions on CloudML, provided the proper access to the CloudML API.</p>
+<p>Now that we’ve deployed a simple end-to-end example, we’ll describe the process of <a href="#model-export">Model Export</a> and <a href="#model-deployment">Model Deployment</a> in more detail.</p>
 </div>
 </div>
 </div>
@@ -239,18 +187,26 @@ preds &lt;-<span class="st"> </span><span class="kw"><a href="reference/predict_
 <div id="keras" class="section level3">
 <h3 class="hasAnchor">
 <a href="#keras" class="anchor"></a>keras</h3>
-<p>The <a href="#keras-example">Keras Example</a> above includes complete example code for creating and using SavedModel instances from Keras so we won’t repeat all of those details here.</p>
+<p>The <a href="End-to-End%20Example">Keras Example</a> above includes complete example code for creating and using SavedModel instances from Keras so we won’t repeat all of those details here.</p>
 <p>To export a TensorFlow SavedModel from a Keras model, simply call the <code><a href="http://www.rdocumentation.org/packages/tensorflow/topics/export_savedmodel">export_savedmodel()</a></code> function on any Keras model:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="http://www.rdocumentation.org/packages/tensorflow/topics/export_savedmodel">export_savedmodel</a></span>(model, <span class="st">"savedmodel"</span>)</code></pre></div>
 <pre style="background-color: transparent; margin: 0 !important; padding: 0 !important;"><code style="color: rgb(196,27,6); background-color: transparent;">Keras learning phase set to 0 for export (restart R session before doing additional training)
 
 </code></pre>
-<p>Note the message that is printed indicates that a side effect of exporting the model was setting the Keras “learning phase” (whether it is training or doing inference) to 0. This is necessary to export Keras models to TensorFlow and carries the implication that you shouldn’t do additional training within your R session after calling <code><a href="http://www.rdocumentation.org/packages/tensorflow/topics/export_savedmodel">export_savedmodel()</a></code> (because Keras will be hard-coded to be in inference mode, which means it won’t update weights as data flows through it’s graph).</p>
+<p>Note the printed output. Exporting a Keras model requires setting the Keras “learning phase” to 0. In practice, this means that after calling <code>export_savedmodel</code> <strong>you can not continue to train the model in the same R session</strong>.</p>
+<p>It is important to assign reasonable names to the the first and last layers. For example, in the model code above we named the first layer “image” and the last layer “prediction”.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">model <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/keras/topics/layer_dense">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">256</span>, <span class="dt">activation =</span> <span class="st">'relu'</span>, <span class="dt">input_shape =</span> <span class="kw">c</span>(<span class="dv">784</span>),
+              <span class="dt">name =</span> <span class="st">"image"</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/keras/topics/layer_dense">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">128</span>, <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/keras/topics/layer_dense">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">10</span>, <span class="dt">activation =</span> <span class="st">'softmax'</span>,
+              <span class="dt">name =</span> <span class="st">"prediction"</span>)</code></pre></div>
+<p>The layer names are reflected in the structure of requests and responses to and from the deployed model.</p>
 </div>
 <div id="tfestimators" class="section level3">
 <h3 class="hasAnchor">
 <a href="#tfestimators" class="anchor"></a>tfestimators</h3>
-<p>Exporting a TensorFlow SavedModel from a TF Estimators model works exactly the same way, simply call <code><a href="http://www.rdocumentation.org/packages/tensorflow/topics/export_savedmodel">export_savedmodel()</a></code> on the estimator. Here is a complete example:</p>
+<p>Exporting a TensorFlow SavedModel from a TF Estimators model works exactly the same way as exporting a keras model, simply call <code><a href="http://www.rdocumentation.org/packages/tensorflow/topics/export_savedmodel">export_savedmodel()</a></code> on the estimator. Here is a complete example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tfestimators)
 
 mtcars_input_fn &lt;-<span class="st"> </span><span class="cf">function</span>(data, <span class="dt">num_epochs =</span> <span class="dv">1</span>) {
@@ -272,27 +228,19 @@ test  &lt;-<span class="st"> </span>mtcars[<span class="op">-</span>indices, ]
 model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/tfestimators/topics/reexports">train</a></span>(<span class="kw">mtcars_input_fn</span>(train, <span class="dt">num_epochs =</span> <span class="dv">10</span>))
 
 <span class="kw"><a href="http://www.rdocumentation.org/packages/tensorflow/topics/export_savedmodel">export_savedmodel</a></span>(model, <span class="st">"savedmodel"</span>)</code></pre></div>
-<p>We can now generate predictions from the model as follows:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># transform data frame records into list of named lists</span>
-test_records &lt;-<span class="st"> </span>mtcars[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="kw">c</span>(<span class="st">"disp"</span>, <span class="st">"cyl"</span>)]
-test_records &lt;-<span class="st"> </span><span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(test_records), <span class="cf">function</span>(i) <span class="kw">as.list</span>(test_records[i,]))
-
-<span class="co"># generate predictions</span>
-<span class="kw">library</span>(tfdeploy)
-preds &lt;-<span class="st"> </span><span class="kw"><a href="reference/predict_savedmodel.html">predict_savedmodel</a></span>(
-  test_records,
-  <span class="st">"savedmodel"</span>,  
-  <span class="dt">type =</span> <span class="st">"export"</span>,
-  <span class="dt">signature_name =</span> <span class="st">"predict"</span>
-)
-preds</code></pre></div>
-<pre><code>$predictions
-  predictions
-1     13.3829
-2     13.3829
-3      9.1437
-4     20.5719
-5     28.4791</code></pre>
+<p>Generating predictions is done in the same way as with exported Keras models. First, use <code>serve_savedmodel</code> to host the model locally. Once running, an HTTP POST request can be made:</p>
+<pre><code>curl -X POST "http://127.0.0.1:8089/predict/predict/" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"instances\": [ { \"disp\": [ 160 ], \"cyl\": [ 4 ] } ]}"</code></pre>
+<p>Each instance of new data should be formatted as a json array, and each element in the array should be a named array corresponding to the feature columns. This structure is similar to a named list in R.</p>
+<p>The response is the predicted MPG:</p>
+<pre><code>{
+  "predictions": [
+    {
+      "predictions": [
+        8.4974
+      ]
+    }
+  ]
+}</code></pre>
 </div>
 <div id="tensorflow" class="section level3">
 <h3 class="hasAnchor">
@@ -305,6 +253,9 @@ sess &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">S
 datasets &lt;-<span class="st"> </span>tf<span class="op">$</span>contrib<span class="op">$</span>learn<span class="op">$</span>datasets
 mnist &lt;-<span class="st"> </span>datasets<span class="op">$</span>mnist<span class="op">$</span><span class="kw">read_data_sets</span>(<span class="st">"MNIST-data"</span>, <span class="dt">one_hot =</span> <span class="ot">TRUE</span>)
 
+<span class="co"># Note that we define x as the input tensor</span>
+<span class="co"># and y as the output tensor that will contain</span>
+<span class="co"># the scores. These are referenced in export_savedmodel</span>
 x &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">placeholder</span>(tf<span class="op">$</span>float32, <span class="kw"><a href="http://www.rdocumentation.org/packages/tensorflow/topics/shape">shape</a></span>(<span class="ot">NULL</span>, 784L))
 W &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(tf<span class="op">$</span><span class="kw">zeros</span>(<span class="kw"><a href="http://www.rdocumentation.org/packages/tensorflow/topics/shape">shape</a></span>(784L, 10L)))
 b &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(tf<span class="op">$</span><span class="kw">zeros</span>(<span class="kw"><a href="http://www.rdocumentation.org/packages/tensorflow/topics/shape">shape</a></span>(10L)))
@@ -331,67 +282,37 @@ sess<span class="op">$</span><span class="kw">run</span>(init)
 <span class="kw"><a href="http://www.rdocumentation.org/packages/tensorflow/topics/export_savedmodel">export_savedmodel</a></span>(
   sess,
   <span class="st">"savedmodel"</span>,
-  <span class="dt">inputs =</span> <span class="kw">list</span>(<span class="dt">images =</span> x),
+  <span class="dt">inputs =</span> <span class="kw">list</span>(<span class="dt">image_input =</span> x),
   <span class="dt">outputs =</span> <span class="kw">list</span>(<span class="dt">scores =</span> y))</code></pre></div>
-<p>You can then generate predictions as follows:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># prepare list of test images</span>
-test_images &lt;-<span class="st"> </span>mnist<span class="op">$</span>test<span class="op">$</span><span class="kw">next_batch</span>(10L)[[<span class="dv">1</span>]]
-test_images &lt;-<span class="st"> </span><span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(test_images), <span class="cf">function</span>(i) test_images[i,])
-
-<span class="co"># generate predictions</span>
-<span class="kw">library</span>(tfdeploy)
-preds &lt;-<span class="st"> </span><span class="kw"><a href="reference/predict_savedmodel.html">predict_savedmodel</a></span>(
-  test_images, 
-  <span class="st">"savedmodel"</span>,
-  <span class="dt">type =</span> <span class="st">"export"</span>
-)</code></pre></div>
+<p>Once the model is exported, the same process of using <code>serve_savedmodel</code> can be used, and the same HTTP requests demonstrated in the Keras example can be used against the tensorflow model.</p>
 </div>
 </div>
 <div id="model-deployment" class="section level2">
 <h2 class="hasAnchor">
 <a href="#model-deployment" class="anchor"></a>Model Deployment</h2>
-<p>There are a variety of ways to deploy a TensorFlow SavedModel, each of which are described below. Of the 4 methods described, 3 of them (the local server, CloudML, and RStudio Connect) all share the same REST interface, which is described in detail here: <a href="https://cloud.google.com/ml-engine/docs/v1/predict-request" class="uri">https://cloud.google.com/ml-engine/docs/v1/predict-request</a>.</p>
-<div id="local-server-1" class="section level3">
-<h3 class="hasAnchor">
-<a href="#local-server-1" class="anchor"></a>Local Server</h3>
-<p>The first place you are likely to “deploy” a SavedModel is on your local system, for the purpose of testing and refining the prediction API. The <code><a href="reference/serve_savedmodel.html">serve_savedmodel()</a></code> function runs a local server that serves your model:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/serve_savedmodel.html">serve_savedmodel</a></span>(<span class="st">"savedmodel"</span>)</code></pre></div>
-<pre style="background-color: transparent; margin: 0 !important; padding: 0 !important;"><code style="color: rgb(196,27,6); background-color: transparent;">Starting server under http://127.0.0.1:8089 with the following API entry points:
-  http://127.0.0.1:8089/api/serving_default/predict/
-
-</code></pre>
-<p>The REST API used by the local server is based on the <a href="https://cloud.google.com/ml-engine/docs/v1/predict-request">CloudML predict request API</a>.</p>
-<p>If you navigate to <a href="http://localhost:8089" class="uri">http://localhost:8089</a> you’ll see a web page that describes the REST interace to your model:</p>
-<div class="figure">
-<img src="images/swagger.png" class="illustration" style="width:80.0%">
-</div>
-<p>You can request predictions remotely from any language or environment using this REST API. You can also call the <code><a href="reference/predict_savedmodel.html">predict_savedmodel()</a></code> function from R:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/predict_savedmodel.html">predict_savedmodel</a></span>(
-  input_data,
-  <span class="st">"http://localhost:8089/api/serving_default/predict"</span>, 
-  <span class="dt">type =</span> <span class="st">"webapi"</span>
-)</code></pre></div>
-</div>
+<p>There are a variety of ways to deploy a TensorFlow SavedModel, each of which are described below. Of the 3 methods described, 2 of them (CloudML and RStudio Connect) share the same REST interface that we have been using with <code>serve_savedmodel</code> to test locally. The REST interface is described in detail here: <a href="https://cloud.google.com/ml-engine/docs/v1/predict-request" class="uri">https://cloud.google.com/ml-engine/docs/v1/predict-request</a>.</p>
 <div id="cloudml" class="section level3">
 <h3 class="hasAnchor">
 <a href="#cloudml" class="anchor"></a>CloudML</h3>
 <p>You can deploy TensorFlow SavedModels to Google’s <a href="https://cloud.google.com/ml-engine/">CloudML</a> service using functions from the <a href="https://tensorflow.rstudio.com/tools/cloudml/">cloudml</a> package. For example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(cloudml)
 <span class="kw"><a href="http://www.rdocumentation.org/packages/cloudml/topics/cloudml_deploy">cloudml_deploy</a></span>(<span class="st">"savedmodel"</span>, <span class="dt">name =</span> <span class="st">"keras_mnist"</span>)</code></pre></div>
-<p>You can generate predictions using the <code><a href="http://www.rdocumentation.org/packages/cloudml/topics/cloudml_predict">cloudml_predict()</a></code> function:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="http://www.rdocumentation.org/packages/cloudml/topics/cloudml_predict">cloudml_predict</a></span>(test_images, <span class="dt">name =</span> <span class="st">"keras_mnist"</span>)</code></pre></div>
+<p>Once deployed to CloudML, predictions can be made using the same REST interace we previously used locally. The HTTP POST requests will be similar to the sample requests, but CloudML additiobnally requires proper authorization.</p>
 <p>See the <a href="https://tensorflow.rstudio.com/tools/cloudml/articles/deployment.html">Deploying Models</a> article on the CloudML package website for additional details.</p>
 </div>
 <div id="rstudio-connect" class="section level3">
 <h3 class="hasAnchor">
 <a href="#rstudio-connect" class="anchor"></a>RStudio Connect</h3>
-<p><a href="https://www.rstudio.com/products/connect/">RStudio Connect</a> is a server publishing platform for applications, reports, and APIs created with R.</p>
+<p><a href="https://www.rstudio.com/products/connect/">RStudio Connect</a> is a publishing platform for applications, reports, and APIs created with R. Connect runs on-premise or in your own cloud infrastructure, giving you full control of the deployment environment. Connect can also integrate with your own security services and user management tools.</p>
 <p>An upcoming version of RStudio Connect will include support for hosting TensorFlow SavedModels, using the same REST interface as is supported by the local server and CloudML.</p>
+<p>Exported models will be published to Connect using the <code>rsconnect</code> package, for example:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rsconnect<span class="op">::</span><span class="kw">deployTFModel</span>(<span class="st">'savedmodel'</span>, <span class="dt">account =</span> <span class="op">&lt;</span>username<span class="op">&gt;</span>, <span class="dt">server =</span> <span class="op">&lt;</span>internal_connect_server<span class="op">&gt;</span>)</code></pre></div>
+<p>If you would like to preview the feature, or get more information, contact <a href="mailto:sales@rstudio.com">sales@rstudio.com</a>.</p>
 </div>
 <div id="tensorflow-serving" class="section level3">
 <h3 class="hasAnchor">
 <a href="#tensorflow-serving" class="anchor"></a>TensorFlow Serving</h3>
-<p><a href="https://www.tensorflow.org/serving">TensorFlow Serving</a> is an open-source library and server implementation that allows you to serve TensorFlow SavedModels using a <a href="https://grpc.io/">gRPC interface</a>.</p>
+<p><a href="https://www.tensorflow.org/serving">TensorFlow Serving</a> is an open-source library and server implementation that allows you to serve TensorFlow SavedModels using a <a href="https://grpc.io/">gRPC interface</a> as opposed to the REST interface offered by the previous deployment tools.</p>
 <p>Once you have exported a TensorFlow model using <code><a href="http://www.rdocumentation.org/packages/tensorflow/topics/export_savedmodel">export_savedmodel()</a></code> it’s straightforward to deploy it using TensorFlow Serving. See the documentation at <a href="https://www.tensorflow.org/serving" class="uri">https://www.tensorflow.org/serving</a> for additional details.</p>
 </div>
 </div>

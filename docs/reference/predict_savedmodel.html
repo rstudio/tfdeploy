@@ -55,6 +55,9 @@
   <a href="../index.html">Home</a>
 </li>
 <li>
+  <a href="../articles/saved-models-from-R.html">Using Saved Models from R</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
@@ -84,8 +87,7 @@
     <p>Runs a prediction over a saved model file, local service or cloudml model.</p>
     
 
-    <pre class="usage"><span class='fu'>predict_savedmodel</span>(<span class='no'>instances</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"export"</span>, <span class='st'>"cloudml"</span>,
-  <span class='st'>"webapi"</span>, <span class='st'>"graph"</span>), <span class='kw'>signature_name</span> <span class='kw'>=</span> <span class='st'>"serving_default"</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>predict_savedmodel</span>(<span class='no'>instances</span>, <span class='no'>model</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -97,31 +99,56 @@ to the service. Even for single predictions, a list with one entry is expected.<
     </tr>
     <tr>
       <th>model</th>
-      <td><p>The model as a local path, REST url, CloudML name or graph object.</p></td>
-    </tr>
-    <tr>
-      <th>type</th>
-      <td><p>The type of object performing the prediction. Valid values
-are <code>cloudml</code>, <code>export</code>, <code>webapi</code> and <code>graph</code>.</p></td>
-    </tr>
-    <tr>
-      <th>signature_name</th>
-      <td><p>The named entry point to use in the model for prediction.</p></td>
+      <td><p>The model as a local path, a REST url, CloudML name or graph object.</p>
+<p>A local path can be exported using <code><a href='http://www.rdocumentation.org/packages/tensorflow/topics/export_savedmodel'>export_savedmodel()</a></code>, a REST URL
+can be created using <code><a href='serve_savedmodel.html'>serve_savedmodel()</a></code>, a CloudML model can be deployed
+usin <code><a href='http://www.rdocumentation.org/packages/cloudml/topics/cloudml_deploy'>cloudml::cloudml_deploy()</a></code> and a graph object loaded using
+<code><a href='load_savedmodel.html'>load_savedmodel()</a></code>.</p>
+<p>Notice that predicting over a CloudML model requires a <code>version</code>
+parameter to identify the model.</p>
+<p>A <code>type</code> parameter can be specified to explicitly choose the type model
+performing the prediction. Valid values are <code>cloudml</code>, <code>export</code>,
+<code>webapi</code> and <code>graph</code>.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Additional arguments. See <code><a href='predict_savedmodel.cloudml_prediction.html'>?predict_savedmodel.cloudml_prediction</a></code>
-and <code><a href='predict_savedmodel.graph_prediction.html'>?predict_savedmodel.graph_prediction</a></code> for additional options.</p></td>
+      <td><p>See <code><a href='predict_savedmodel.export_prediction.html'>predict_savedmodel.export_prediction()</a></code>,
+<code><a href='predict_savedmodel.graph_prediction.html'>predict_savedmodel.graph_prediction()</a></code>,
+<code><a href='predict_savedmodel.webapi_prediction.html'>predict_savedmodel.webapi_prediction()</a></code>
+and <code><a href='predict_savedmodel.cloudml_prediction.html'>predict_savedmodel.cloudml_prediction()</a></code> for additional options.</p>
+<p>#' @section Implementations:</p><ul>
+<li><p><code><a href='predict_savedmodel.export_prediction.html'>predict_savedmodel.export_prediction()</a></code></p></li>
+<li><p><code><a href='predict_savedmodel.graph_prediction.html'>predict_savedmodel.graph_prediction()</a></code></p></li>
+<li><p><code><a href='predict_savedmodel.webapi_prediction.html'>predict_savedmodel.webapi_prediction()</a></code>]</p></li>
+<li><p><code><a href='predict_savedmodel.cloudml_prediction.html'>predict_savedmodel.cloudml_prediction()</a></code></p></li>
+</ul></td>
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
+    <p><code><a href='http://www.rdocumentation.org/packages/tensorflow/topics/export_savedmodel'>export_savedmodel()</a></code>, <code><a href='serve_savedmodel.html'>serve_savedmodel()</a></code>, <code><a href='load_savedmodel.html'>load_savedmodel()</a></code></p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+<span class='co'># perform prediction based on an existing model</span>
+<span class='kw pkg'>tfdeploy</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/tfdeploy/topics/predict_savedmodel'>predict_savedmodel</a></span>(
+  <span class='fu'>list</span>(<span class='fu'>rep</span>(<span class='fl'>9</span>, <span class='fl'>784</span>)),
+  <span class='fu'>system.file</span>(<span class='st'>"models/tensorflow-mnist"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"tfdeploy"</span>)
+)
+<span class='co'># }</span><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#see-also">See also</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

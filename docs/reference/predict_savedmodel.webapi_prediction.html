@@ -55,6 +55,9 @@
   <a href="../index.html">Home</a>
 </li>
 <li>
+  <a href="../articles/saved-models-from-R.html">Using Saved Models from R</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
@@ -85,15 +88,50 @@
     
 
     <pre class="usage"><span class='co'># S3 method for webapi_prediction</span>
-<span class='fu'><a href='predict_savedmodel.html'>predict_savedmodel</a></span>(<span class='no'>instances</span>,
-  <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"http://127.0.0.1:8089/api/serving_default/predict/"</span>,
-  <span class='kw'>signature_name</span> <span class='kw'>=</span> <span class='st'>"serving_default"</span>, <span class='no'>...</span>)</pre>
-        
+<span class='fu'><a href='predict_savedmodel.html'>predict_savedmodel</a></span>(<span class='no'>instances</span>, <span class='no'>model</span>, <span class='no'>...</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>instances</th>
+      <td><p>A list of prediction instances to be passed as input tensors
+to the service. Even for single predictions, a list with one entry is expected.</p></td>
+    </tr>
+    <tr>
+      <th>model</th>
+      <td><p>The model as a local path, a REST url, CloudML name or graph object.</p>
+<p>A local path can be exported using <code><a href='http://www.rdocumentation.org/packages/tensorflow/topics/export_savedmodel'>export_savedmodel()</a></code>, a REST URL
+can be created using <code><a href='serve_savedmodel.html'>serve_savedmodel()</a></code>, a CloudML model can be deployed
+usin <code><a href='http://www.rdocumentation.org/packages/cloudml/topics/cloudml_deploy'>cloudml::cloudml_deploy()</a></code> and a graph object loaded using
+<code><a href='load_savedmodel.html'>load_savedmodel()</a></code>.</p>
+<p>Notice that predicting over a CloudML model requires a <code>version</code>
+parameter to identify the model.</p>
+<p>A <code>type</code> parameter can be specified to explicitly choose the type model
+performing the prediction. Valid values are <code>cloudml</code>, <code>export</code>,
+<code>webapi</code> and <code>graph</code>.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>See <code><a href='predict_savedmodel.export_prediction.html'>predict_savedmodel.export_prediction()</a></code>,
+<code><a href='predict_savedmodel.graph_prediction.html'>predict_savedmodel.graph_prediction()</a></code>,
+<code>predict_savedmodel.webapi_prediction()</code>
+and <code><a href='predict_savedmodel.cloudml_prediction.html'>predict_savedmodel.cloudml_prediction()</a></code> for additional options.</p>
+<p>#' @section Implementations:</p><ul>
+<li><p><code><a href='predict_savedmodel.export_prediction.html'>predict_savedmodel.export_prediction()</a></code></p></li>
+<li><p><code><a href='predict_savedmodel.graph_prediction.html'>predict_savedmodel.graph_prediction()</a></code></p></li>
+<li><p><code>predict_savedmodel.webapi_prediction()</code>]</p></li>
+<li><p><code><a href='predict_savedmodel.cloudml_prediction.html'>predict_savedmodel.cloudml_prediction()</a></code></p></li>
+</ul></td>
+    </tr>
+    </table>
+    
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
                 </ul>
 
   </div>

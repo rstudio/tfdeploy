@@ -1,13 +1,14 @@
 template:
   params:
     bootswatch: cosmo
-
 navbar:
   title: "tfdeploy"
   type: inverse
   left:
     - text: "Home"
       href: index.html
+    - text: "Using Saved Models from R"
+      href: articles/saved-models-from-R.html
     - text: "Reference"
       href: reference/index.html
   right:

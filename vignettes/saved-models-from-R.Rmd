@@ -1,10 +1,10 @@
 ---
 title: 'Using Saved Models from R'
-output: 
-  html_document: 
-    pandoc_args: [
-      "--columns", "1000"
-    ]
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using Saved Models from R} 
+  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}

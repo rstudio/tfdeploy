@@ -10,3 +10,6 @@
 ^images$
 runs$
 ^scripts$
+^scratch$
+^.*saved_model\.pb$
+^.inst/models/.*-mnist$

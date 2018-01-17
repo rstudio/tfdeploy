@@ -19,16 +19,17 @@ Imports:
   httr,
   jsonlite,
   magrittr,
-  reticulate,
   swagger,
   tensorflow
 Suggests:
   pixels,
   processx,
-  testthat
+  testthat,
+  knitr
 Remotes:
-  rstudio/reticulate,
   rstudio/tensorflow,
   rstudio/cloudml
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.1
+VignetteBuilder: knitr
+

@@ -1,12 +1,26 @@
 ---
-output: github_document
+title: "Deploying TensorFlow Models from R"
+output: 
+  rmarkdown::html_vignette: default
+vignette: >
+  %\VignetteIndexEntry{Deploying TensorFlow Models from R}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+type: docs
+repo: https://github.com/rstudio/tfdeploy
+menu:
+  main:
+    name: "Deploying Models from R"
+    identifier: "tools-tfdeploy-introduction"
+    parent: "tfdeploy-top"
+    weight: 10
+aliases:
+  - /tools/tfdeploy/
 ---
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(eval = FALSE)
 ```
-
-# TensorFlow Model Deployment from R
 
 ## Overview
 

@@ -21,7 +21,7 @@ The R interface to TensorFlow includes a variety of tools designed to make expor
 
 -   Call the `export_savedmodel()` function on your trained model to write it to disk as a TensorFlow SavedModel.
 
--   Use the `serve_savedmodel()` from the [tfdeploy](https://tensorflow.rstudio.com/tools/tfdeploy/) package to run a local test server that supports the same REST API as CloudML and RStudio Connect.
+-   Use the `serve_savedmodel()` function from the [tfdeploy](https://tensorflow.rstudio.com/tools/tfdeploy/) package to run a local test server that supports the same REST API as CloudML and RStudio Connect.
 
 -   Deploy your model using TensorFlow Serving, CloudML, or RStudio Connect.
 
@@ -34,9 +34,9 @@ Begin by installing the **tfdeploy** package from GitHub as follows:
 devtools::install_github("rstudio/tfdeploy")
 ```
 
-First we'll walk through an end-to-end example that: trains a Keras model with the MNIST dataset, exports the saved model, and then serves the exported model locally for predictions with a REST API. After that we'll describe in more depth the specific requirements and various options associated with exporting models. Finally, we'll cover the various deployment options and provide links to additional documentation.
+To demonstrate the basics, we'll walk through an end-to-end example that trains a Keras model with the MNIST dataset, exports the saved model, and then serves the exported model locally for predictions with a REST API. After that we'll describe in more depth the specific requirements and various options associated with exporting models. Finally, we'll cover the various deployment options and provide links to additional documentation.
 
-### End-to-End Example
+### MNIST Model
 
 We'll use a Keras model that recognizes handwritten digits from the [MNIST](https://en.wikipedia.org/wiki/MNIST_database) dataset as an example. MNIST consists of 28 x 28 grayscale images of handwritten digits like these:
 
@@ -96,9 +96,9 @@ preds <- predict(model, x_test[1:5,])
 
 Each row represents an image, each column represents a digit from 0-9, and the values represent the model's prediction. For example, the first image is predicted to be a 7.
 
-What if we want to deploy the model in an environment where R isn't available? The next sections cover exporting and deploying the model with the **tfdeploy** package.
+What if we want to deploy the model in an environment where R isn't available? The following sections cover exporting and deploying the model with the **tfdeploy** package.
 
-#### Exporting the Model
+### Exporting the Model
 
 After training, the next step is to export the model as a TensorFlow SavedModel using the `export_savedmodel()` function:
 
@@ -113,19 +113,24 @@ This will create a "savedmodel" directory that contains a saved version of your 
 view_savedmodel("savedmodel")
 ```
 
-#### Using the Exported Model
+### Using the Exported Model
 
-To test the exported model locally, use the `serve_savedmodel` function.
+To test the exported model locally, use the `serve_savedmodel()` function.
 
 ``` r
+library(tfdeploy)
 serve_savedmodel('savedmodel', browse = TRUE)
 ```
 
 <img src="images/swagger.png" class="illustration" style="width:80.0%" />
 
-The model is served at <http://localhost:8989> along with a webpage that describes the REST interface to the model. The REST interface is based on the [CloudML predict request API](https://cloud.google.com/ml-engine/docs/v1/predict-request).
+The REST API for the model is served at <http://localhost:8989>. Because we specified the `browse = TRUE` parameter, a webpage that describes the REST interface to the model is also displayed. The REST interface is based on the [CloudML predict request API](https://cloud.google.com/ml-engine/docs/v1/predict-request).
 
-The model can be used for prediction by making HTTP POST requests. The body of the request should contain the new instances of data and the HTTP response provides the model's predictions. **The data in the request body should be pre-processed and formatted in the same way as the original training data**. For MNIST, the request body could be a JSON file containing one or more pre-processed images:
+The model can be used for prediction by making HTTP POST requests. The body of the request should contain instances of data to generate predictions for. The HTTP response will provide the model's predictions. **The data in the request body should be pre-processed and formatted in the same way as the original training data** (e.g. feature scaling and normalization, pixel transformations for images, etc.).
+
+For MNIST, the request body could be a JSON file containing one or more pre-processed images:
+
+**new\_image.json**
 
 ``` text
 {
@@ -143,13 +148,30 @@ The HTTP POST request would be:
 curl -X POST -H "Content-Type: application/json" -d @new_image.json http://localhost:8089/serving_default/predict
 ```
 
-Similar to R's predict function, the response includes an array representing the digits 0-9. The image in `new_image.json` is predicted to be a 7:
+Similar to R's predict function, the response includes an array representing the digits 0-9. The image in `new_image.json` is predicted to be a 7 (since that's the column which has a `1`, whereas the other columns have values approximating zero).
 
-    {"predictions":[{"prediction":[1.3306e-24,4.9968e-26,1.8917e-23,1.7047e-21,0,8.963e-33,0,1,2.3306e-32,2.0314e-22]}]}
+    {
+      "predictions": [
+        {
+          "prediction": [
+            1.3306e-24,
+            4.9968e-26,
+            1.8917e-23,
+            1.7047e-21,
+            0,
+            8.963e-33,
+            0,
+            1,
+            2.3306e-32,
+            2.0314e-22
+          ]
+        }
+      ]
+    }
 
-#### Deploying the Model
+### Deploying the Model
 
-Once you are satisifed with local testing, the next step is to make the model available to others. There are a number of available options for this including [TensorFlow Serving](#tensorflow-serving), [CloudML](#cloudml), and [RStudio Connect](#rstudio-connect). For example, to deploy the saved model to CloudML we could use the cloudml package:
+Once you are satisifed with local testing, the next step is to deploy the model so others can use it. There are a number of available options for this including [TensorFlow Serving](#tensorflow-serving), [CloudML](#cloudml), and [RStudio Connect](#rstudio-connect). For example, to deploy the saved model to CloudML we could use the cloudml package:
 
 ``` r
 library(cloudml)
@@ -169,7 +191,7 @@ The `export_savedmodel()` function creates a SavedModel from a model trained usi
 
 ### keras
 
-The [Keras Example](End-to-End%20Example) above includes complete example code for creating and using SavedModel instances from Keras so we won't repeat all of those details here.
+The [Keras Example](#mnist-model) above includes complete example code for creating and using SavedModel instances from Keras so we won't repeat all of those details here.
 
 To export a TensorFlow SavedModel from a Keras model, simply call the `export_savedmodel()` function on any Keras model:
 
@@ -180,7 +202,7 @@ export_savedmodel(model, "savedmodel")
 <pre style="background-color: transparent; margin: 0 !important; padding: 0 !important;"><code style="color: rgb(196,27,6); background-color: transparent;">Keras learning phase set to 0 for export (restart R session before doing additional training)
 
 </code></pre>
-Note the printed output. Exporting a Keras model requires setting the Keras "learning phase" to 0. In practice, this means that after calling `export_savedmodel` **you can not continue to train the model in the same R session**.
+Note the message that is printed: exporting a Keras model requires setting the Keras "learning phase" to 0. In practice, this means that after calling `export_savedmodel` **you can not continue to train models in the same R session**.
 
 It is important to assign reasonable names to the the first and last layers. For example, in the model code above we named the first layer "image" and the last layer "prediction".
 
@@ -193,7 +215,7 @@ model %>%
               name = "prediction")
 ```
 
-The layer names are reflected in the structure of requests and responses to and from the deployed model.
+The layer names are reflected in the structure of REST requests and responses to and from the deployed model.
 
 ### tfestimators
 
@@ -223,9 +245,12 @@ model %>% train(mtcars_input_fn(train, num_epochs = 10))
 export_savedmodel(model, "savedmodel")
 ```
 
-Generating predictions is done in the same way as with exported Keras models. First, use `serve_savedmodel` to host the model locally. Once running, an HTTP POST request can be made:
+Generating predictions is done in the same way as with exported Keras models. First, use `serve_savedmodel()` to host the model locally. Once running, an HTTP POST request can be made:
 
-    curl -X POST "http://127.0.0.1:8089/predict/predict/" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"instances\": [ { \"disp\": [ 160 ], \"cyl\": [ 4 ] } ]}"
+    curl -X POST "http://127.0.0.1:8089/predict/predict/" \ 
+      -H "accept: application/json"                       \
+      -H "Content-Type: application/json"                 \
+      -d "{ \"instances\": [ { \"disp\": [ 160 ], \"cyl\": [ 4 ] } ]}"
 
 Each instance of new data should be formatted as a json array, and each element in the array should be a named array corresponding to the feature columns. This structure is similar to a named list in R.
 
@@ -287,7 +312,7 @@ export_savedmodel(
   outputs = list(scores = y))
 ```
 
-Once the model is exported, the same exact process used with the exported Keras MNIST model can be used to locally serve and test this TensorFlow model.
+Once the model is exported, the same process of using `serve_savedmodel` can be used, and the same HTTP requests demonstrated in the Keras example can be used against the tensorflow model.
 
 Model Deployment
 ----------------

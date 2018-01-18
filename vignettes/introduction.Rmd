@@ -1,16 +1,16 @@
 ---
-title: "Deploying TensorFlow Models from R"
+title: "Deploying TensorFlow Models"
 output: 
   rmarkdown::html_vignette: default
 vignette: >
-  %\VignetteIndexEntry{Deploying TensorFlow Models from R}
+  %\VignetteIndexEntry{Deploying TensorFlow Models}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 type: docs
 repo: https://github.com/rstudio/tfdeploy
 menu:
   main:
-    name: "Deploying Models from R"
+    name: "Deploying Models"
     identifier: "tools-tfdeploy-introduction"
     parent: "tfdeploy-top"
     weight: 10

@@ -1,14 +1,15 @@
 ---
-title: 'Using Saved Models from R'
+title: 'Using Saved Models'
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Using Saved Models from R} 
   %\VignetteEngine{knitr::rmarkdown} 
   %\VignetteEncoding{UTF-8}
+type: docs
 repo: https://github.com/rstudio/tfdeploy
 menu:
   main:
-    name: "Using Saved Models from R"
+    name: "Using Saved Models"
     identifier: "tools-tfdeploy-using-saved-models"
     parent: "tfdeploy-top"
     weight: 20

@@ -5,6 +5,13 @@ vignette: >
   %\VignetteIndexEntry{Using Saved Models from R} 
   %\VignetteEngine{knitr::rmarkdown} 
   %\VignetteEncoding{UTF-8}
+repo: https://github.com/rstudio/tfdeploy
+menu:
+  main:
+    name: "Using Saved Models from R"
+    identifier: "tools-tfdeploy-using-saved-models"
+    parent: "tfdeploy-top"
+    weight: 20
 ---
 
 ```{r setup, include=FALSE}

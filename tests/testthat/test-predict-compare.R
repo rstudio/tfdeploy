@@ -178,7 +178,8 @@ test_that("tfestimators model predictions across services are equivalent", {
   service_defs <- list(
     cloudml = list(
       model = "tfdeploy",
-      version = "tfestimators_mtcars"
+      version = "tfestimators_mtcars",
+      type = "cloudml"
     ),
     export = list(
       model = "models/tfestimators-mtcars/",

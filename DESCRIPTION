@@ -9,12 +9,11 @@ Authors@R: c(
 Maintainer: Javier Luraschi <javier@rstudio.com>
 Description: Tools to deploy TensorFlow models across multiple services. For instance,
   it provides a local server for testing cloudml compatible services and a common
-  interface to predict across local exports, Google CloudML and web APIs.
+  interface to predict across local exports and web APIs.
 License: Apache License 2.0
 Encoding: UTF-8
 LazyData: true
 Imports:
-  cloudml,
   httpuv,
   httr,
   jsonlite,
@@ -22,6 +21,7 @@ Imports:
   swagger,
   tensorflow
 Suggests:
+  cloudml,
   pixels,
   processx,
   testthat,

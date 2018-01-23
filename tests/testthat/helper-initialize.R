@@ -1,5 +1,7 @@
 library(cloudml)
 
+source("utils.R")
+
 sysenv_file <- function(name, destination) {
   if (file.exists(destination))
     return()

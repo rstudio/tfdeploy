@@ -12,6 +12,8 @@ test_serve_predict <- function(instances, model) {
 }
 
 test_that("can predict tensorflow mnist model in local serve", {
+  skip_if_no_tensorflow()
+
   test_serve_predict(
     instances = list(
       list(images = rep(0, 784))
@@ -21,6 +23,8 @@ test_that("can predict tensorflow mnist model in local serve", {
 })
 
 test_that("can predict keras mnist model in local serve", {
+  skip_if_no_tensorflow()
+
   test_serve_predict(
     instances = list(
       list(image_input = rep(0, 784))
@@ -30,6 +34,8 @@ test_that("can predict keras mnist model in local serve", {
 })
 
 test_that("can predict tensorflow with multiple tensors model in local serve", {
+  skip_if_no_tensorflow()
+
   test_serve_predict(
     instances = list(
       list(i1 = "One", i2 = "Two"),
@@ -40,6 +46,8 @@ test_that("can predict tensorflow with multiple tensors model in local serve", {
 })
 
 test_that("can predict keras with multiple tensors model in local serve", {
+  skip_if_no_tensorflow()
+
   test_serve_predict(
     instances = list(
       list(input1 = 1, input2 = 2),

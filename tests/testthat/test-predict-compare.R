@@ -68,6 +68,8 @@ test_compare_services <- function(service_defs, instances_entries) {
 }
 
 test_that("mnist tensorflow model predictions across services are equivalent", {
+  skip_if_no_tensorflow()
+
   service_defs <- list(
     cloudml = list(
       model = "tfdeploy",
@@ -93,6 +95,8 @@ test_that("mnist tensorflow model predictions across services are equivalent", {
 })
 
 test_that("mnist keras model predictions across services are equivalent", {
+  skip_if_no_tensorflow()
+
   service_defs <- list(
     cloudml = list(
       model = "tfdeploy",
@@ -118,6 +122,8 @@ test_that("mnist keras model predictions across services are equivalent", {
 })
 
 test_that("multiple tensorflow inputs and outputs model predictions across services are equivalent", {
+  skip_if_no_tensorflow()
+
   service_defs <- list(
     cloudml = list(
       model = "tfdeploy",
@@ -145,6 +151,8 @@ test_that("multiple tensorflow inputs and outputs model predictions across servi
 })
 
 test_that("multiple keras inputs and outputs model predictions across services are equivalent", {
+  skip_if_no_tensorflow()
+
   service_defs <- list(
     cloudml = list(
       model = "tfdeploy",
@@ -175,6 +183,8 @@ test_that("multiple keras inputs and outputs model predictions across services a
 })
 
 test_that("tfestimators model predictions across services are equivalent", {
+  skip_if_no_tensorflow()
+
   service_defs <- list(
     cloudml = list(
       model = "tfdeploy",

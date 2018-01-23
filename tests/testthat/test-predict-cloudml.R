@@ -31,6 +31,8 @@ test_cloudml_predict <- function(instances, model, version) {
 }
 
 test_that("can predict tensorflow mnist model in cloudml", {
+  skip_if_no_tensorflow()
+
   test_cloudml_predict(
     list(list(images = rep(0, 784))),
     "tfdeploy",
@@ -38,6 +40,8 @@ test_that("can predict tensorflow mnist model in cloudml", {
 })
 
 test_that("can predict keras mnist model in cloudml", {
+  skip_if_no_tensorflow()
+
   test_cloudml_predict(
     list(list(image_input = rep(0, 784))),
     "tfdeploy",
@@ -45,6 +49,8 @@ test_that("can predict keras mnist model in cloudml", {
 })
 
 test_that("can predict tensorflow with multiple tensors model in cloudml", {
+  skip_if_no_tensorflow()
+
   test_cloudml_predict(
     list(
       list(i1 = "One", i2 = "Two"),
@@ -55,6 +61,8 @@ test_that("can predict tensorflow with multiple tensors model in cloudml", {
 })
 
 test_that("can predict keras with multiple tensors model in cloudml", {
+  skip_if_no_tensorflow()
+
   test_cloudml_predict(
     list(
       list(input1 = 1, input2 = 2),
@@ -65,6 +73,8 @@ test_that("can predict keras with multiple tensors model in cloudml", {
 })
 
 test_that("can predict tfestimators model in cloudml", {
+  skip_if_no_tensorflow()
+
   test_cloudml_predict(
     list(
       list(disp = 100, cyl = 6)

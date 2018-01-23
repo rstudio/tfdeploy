@@ -1,6 +1,8 @@
 context("Predict Exported SavedModel")
 
 test_that("can predict mnist model from a local file", {
+  skip_if_no_tensorflow()
+
   model_dir <- system.file("models/tensorflow-mnist", package = "tfdeploy")
 
   results <- predict_savedmodel(

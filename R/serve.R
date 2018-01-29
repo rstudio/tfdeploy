@@ -125,11 +125,17 @@ serve_handlers <- function(host, port) {
 
       instances <- list()
       if (length(json_raw) > 0) {
-        instances <- jsonlite::fromJSON(
+        body <- jsonlite::fromJSON(
           rawToChar(json_raw),
           simplifyDataFrame = FALSE,
           simplifyMatrix = FALSE
-        )$instances
+        )
+
+        instances <- body$instances
+
+        if (!is.null(body$signature_name)) {
+          signature_name <- body$signature_name
+        }
       }
 
       result <- predict_savedmodel(

@@ -20,7 +20,7 @@ test_that("can predict mnist model from a local file", {
 test_that("can predict mtcars model from a local tar", {
   skip_if_no_tensorflow()
 
-  model_dir <- system.file("models/tfestimators-mtcars.tar", package = "tfdeploy")
+  model_dir <- "models/tfestimators-mtcars.tar"
 
   results <- predict_savedmodel(
     list(list(cyl = 0, disp = 0)),

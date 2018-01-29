@@ -41,7 +41,7 @@ predict_single_savedmodel_export <- function(instance, sess, graph, signature_de
         input_dim <- dim(feed_dict[[placeholder_name]])
 
       feed_dict[[placeholder_name]] <- array(
-        feed_dict[[placeholder_name]],
+        unlist(feed_dict[[placeholder_name]]),
         c(1, input_dim)
       )
     }

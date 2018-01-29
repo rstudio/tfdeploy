@@ -214,3 +214,36 @@ test_that("tfestimators model predictions across services are equivalent", {
 
   test_compare_services(service_defs, instances_entries)
 })
+
+test_that("tfestimators model predictions across services with nested vectors are equivalent", {
+  skip_if_no_tensorflow()
+
+  service_defs <- list(
+    cloudml = list(
+      model = "tfdeploy",
+      version = "tfestimators_mtcars",
+      type = "cloudml"
+    ),
+    export = list(
+      model = "models/tfestimators-mtcars/",
+      signature_name = "predict"
+    ),
+    serve = list(
+      model = "models/tfestimators-mtcars/",
+      type = "serve_test",
+      signature_name = "predict"
+    )
+  )
+
+  instances_entries <- list(
+    tensorflow_mnist_simple = list(
+      list(disp = list(list(100)), cyl = list(list(6)))
+    ),
+    tensorflow_mnist_double = list(
+      list(disp = list(list(100)), cyl = list(list(6))),
+      list(disp = list(list(100)), cyl = list(list(6)))
+    )
+  )
+
+  test_compare_services(service_defs, instances_entries)
+})

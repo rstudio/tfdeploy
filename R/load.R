@@ -53,12 +53,19 @@ find_savedmodel <- function(path) {
 #' sess$close()
 #' }
 #'
+#' @importFrom tools file_ext
 #' @export
 load_savedmodel <- function(
   sess,
   model_dir = NULL
 ) {
   model_dir <- find_savedmodel(model_dir)
+
+  if (identical(file_ext(model_dir), "tar")) {
+    extracted_dir <- tempfile()
+    untar(model_dir, exdir = extracted_dir)
+    model_dir <- extracted_dir
+  }
 
   tf$reset_default_graph()
 

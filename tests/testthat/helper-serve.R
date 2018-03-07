@@ -21,7 +21,7 @@ retry <- function(do, times = 1, message = NULL, sleep = 1) {
 
 wait_for_server <- function(url) {
   start <- Sys.time()
-  if (!retry(function() server_success(url), 10))
+  if (!retry(function() server_success(url), 20))
     stop(
       "Failed to connect to server: ",
       url,

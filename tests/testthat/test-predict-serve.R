@@ -56,3 +56,27 @@ test_that("can predict keras with multiple tensors model in local serve", {
     model = "models/keras-multiple"
   )
 })
+
+test_that("can use tfestimators with example entry in local serve", {
+  skip_if_no_tensorflow()
+
+  error_message <- tryCatch({
+    predict_savedmodel(
+      list(
+        instances = list(
+          "ABC"
+        )
+      ),
+      model = "models/tfestimators-example",
+      type = "serve_test"
+    )
+   ""
+  }, error = function(e) {
+    e$message
+  })
+
+  expect_true(
+    grepl("Could not parse example input", error_message)
+  )
+})
+

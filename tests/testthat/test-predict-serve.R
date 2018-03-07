@@ -76,7 +76,8 @@ test_that("can use tfestimators with example entry in local serve", {
   })
 
   expect_true(
-    grepl("Could not parse example input", error_message)
+    grepl("Could not parse example input", error_message),
+    paste("Actual error message: '", strtrim(error_message, 80), "'", sep = "")
   )
 })
 

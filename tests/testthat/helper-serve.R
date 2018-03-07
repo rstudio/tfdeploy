@@ -57,8 +57,14 @@ predict_savedmodel.serve_test_prediction <- function(
       ),
       "--vanilla"
     ),
-    stdout = output_log
+    stdout = output_log,
+    stderr = output_log
   )
+
+  Sys.sleep(1)
+  if (!process$is_alive()) {
+    stop(paste(readLines(output_log), collapse = "\n"))
+  }
 
   on.exit(expr = process$kill(), add = TRUE)
 

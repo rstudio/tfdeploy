@@ -151,7 +151,7 @@ swagger_input_tensor_def <- function(signature_entry, tensor_input_name) {
   swagger_type_def <- list(
     type = unbox("object"),
     items = swagger_items,
-    example = rep(swagger_example, tensor_input_example_length)
+    example = rep(swagger_example, max(1, tensor_input_example_length))
   )
 
   if (tensor_input_dim_len > 0) {

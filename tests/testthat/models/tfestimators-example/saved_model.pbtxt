@@ -22,7 +22,6 @@ meta_graphs {
           allowed_values {
             list {
               type: DT_HALF
-              type: DT_BFLOAT16
               type: DT_FLOAT
               type: DT_DOUBLE
               type: DT_UINT8
@@ -166,9 +165,6 @@ meta_graphs {
               type: DT_QUINT8
               type: DT_QINT32
               type: DT_HALF
-              type: DT_UINT32
-              type: DT_UINT64
-              type: DT_BFLOAT16
             }
           }
         }
@@ -279,7 +275,6 @@ meta_graphs {
           allowed_values {
             list {
               type: DT_HALF
-              type: DT_BFLOAT16
               type: DT_FLOAT
               type: DT_DOUBLE
               type: DT_UINT8
@@ -327,9 +322,6 @@ meta_graphs {
               type: DT_INT8
               type: DT_UINT16
               type: DT_HALF
-              type: DT_UINT32
-              type: DT_UINT64
-              type: DT_BFLOAT16
             }
           }
         }
@@ -365,9 +357,6 @@ meta_graphs {
               type: DT_INT8
               type: DT_UINT16
               type: DT_HALF
-              type: DT_UINT32
-              type: DT_UINT64
-              type: DT_BFLOAT16
             }
           }
         }
@@ -415,9 +404,6 @@ meta_graphs {
               type: DT_INT8
               type: DT_UINT16
               type: DT_HALF
-              type: DT_UINT32
-              type: DT_UINT64
-              type: DT_BFLOAT16
             }
           }
         }
@@ -456,7 +442,6 @@ meta_graphs {
           allowed_values {
             list {
               type: DT_HALF
-              type: DT_BFLOAT16
               type: DT_FLOAT
               type: DT_DOUBLE
               type: DT_INT32
@@ -506,9 +491,6 @@ meta_graphs {
               type: DT_QUINT8
               type: DT_QINT32
               type: DT_HALF
-              type: DT_UINT32
-              type: DT_UINT64
-              type: DT_BFLOAT16
             }
           }
         }
@@ -591,7 +573,6 @@ meta_graphs {
           allowed_values {
             list {
               type: DT_HALF
-              type: DT_BFLOAT16
               type: DT_FLOAT
               type: DT_DOUBLE
               type: DT_UINT8
@@ -819,7 +800,6 @@ meta_graphs {
           allowed_values {
             list {
               type: DT_HALF
-              type: DT_BFLOAT16
               type: DT_FLOAT
               type: DT_DOUBLE
             }
@@ -861,9 +841,6 @@ meta_graphs {
               type: DT_INT8
               type: DT_UINT16
               type: DT_HALF
-              type: DT_UINT32
-              type: DT_UINT64
-              type: DT_BFLOAT16
             }
           }
         }
@@ -980,9 +957,6 @@ meta_graphs {
               type: DT_INT8
               type: DT_UINT16
               type: DT_HALF
-              type: DT_UINT32
-              type: DT_UINT64
-              type: DT_BFLOAT16
             }
           }
         }
@@ -1195,7 +1169,6 @@ meta_graphs {
           allowed_values {
             list {
               type: DT_HALF
-              type: DT_BFLOAT16
               type: DT_FLOAT
               type: DT_DOUBLE
               type: DT_UINT8
@@ -1250,9 +1223,6 @@ meta_graphs {
               type: DT_QUINT8
               type: DT_QINT32
               type: DT_HALF
-              type: DT_UINT32
-              type: DT_UINT64
-              type: DT_BFLOAT16
             }
           }
         }
@@ -1326,8 +1296,8 @@ meta_graphs {
       }
     }
     tags: "serve"
-    tensorflow_version: "1.5.0"
-    tensorflow_git_version: "v1.5.0-0-g37aa430d84"
+    tensorflow_version: "1.4.0"
+    tensorflow_git_version: "v1.4.0-rc1-11-g130a514"
   }
   graph_def {
     node {
@@ -2414,28 +2384,6 @@ meta_graphs {
       }
     }
     node {
-      name: "dnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/Assert"
-      op: "Assert"
-      input: "dnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/Assert/Switch"
-      input: "dnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/Assert/Switch_1"
-      input: "dnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/Assert/Switch_2"
-      attr {
-        key: "T"
-        value {
-          list {
-            type: DT_INT64
-            type: DT_INT64
-          }
-        }
-      }
-      attr {
-        key: "summarize"
-        value {
-          i: 3
-        }
-      }
-    }
-    node {
       name: "dnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/Assert/Switch"
       op: "Switch"
       input: "dnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/All"
@@ -2531,6 +2479,28 @@ meta_graphs {
             shape {
             }
           }
+        }
+      }
+    }
+    node {
+      name: "dnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/Assert"
+      op: "Assert"
+      input: "dnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/Assert/Switch"
+      input: "dnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/Assert/Switch_1"
+      input: "dnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/Assert/Switch_2"
+      attr {
+        key: "T"
+        value {
+          list {
+            type: DT_INT64
+            type: DT_INT64
+          }
+        }
+      }
+      attr {
+        key: "summarize"
+        value {
+          i: 3
         }
       }
     }
@@ -2797,26 +2767,6 @@ meta_graphs {
       }
     }
     node {
-      name: "dnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/Assert"
-      op: "Assert"
-      input: "dnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/Assert/Switch"
-      input: "dnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/Assert/Switch_1"
-      attr {
-        key: "T"
-        value {
-          list {
-            type: DT_INT64
-          }
-        }
-      }
-      attr {
-        key: "summarize"
-        value {
-          i: 3
-        }
-      }
-    }
-    node {
       name: "dnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/Assert/Switch"
       op: "Switch"
       input: "dnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/All"
@@ -2881,6 +2831,26 @@ meta_graphs {
               }
             }
           }
+        }
+      }
+    }
+    node {
+      name: "dnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/Assert"
+      op: "Assert"
+      input: "dnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/Assert/Switch"
+      input: "dnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/Assert/Switch_1"
+      attr {
+        key: "T"
+        value {
+          list {
+            type: DT_INT64
+          }
+        }
+      }
+      attr {
+        key: "summarize"
+        value {
+          i: 3
         }
       }
     }
@@ -6640,7 +6610,7 @@ meta_graphs {
       }
     }
     node {
-      name: "dnn/head/logits/assert_rank_at_least/rank"
+      name: "dnn/head/logits/assert_rank/rank"
       op: "Const"
       attr {
         key: "_output_shapes"
@@ -6670,12 +6640,343 @@ meta_graphs {
       }
     }
     node {
-      name: "dnn/head/logits/assert_rank_at_least/assert_type/statically_determined_correct_type"
+      name: "dnn/head/logits/assert_rank/assert_type/statically_determined_correct_type"
       op: "NoOp"
     }
     node {
-      name: "dnn/head/logits/assert_rank_at_least/static_checks_determined_all_ok"
+      name: "dnn/head/logits/assert_rank/static_checks_determined_all_ok"
       op: "NoOp"
+    }
+    node {
+      name: "dnn/head/logits/strided_slice/stack"
+      op: "Const"
+      input: "^dnn/head/logits/assert_rank/static_checks_determined_all_ok"
+      attr {
+        key: "_output_shapes"
+        value {
+          list {
+            shape {
+              dim {
+                size: 1
+              }
+            }
+          }
+        }
+      }
+      attr {
+        key: "dtype"
+        value {
+          type: DT_INT32
+        }
+      }
+      attr {
+        key: "value"
+        value {
+          tensor {
+            dtype: DT_INT32
+            tensor_shape {
+              dim {
+                size: 1
+              }
+            }
+            int_val: 1
+          }
+        }
+      }
+    }
+    node {
+      name: "dnn/head/logits/strided_slice/stack_1"
+      op: "Const"
+      input: "^dnn/head/logits/assert_rank/static_checks_determined_all_ok"
+      attr {
+        key: "_output_shapes"
+        value {
+          list {
+            shape {
+              dim {
+                size: 1
+              }
+            }
+          }
+        }
+      }
+      attr {
+        key: "dtype"
+        value {
+          type: DT_INT32
+        }
+      }
+      attr {
+        key: "value"
+        value {
+          tensor {
+            dtype: DT_INT32
+            tensor_shape {
+              dim {
+                size: 1
+              }
+            }
+            int_val: 2
+          }
+        }
+      }
+    }
+    node {
+      name: "dnn/head/logits/strided_slice/stack_2"
+      op: "Const"
+      input: "^dnn/head/logits/assert_rank/static_checks_determined_all_ok"
+      attr {
+        key: "_output_shapes"
+        value {
+          list {
+            shape {
+              dim {
+                size: 1
+              }
+            }
+          }
+        }
+      }
+      attr {
+        key: "dtype"
+        value {
+          type: DT_INT32
+        }
+      }
+      attr {
+        key: "value"
+        value {
+          tensor {
+            dtype: DT_INT32
+            tensor_shape {
+              dim {
+                size: 1
+              }
+            }
+            int_val: 1
+          }
+        }
+      }
+    }
+    node {
+      name: "dnn/head/logits/strided_slice"
+      op: "StridedSlice"
+      input: "dnn/head/logits/Shape"
+      input: "dnn/head/logits/strided_slice/stack"
+      input: "dnn/head/logits/strided_slice/stack_1"
+      input: "dnn/head/logits/strided_slice/stack_2"
+      attr {
+        key: "Index"
+        value {
+          type: DT_INT32
+        }
+      }
+      attr {
+        key: "T"
+        value {
+          type: DT_INT32
+        }
+      }
+      attr {
+        key: "_output_shapes"
+        value {
+          list {
+            shape {
+            }
+          }
+        }
+      }
+      attr {
+        key: "begin_mask"
+        value {
+          i: 0
+        }
+      }
+      attr {
+        key: "ellipsis_mask"
+        value {
+          i: 0
+        }
+      }
+      attr {
+        key: "end_mask"
+        value {
+          i: 0
+        }
+      }
+      attr {
+        key: "new_axis_mask"
+        value {
+          i: 0
+        }
+      }
+      attr {
+        key: "shrink_axis_mask"
+        value {
+          i: 1
+        }
+      }
+    }
+    node {
+      name: "dnn/head/logits/assert_equal/x"
+      op: "Const"
+      input: "^dnn/head/logits/assert_rank/static_checks_determined_all_ok"
+      attr {
+        key: "_output_shapes"
+        value {
+          list {
+            shape {
+            }
+          }
+        }
+      }
+      attr {
+        key: "dtype"
+        value {
+          type: DT_INT32
+        }
+      }
+      attr {
+        key: "value"
+        value {
+          tensor {
+            dtype: DT_INT32
+            tensor_shape {
+            }
+            int_val: 1
+          }
+        }
+      }
+    }
+    node {
+      name: "dnn/head/logits/assert_equal/Equal"
+      op: "Equal"
+      input: "dnn/head/logits/assert_equal/x"
+      input: "dnn/head/logits/strided_slice"
+      attr {
+        key: "T"
+        value {
+          type: DT_INT32
+        }
+      }
+      attr {
+        key: "_output_shapes"
+        value {
+          list {
+            shape {
+            }
+          }
+        }
+      }
+    }
+    node {
+      name: "dnn/head/logits/assert_equal/Const"
+      op: "Const"
+      input: "^dnn/head/logits/assert_rank/static_checks_determined_all_ok"
+      attr {
+        key: "_output_shapes"
+        value {
+          list {
+            shape {
+              dim {
+              }
+            }
+          }
+        }
+      }
+      attr {
+        key: "dtype"
+        value {
+          type: DT_INT32
+        }
+      }
+      attr {
+        key: "value"
+        value {
+          tensor {
+            dtype: DT_INT32
+            tensor_shape {
+              dim {
+              }
+            }
+          }
+        }
+      }
+    }
+    node {
+      name: "dnn/head/logits/assert_equal/All"
+      op: "All"
+      input: "dnn/head/logits/assert_equal/Equal"
+      input: "dnn/head/logits/assert_equal/Const"
+      attr {
+        key: "Tidx"
+        value {
+          type: DT_INT32
+        }
+      }
+      attr {
+        key: "_output_shapes"
+        value {
+          list {
+            shape {
+            }
+          }
+        }
+      }
+      attr {
+        key: "keep_dims"
+        value {
+          b: false
+        }
+      }
+    }
+    node {
+      name: "dnn/head/logits/assert_equal/Assert/Assert"
+      op: "Assert"
+      input: "dnn/head/logits/assert_equal/All"
+      input: "dnn/head/logits/Shape"
+      attr {
+        key: "T"
+        value {
+          list {
+            type: DT_INT32
+          }
+        }
+      }
+      attr {
+        key: "summarize"
+        value {
+          i: 3
+        }
+      }
+    }
+    node {
+      name: "dnn/head/logits"
+      op: "Identity"
+      input: "dnn/logits/BiasAdd"
+      input: "^dnn/head/logits/assert_rank/static_checks_determined_all_ok"
+      input: "^dnn/head/logits/assert_equal/Assert/Assert"
+      attr {
+        key: "T"
+        value {
+          type: DT_FLOAT
+        }
+      }
+      attr {
+        key: "_output_shapes"
+        value {
+          list {
+            shape {
+              dim {
+                size: -1
+              }
+              dim {
+                size: 1
+              }
+            }
+          }
+        }
+      }
     }
     node {
       name: "save/Const"
@@ -6732,7 +7033,7 @@ meta_graphs {
             dtype: DT_STRING
             tensor_shape {
             }
-            string_val: "_temp_a4c578f6c8dc459fb568df3ed8c007f5/part"
+            string_val: "_temp_720e9cdbfd84418c854922799537d0a5/part"
           }
         }
       }
@@ -6797,7 +7098,6 @@ meta_graphs {
     node {
       name: "save/ShardedFilename/shard"
       op: "Const"
-      device: "/device:CPU:0"
       attr {
         key: "_output_shapes"
         value {
@@ -6831,7 +7131,6 @@ meta_graphs {
       input: "save/StringJoin"
       input: "save/ShardedFilename/shard"
       input: "save/num_shards"
-      device: "/device:CPU:0"
       attr {
         key: "_output_shapes"
         value {
@@ -6845,7 +7144,6 @@ meta_graphs {
     node {
       name: "save/SaveV2/tensor_names"
       op: "Const"
-      device: "/device:CPU:0"
       attr {
         key: "_output_shapes"
         value {
@@ -6888,7 +7186,6 @@ meta_graphs {
     node {
       name: "save/SaveV2/shape_and_slices"
       op: "Const"
-      device: "/device:CPU:0"
       attr {
         key: "_output_shapes"
         value {
@@ -6941,7 +7238,6 @@ meta_graphs {
       input: "dnn/logits/bias/part_0/read"
       input: "dnn/logits/kernel/part_0/read"
       input: "global_step"
-      device: "/device:CPU:0"
       attr {
         key: "dtypes"
         value {
@@ -6962,7 +7258,6 @@ meta_graphs {
       op: "Identity"
       input: "save/ShardedFilename"
       input: "^save/SaveV2"
-      device: "/device:CPU:0"
       attr {
         key: "T"
         value {
@@ -6992,7 +7287,6 @@ meta_graphs {
       op: "Pack"
       input: "save/ShardedFilename"
       input: "^save/control_dependency"
-      device: "/device:CPU:0"
       attr {
         key: "N"
         value {
@@ -7029,7 +7323,6 @@ meta_graphs {
       op: "MergeV2Checkpoints"
       input: "save/MergeV2Checkpoints/checkpoint_prefixes"
       input: "save/Const"
-      device: "/device:CPU:0"
       attr {
         key: "delete_old_dirs"
         value {
@@ -7043,7 +7336,6 @@ meta_graphs {
       input: "save/Const"
       input: "^save/control_dependency"
       input: "^save/MergeV2Checkpoints"
-      device: "/device:CPU:0"
       attr {
         key: "T"
         value {
@@ -8099,15 +8391,10 @@ meta_graphs {
       op: "NoOp"
     }
     node {
-      name: "init_1"
-      op: "NoOp"
-    }
-    node {
       name: "group_deps"
       op: "NoOp"
       input: "^init"
       input: "^init_all_tables"
-      input: "^init_1"
     }
     node {
       name: "save_1/Const"
@@ -8164,7 +8451,7 @@ meta_graphs {
             dtype: DT_STRING
             tensor_shape {
             }
-            string_val: "_temp_da0350e66b034c4b97c768c4773a0e82/part"
+            string_val: "_temp_e72326f714f74e2ea72cf1c19dfbc199/part"
           }
         }
       }
@@ -8229,7 +8516,6 @@ meta_graphs {
     node {
       name: "save_1/ShardedFilename/shard"
       op: "Const"
-      device: "/device:CPU:0"
       attr {
         key: "_output_shapes"
         value {
@@ -8263,7 +8549,6 @@ meta_graphs {
       input: "save_1/StringJoin"
       input: "save_1/ShardedFilename/shard"
       input: "save_1/num_shards"
-      device: "/device:CPU:0"
       attr {
         key: "_output_shapes"
         value {
@@ -8277,7 +8562,6 @@ meta_graphs {
     node {
       name: "save_1/SaveV2/tensor_names"
       op: "Const"
-      device: "/device:CPU:0"
       attr {
         key: "_output_shapes"
         value {
@@ -8320,7 +8604,6 @@ meta_graphs {
     node {
       name: "save_1/SaveV2/shape_and_slices"
       op: "Const"
-      device: "/device:CPU:0"
       attr {
         key: "_output_shapes"
         value {
@@ -8373,7 +8656,6 @@ meta_graphs {
       input: "dnn/logits/bias/part_0/read"
       input: "dnn/logits/kernel/part_0/read"
       input: "global_step"
-      device: "/device:CPU:0"
       attr {
         key: "dtypes"
         value {
@@ -8394,7 +8676,6 @@ meta_graphs {
       op: "Identity"
       input: "save_1/ShardedFilename"
       input: "^save_1/SaveV2"
-      device: "/device:CPU:0"
       attr {
         key: "T"
         value {
@@ -8424,7 +8705,6 @@ meta_graphs {
       op: "Pack"
       input: "save_1/ShardedFilename"
       input: "^save_1/control_dependency"
-      device: "/device:CPU:0"
       attr {
         key: "N"
         value {
@@ -8461,7 +8741,6 @@ meta_graphs {
       op: "MergeV2Checkpoints"
       input: "save_1/MergeV2Checkpoints/checkpoint_prefixes"
       input: "save_1/Const"
-      device: "/device:CPU:0"
       attr {
         key: "delete_old_dirs"
         value {
@@ -8475,7 +8754,6 @@ meta_graphs {
       input: "save_1/Const"
       input: "^save_1/control_dependency"
       input: "^save_1/MergeV2Checkpoints"
-      device: "/device:CPU:0"
       attr {
         key: "T"
         value {
@@ -9540,9 +9818,9 @@ meta_graphs {
     value {
       bytes_list {
         value: "\nqdnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/cond_text\022qdnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/pred_id:0\032rdnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/switch_t:0 \001*\345\002\n|dnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/control_dependency:0\nqdnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/pred_id:0\nrdnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/switch_t:0"
-        value: "\nsdnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/cond_text_1\022qdnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/pred_id:0\032rdnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/switch_f:0*\316\013\n\033ParseExample/ParseExample:1\nZdnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/All:0\nwdnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/Assert/Switch:0\nydnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/Assert/Switch_1:0\nydnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/Assert/Switch_2:0\n~dnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/control_dependency_1:0\nqdnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/pred_id:0\nrdnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/switch_f:0\nEdnn/input_from_feature_columns/input_layer/x2_indicator/num_buckets:0\022\302\001\nEdnn/input_from_feature_columns/input_layer/x2_indicator/num_buckets:0\022ydnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/Assert/Switch_2:0\022\230\001\n\033ParseExample/ParseExample:1\022ydnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/Assert/Switch_1:0\022\325\001\nZdnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/All:0\022wdnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/Assert/Switch:0"
+        value: "\nsdnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/cond_text_1\022qdnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/pred_id:0\032rdnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/switch_f:0*\316\013\n\033ParseExample/ParseExample:1\nZdnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/All:0\nwdnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/Assert/Switch:0\nydnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/Assert/Switch_1:0\nydnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/Assert/Switch_2:0\n~dnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/control_dependency_1:0\nqdnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/pred_id:0\nrdnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/switch_f:0\nEdnn/input_from_feature_columns/input_layer/x2_indicator/num_buckets:0\022\302\001\nEdnn/input_from_feature_columns/input_layer/x2_indicator/num_buckets:0\022ydnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/Assert/Switch_2:0\022\325\001\nZdnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/All:0\022wdnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/Assert/Switch:0\022\230\001\n\033ParseExample/ParseExample:1\022ydnn/input_from_feature_columns/input_layer/x2_indicator/assert_less_than_num_buckets/Assert/AssertGuard/Assert/Switch_1:0"
         value: "\nndnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/cond_text\022ndnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/pred_id:0\032odnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/switch_t:0 \001*\334\002\nydnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/control_dependency:0\nndnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/pred_id:0\nodnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/switch_t:0"
-        value: "\npdnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/cond_text_1\022ndnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/pred_id:0\032odnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/switch_f:0*\254\010\n\033ParseExample/ParseExample:1\nWdnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/All:0\ntdnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/Assert/Switch:0\nvdnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/Assert/Switch_1:0\n{dnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/control_dependency_1:0\nndnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/pred_id:0\nodnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/switch_f:0\022\317\001\nWdnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/All:0\022tdnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/Assert/Switch:0\022\225\001\n\033ParseExample/ParseExample:1\022vdnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/Assert/Switch_1:0"
+        value: "\npdnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/cond_text_1\022ndnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/pred_id:0\032odnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/switch_f:0*\254\010\n\033ParseExample/ParseExample:1\nWdnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/All:0\ntdnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/Assert/Switch:0\nvdnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/Assert/Switch_1:0\n{dnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/control_dependency_1:0\nndnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/pred_id:0\nodnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/switch_f:0\022\225\001\n\033ParseExample/ParseExample:1\022vdnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/Assert/Switch_1:0\022\317\001\nWdnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/All:0\022tdnn/input_from_feature_columns/input_layer/x2_indicator/assert_greater_or_equal_0/Assert/AssertGuard/Assert/Switch:0"
       }
     }
   }
@@ -9620,7 +9898,7 @@ meta_graphs {
       outputs {
         key: "predictions"
         value {
-          name: "dnn/logits/BiasAdd:0"
+          name: "dnn/head/logits:0"
           dtype: DT_FLOAT
           tensor_shape {
             dim {
@@ -9653,7 +9931,7 @@ meta_graphs {
       outputs {
         key: "outputs"
         value {
-          name: "dnn/logits/BiasAdd:0"
+          name: "dnn/head/logits:0"
           dtype: DT_FLOAT
           tensor_shape {
             dim {
@@ -9686,7 +9964,7 @@ meta_graphs {
       outputs {
         key: "outputs"
         value {
-          name: "dnn/logits/BiasAdd:0"
+          name: "dnn/head/logits:0"
           dtype: DT_FLOAT
           tensor_shape {
             dim {

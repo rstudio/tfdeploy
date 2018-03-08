@@ -40,9 +40,18 @@ predict_single_savedmodel_export <- function(instance, sess, graph, signature_de
       else
         input_dim <- dim(feed_dict[[placeholder_name]])
 
+      tensor_dims <- signature_input$tensor_shape$dim
+      tensor_dims_r <- c()
+      for (i in 0:(signature_input$tensor_shape$dim$`__len__`()-1)) {
+        tensor_dims_r <- c(
+          tensor_dims_r,
+          ifelse(tensor_dims[[i]]$size == -1, 1, tensor_dims[[i]]$size)
+        )
+      }
+
       feed_dict[[placeholder_name]] <- array(
         unlist(feed_dict[[placeholder_name]]),
-        c(1, input_dim)
+        tensor_dims_r
       )
     }
   }

@@ -19,7 +19,7 @@ retry <- function(do, times = 1, message = NULL, sleep = 1) {
   times > 0
 }
 
-wait_for_server <- function(url) {
+wait_for_server <- function(url, output_log) {
   start <- Sys.time()
   if (!retry(function() server_success(url), 10))
     stop(
@@ -27,7 +27,8 @@ wait_for_server <- function(url) {
       url,
       " after ",
       round(as.numeric(Sys.time() - start), 2),
-      " secs."
+      " secs. Logs:\n",
+      paste(readLines(output_log), collapse = "\n")
     )
 }
 
@@ -41,6 +42,8 @@ predict_savedmodel.serve_test_prediction <- function(
 
   output_log <- tempfile()
 
+  port_numer <- 9000
+
   rscript <- system2("which", "Rscript", stdout = TRUE)
   if (length(rscript) == 0)
     stop("Failed to find Rscript")
@@ -53,22 +56,30 @@ predict_savedmodel.serve_test_prediction <- function(
         "library(tfdeploy); ",
         "serve_savedmodel('",
         full_path,
-        "', port = 9090)"
+        "', port = ",
+        port_numer,
+        ")"
       ),
       "--vanilla"
     ),
-    stdout = output_log
+    stdout = output_log,
+    stderr = output_log
   )
+
+  Sys.sleep(1)
+  if (!process$is_alive()) {
+    stop(paste(readLines(output_log), collapse = "\n"))
+  }
 
   on.exit(expr = process$kill(), add = TRUE)
 
   url <- paste0(
-    "http://127.0.0.1:9090/",
+    paste("http://127.0.0.1:", port_numer, "/", sep = ""),
     signature_name,
     "/predict/"
   )
 
-  wait_for_server(url)
+  wait_for_server(url, output_log)
 
   predict_savedmodel(
     instances,

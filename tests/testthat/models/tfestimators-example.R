@@ -40,4 +40,6 @@ tfestimators::export_savedmodel(
       feature_columns = cols,
       weight_column = NULL,
       label_key = "label"
-    )))
+    )),
+  as_text = TRUE
+)

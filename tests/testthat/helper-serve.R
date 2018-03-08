@@ -41,6 +41,8 @@ predict_savedmodel.serve_test_prediction <- function(
 
   output_log <- tempfile()
 
+  port_numer <- as.integer(runif(1, 9000, 9999))
+
   rscript <- system2("which", "Rscript", stdout = TRUE)
   if (length(rscript) == 0)
     stop("Failed to find Rscript")
@@ -53,7 +55,9 @@ predict_savedmodel.serve_test_prediction <- function(
         "library(tfdeploy); ",
         "serve_savedmodel('",
         full_path,
-        "', port = 9090)"
+        "', port = ",
+        port_numer,
+        ")"
       ),
       "--vanilla"
     ),
@@ -69,7 +73,7 @@ predict_savedmodel.serve_test_prediction <- function(
   on.exit(expr = process$kill(), add = TRUE)
 
   url <- paste0(
-    "http://127.0.0.1:9090/",
+    paste("http://127.0.0.1:", port_numer, "/", sep = ""),
     signature_name,
     "/predict/"
   )

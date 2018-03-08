@@ -19,15 +19,16 @@ retry <- function(do, times = 1, message = NULL, sleep = 1) {
   times > 0
 }
 
-wait_for_server <- function(url) {
+wait_for_server <- function(url, output_log) {
   start <- Sys.time()
-  if (!retry(function() server_success(url), 20))
+  if (!retry(function() server_success(url), 10))
     stop(
       "Failed to connect to server: ",
       url,
       " after ",
       round(as.numeric(Sys.time() - start), 2),
-      " secs."
+      " secs. Logs:\n",
+      paste(readLines(output_log), collapse = "\n")
     )
 }
 
@@ -41,7 +42,7 @@ predict_savedmodel.serve_test_prediction <- function(
 
   output_log <- tempfile()
 
-  port_numer <- as.integer(runif(1, 9000, 9999))
+  port_numer <- 9000
 
   rscript <- system2("which", "Rscript", stdout = TRUE)
   if (length(rscript) == 0)
@@ -78,7 +79,7 @@ predict_savedmodel.serve_test_prediction <- function(
     "/predict/"
   )
 
-  wait_for_server(url)
+  wait_for_server(url, output_log)
 
   predict_savedmodel(
     instances,

@@ -58,7 +58,7 @@ swagger_path <- function(signature_name, signature_id) {
 }
 
 swagger_paths <- function(signature_def) {
-  path_names <- signature_def$keys()
+  path_names <- py_dict_get_keys(signature_def)
   path_values <- lapply(seq_along(path_names), function(path_index) {
     swagger_path(path_names[[path_index]], path_index)
   })
@@ -173,7 +173,7 @@ swagger_input_tensor_def <- function(signature_entry, tensor_input_name) {
 }
 
 swagger_def <- function(signature_entry, signature_id) {
-  tensor_input_names <- signature_entry$inputs$keys()
+  tensor_input_names <- py_dict_get_keys(signature_entry$inputs)
 
   swagger_input_defs <- lapply(tensor_input_names, function(tensor_input_name) {
     swagger_input_tensor_def(
@@ -204,7 +204,7 @@ swagger_def <- function(signature_entry, signature_id) {
 }
 
 swagger_defs <- function(signature_def) {
-  defs_names <- signature_def$keys()
+  defs_names <- py_dict_get_keys(signature_def)
   defs_values <- lapply(seq_along(defs_names), function(defs_index) {
     swagger_def(signature_def$get(defs_names[[defs_index]]), defs_index)
   })

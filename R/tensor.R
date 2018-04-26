@@ -9,7 +9,7 @@ tensor_is_multi_instance <- function(tensor) {
 
 # Retrieves the input and output tensors from a graph as a named list.
 tensor_get_boundaries <- function(graph, signature_def, signature_name) {
-  signature_names <- signature_def$keys()
+  signature_names <- py_dict_get_keys(signature_def)
   if (!signature_name %in% signature_names) {
     stop(
       "Signature '", signature_name, "' not available in model signatures. ",
@@ -18,8 +18,8 @@ tensor_get_boundaries <- function(graph, signature_def, signature_name) {
 
   signature_obj <- signature_def$get(signature_name)
 
-  signature_input_names <- signature_obj$inputs$keys()
-  signature_output_names <- signature_obj$outputs$keys()
+  signature_input_names <- py_dict_get_keys(signature_obj$inputs)
+  signature_output_names <- py_dict_get_keys(signature_obj$outputs)
 
   if (length(signature_input_names) == 0) {
     stop("Signature '", signature_name, "' contains no inputs.")

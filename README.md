@@ -1,6 +1,11 @@
 
 ## Deploying TensorFlow Models from R
 
+[![Build
+Status](https://travis-ci.org/rstudio/tfdeploy.svg?branch=master)](https://travis-ci.org/rstudio/tfdeploy)
+[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/tfdeploy)](https://cran.r-project.org/package=tfdeploy)
+[![codecov](https://codecov.io/gh/rstudio/tfdeploy/branch/master/graph/badge.svg)](https://codecov.io/gh/rstudio/tfdeploy)
+
 While TensorFlow models are typically defined and trained using R or Python code, it is possible to deploy TensorFlow models in a wide variety of environments without any runtime dependency on R or Python:
 
 - [TensorFlow Serving](https://www.tensorflow.org/serving/) is an open-source software library for serving TensorFlow models using a [gRPC](https://grpc.io/) interface.

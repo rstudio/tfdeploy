@@ -5,12 +5,15 @@ sudo: false
 warnings_are_errors: false
 
 env:
-  TF_VERSION="1.4"
+  TF_VERSION="1.7"
 
 cache:
   packages: true
   directories:
     - $HOME/.cache/pip
+
+r_packages:
+  - covr
 
 before_script:
   - source scripts/travis_install.sh
@@ -18,7 +21,8 @@ before_script:
 script:
   - |
     R CMD build .
-    R CMD check --no-build-vignettes --no-manual tfdeploy*tar.gz
+    R CMD check --no-build-vignettes --no-manual --no-tests tfdeploy*tar.gz
+    travis_wait 20 Rscript -e 'covr::codecov()'
 
 after_failure:
   - |

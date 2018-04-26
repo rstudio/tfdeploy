@@ -175,7 +175,7 @@ message_serve_start <- function(host, port, graph) {
   message()
   message("Starting server under ", hostname, " with the following API entry points:")
 
-  for (signature_name in graph$signature_def$keys()) {
+  for (signature_name in py_dict_get_keys(graph$signature_def)) {
     message("  ", hostname, "/", signature_name, "/predict/")
   }
 }

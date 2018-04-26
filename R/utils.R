@@ -11,9 +11,9 @@ append_predictions_class <- function(x) {
   x
 }
 
-py_builtins <- reticulate::import_builtins()
-
 py_dict_get_keys <- function(x) {
+  py_builtins <- reticulate::import_builtins()
+
   # python 3 returns keys as KeysView not list
   py_builtins$list(x$keys())
 }

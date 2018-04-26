@@ -12,6 +12,9 @@ cache:
   directories:
     - $HOME/.cache/pip
 
+r_packages:
+  - covr
+
 before_script:
   - source scripts/travis_install.sh
 
@@ -25,3 +28,6 @@ after_failure:
     cd tests
     travis_wait 30 Rscript ../.travis.R
     sleep 2
+
+after_success:
+  - Rscript -e 'covr::codecov()'

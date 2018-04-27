@@ -28,15 +28,14 @@ wait_for_server <- function(url, output_log) {
       " after ",
       round(as.numeric(Sys.time() - start), 2),
       " secs. Logs:\n",
-      paste(readLines(output_log), collapse = "\n")
+      if (!is.null(output_log)) paste(readLines(output_log), collapse = "\n") else ""
     )
 }
 
-predict_savedmodel.serve_test_prediction <- function(
-  instances,
+serve_savedmodel_async <- function(
   model,
-  signature_name = "serving_default",
-  ...) {
+  operation,
+  signature_name = "serving_default") {
 
   full_path <- normalizePath(model)
 
@@ -81,9 +80,29 @@ predict_savedmodel.serve_test_prediction <- function(
 
   wait_for_server(url, output_log)
 
-  predict_savedmodel(
-    instances,
-    model = url,
-    type = "webapi")
+  operation()
+}
 
+predict_savedmodel.serve_test_prediction <- function(
+  instances,
+  model,
+  signature_name = "serving_default",
+  ...) {
+
+  serve_savedmodel_async(
+    model,
+    function() {
+      url <- paste0(
+        "http://127.0.0.1:9000/",
+        signature_name,
+        "/predict/"
+      )
+
+      predict_savedmodel(
+        instances,
+        model = url,
+        type = "webapi")
+    },
+    signature_name
+  )
 }

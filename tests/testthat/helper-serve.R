@@ -52,9 +52,6 @@ serve_savedmodel_async <- function(
     args = c(
       "-e",
       paste0(
-        ".libPaths('",
-        Sys.getenv("R_LIBS"),
-        "'); ",
         "library(tfdeploy); ",
         "serve_savedmodel('",
         full_path,

@@ -73,7 +73,7 @@ serve_savedmodel_async <- function(
     stop(paste(readLines(output_log), collapse = "\n"))
   }
 
-  on.exit(expr = process$kill(), add = TRUE)
+  on.exit(expr = process$signal(signal = 2), add = TRUE)
 
   url <- paste0(
     paste("http://127.0.0.1:", port_numer, "/", sep = ""),

@@ -1,6 +1,6 @@
 Package: tfdeploy
 Type: Package
-Title: tfdeploy: Deploy 'TensorFlow' Models
+Title: Deploy 'TensorFlow' Models
 Version: 0.6.0
 Authors@R: c(
     person("Javier", "Luraschi", email = "javier@rstudio.com", role = c("aut", "cre")),

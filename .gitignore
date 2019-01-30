@@ -23,3 +23,4 @@ docs/articles/trained
 runs/
 docs/articles/tensorflow-mnist/
 scratch
+savedmodel

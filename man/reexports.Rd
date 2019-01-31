@@ -4,9 +4,7 @@
 \name{reexports}
 \alias{reexports}
 \alias{\%>\%}
-\alias{reexports}
 \alias{export_savedmodel}
-\alias{reexports}
 \alias{view_savedmodel}
 \title{Objects exported from other packages}
 \keyword{internal}

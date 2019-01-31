@@ -54,6 +54,7 @@ find_savedmodel <- function(path) {
 #' }
 #'
 #' @importFrom tools file_ext
+#' @importFrom utils untar
 #' @export
 load_savedmodel <- function(
   sess,

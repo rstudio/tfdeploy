@@ -81,3 +81,8 @@ test_that("can use tfestimators with example entry in local serve", {
   )
 })
 
+test_that("prediction fails against invalid web api", {
+  expect_error(
+    predict_savedmodel(list(), "http://localhost:9090")
+  )
+})

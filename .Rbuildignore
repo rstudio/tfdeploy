@@ -14,3 +14,4 @@ runs$
 ^scratch$
 ^.*saved_model\.pb$
 ^.inst/models/.*-mnist$
+^savedmodel$

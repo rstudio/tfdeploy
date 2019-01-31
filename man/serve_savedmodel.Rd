@@ -21,8 +21,7 @@ are not blocked to handle requests. To terminate a daemonized server, call
 \item{browse}{Launch browser with serving landing page?}
 }
 \description{
-Serve a TensorFlow SavedModel as a local web api under
-\url{http://localhost:8089}.
+Serve a TensorFlow SavedModel as a local web api.
 }
 \examples{
 \dontrun{

@@ -1,7 +1,6 @@
 #' Serve a SavedModel
 #'
-#' Serve a TensorFlow SavedModel as a local web api under
-#' \url{http://localhost:8089}.
+#' Serve a TensorFlow SavedModel as a local web api.
 #'
 #' @param model_dir The path to the exported model, as a string.
 #' @param host Address to use to serve model, as a string.

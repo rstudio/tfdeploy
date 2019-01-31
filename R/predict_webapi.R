@@ -19,9 +19,13 @@ predict_savedmodel.webapi_prediction <- function(
   ) %>% httr::content(as = "text")
 
   tryCatch({
-    text_response %>%
-      jsonlite::fromJSON(simplifyDataFrame = FALSE) %>%
-      append_predictions_class()
+    response <- text_response %>%
+      jsonlite::fromJSON(simplifyDataFrame = FALSE)
+
+    if (!identical(response$error, NULL))
+      stop(response$error)
+
+    append_predictions_class(response)
   }, error = function(e) {
     stop(text_response)
   })

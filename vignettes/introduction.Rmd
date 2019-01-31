@@ -46,10 +46,10 @@ The R interface to TensorFlow includes a variety of tools designed to make expor
 
 ## Getting Started
 
-Begin by installing the **tfdeploy** package from GitHub as follows:
+Begin by installing the **tfdeploy** package from CRAN as follows:
 
 ```{r}
-devtools::install_github("rstudio/tfdeploy")
+install.packages(tfdeploy)
 ```
 
 To demonstrate the basics, we'll walk through an end-to-end example that trains a Keras model with the MNIST dataset, exports the saved model, and then serves the exported model locally for predictions with a REST API. After that we'll describe in more depth the specific requirements and various options associated with exporting models. Finally, we'll cover the various deployment options and provide links to additional documentation. 
@@ -146,7 +146,7 @@ serve_savedmodel('savedmodel', browse = TRUE)
 
 ![](images/swagger.png){width=80% .illustration}
 
-The REST API for the model is served at http://localhost:8989. Because we specified the `browse = TRUE` parameter, a webpage that describes the REST interface to the model is also displayed. The REST interface is based on the [CloudML predict request API](https://cloud.google.com/ml-engine/docs/v1/predict-request).
+The REST API for the model is served under localhost with port 8989. Because we specified the `browse = TRUE` parameter, a webpage that describes the REST interface to the model is also displayed. The REST interface is based on the [CloudML predict request API](https://cloud.google.com/ml-engine/docs/v1/predict-request).
 
 The model can be used for prediction by making HTTP POST requests. The body of the request should contain instances of data to generate predictions for. The HTTP response will provide the model's predictions. **The data in the request body should be pre-processed and formatted in the same way as the original training data** (e.g. feature scaling and normalization, pixel transformations for images, etc.). 
 

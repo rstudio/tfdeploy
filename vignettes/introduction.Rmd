@@ -46,10 +46,10 @@ The R interface to TensorFlow includes a variety of tools designed to make expor
 
 ## Getting Started
 
-Begin by installing the **tfdeploy** package from GitHub as follows:
+Begin by installing the **tfdeploy** package from CRAN as follows:
 
 ```{r}
-devtools::install_github("rstudio/tfdeploy")
+install.packages(tfdeploy)
 ```
 
 To demonstrate the basics, we'll walk through an end-to-end example that trains a Keras model with the MNIST dataset, exports the saved model, and then serves the exported model locally for predictions with a REST API. After that we'll describe in more depth the specific requirements and various options associated with exporting models. Finally, we'll cover the various deployment options and provide links to additional documentation. 

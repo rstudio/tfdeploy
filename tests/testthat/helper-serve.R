@@ -1,6 +1,6 @@
 server_success <- function(url) {
   tryCatch({
-    httr::GET(url)
+    httr::GET(url, httr::timeout(1))
     TRUE
   }, error = function(e) {
     FALSE
@@ -21,7 +21,7 @@ retry <- function(do, times = 1, message = NULL, sleep = 1) {
 
 wait_for_server <- function(url, output_log) {
   start <- Sys.time()
-  if (!retry(function() server_success(url), 10))
+  if (!retry(function() server_success(url), 20))
     stop(
       "Failed to connect to server: ",
       url,

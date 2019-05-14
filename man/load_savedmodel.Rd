@@ -4,10 +4,10 @@
 \alias{load_savedmodel}
 \title{Load a SavedModel}
 \usage{
-load_savedmodel(sess, model_dir = NULL)
+load_savedmodel(sess = NULL, model_dir = NULL)
 }
 \arguments{
-\item{sess}{The TensorFlow session.}
+\item{sess}{The TensorFlow session. \code{NULL} if using Eager execution.}
 
 \item{model_dir}{The path to the exported model, as a string. Defaults to
 a "savedmodel" path or the latest training run.}

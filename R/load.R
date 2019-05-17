@@ -70,19 +70,21 @@ load_savedmodel <- function(
   }
 
   if (tensorflow::tf_version() >= "2.0" && tf$executing_eagerly()) {
-    graph <- tensorflow::tf$saved_model$load(
-      export_dir = model_dir,
-      tags = list(tf$python$saved_model$tag_constants$SERVING)
-    )
-  } else {
-    tf$reset_default_graph()
+    saved_model <- tf$compat$v1$saved_model
 
-    graph <- tf$saved_model$loader$load(
-      sess,
-      list(tf$python$saved_model$tag_constants$SERVING),
-      model_dir
-    )
+    if (is.null(sess))
+      sess <- tf$compat$v1$Session()
+
+  } else {
+    saved_model <- tf$saved_model
+    tf$reset_default_graph()
   }
+
+  graph <- saved_model$loader$load(
+    sess,
+    list(tf$python$saved_model$tag_constants$SERVING),
+    model_dir
+  )
 
   graph
 }

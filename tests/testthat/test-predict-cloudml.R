@@ -1,8 +1,5 @@
 context("Predict CloudML Model")
 
-source("helper-initialize.R")
-
-
 test_cloudml_predict <- function(instances, model, version, file_name = version) {
 
   results <- cloudml::cloudml_predict(

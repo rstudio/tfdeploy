@@ -64,7 +64,12 @@ swagger_paths <- function(signature_def) {
   })
   names(path_values) <- path_names
 
-  serving_default <- tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY
+  if (tensorflow::tf_version() >= "2.0") {
+    serving_default <- tf$saved_model$DEFAULT_SERVING_SIGNATURE_DEF_KEY
+  } else {
+    serving_default <- tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY
+  }
+
   if (!serving_default %in% path_names) {
     warning(
       "Signature '",

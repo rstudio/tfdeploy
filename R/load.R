@@ -25,7 +25,7 @@ find_savedmodel <- function(path) {
 #' Loading a model improves performance over multiple \code{predict_savedmodel()}
 #' calls.
 #'
-#' @param sess The TensorFlow session.
+#' @param sess The TensorFlow session. `NULL` if using Eager execution.
 #'
 #' @param model_dir The path to the exported model, as a string. Defaults to
 #'   a "savedmodel" path or the latest training run.
@@ -57,9 +57,10 @@ find_savedmodel <- function(path) {
 #' @importFrom utils untar
 #' @export
 load_savedmodel <- function(
-  sess,
+  sess = NULL,
   model_dir = NULL
 ) {
+
   model_dir <- find_savedmodel(model_dir)
 
   if (identical(file_ext(model_dir), "tar")) {
@@ -68,12 +69,22 @@ load_savedmodel <- function(
     model_dir <- extracted_dir
   }
 
-  tf$reset_default_graph()
+  if (tensorflow::tf_version() >= "2.0" && tf$executing_eagerly()) {
+    saved_model <- tf$compat$v1$saved_model
 
-  graph <- tf$saved_model$loader$load(
+    if (is.null(sess))
+      sess <- tf$compat$v1$Session()
+
+  } else {
+    saved_model <- tf$saved_model
+    tf$reset_default_graph()
+  }
+
+  graph <- saved_model$loader$load(
     sess,
     list(tf$python$saved_model$tag_constants$SERVING),
-    model_dir)
+    model_dir
+  )
 
   graph
 }

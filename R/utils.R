@@ -1,6 +1,11 @@
 #' @import tensorflow
 with_new_session <- function(f) {
-  sess <- tf$Session()
+
+  if (tensorflow::tf_version() >= "2.0")
+    sess <- tf$compat$v1$Session()
+  else
+    sess <- tf$Session()
+
   on.exit(sess$close(), add = TRUE)
 
   f(sess)

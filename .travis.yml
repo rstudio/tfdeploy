@@ -5,8 +5,10 @@ sudo: false
 warnings_are_errors: false
 
 env:
-  - TF_VERSION="1.4"
-  - TF_VERSION="1.7"
+  - TF_VERSION="1.12.0"
+  - TF_VERSION="1.13.1"
+  - TF_VERSION="2.0.0-alpha0"
+  - TF_VERSION="nightly"
 
 cache:
   packages: true
@@ -23,10 +25,6 @@ script:
   - |
     R CMD build .
     R CMD check --no-build-vignettes --no-manual --no-tests tfdeploy*tar.gz
-    travis_wait 20 Rscript -e 'covr::codecov()'
-
-after_failure:
-  - |
     cd tests
     travis_wait 30 Rscript ../.travis.R
-    sleep 2
+

@@ -12,4 +12,7 @@ elif [[ "$TF_VERSION" == "1.7" ]]; then
 elif [[ "$TF_VERSION" == "nightly" ]]; then
       echo "Installing TensorFlow nightly ...";
       Rscript -e 'tensorflow::install_tensorflow(version = "nightly")';
+else
+      echo "Installing Tensorflow $TF_VERSION ..."
+      Rscript -e 'tensorflow::install_tensorflow(version = "${TF_VERSION}")';
 fi

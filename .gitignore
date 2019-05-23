@@ -24,3 +24,4 @@ runs/
 docs/articles/tensorflow-mnist/
 scratch
 savedmodel
+tests/testthat/data/mnist.rds

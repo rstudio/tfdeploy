@@ -65,12 +65,15 @@ serve_savedmodel_async <- function(
     stderr = output_log
   )
 
-  Sys.sleep(1)
+  Sys.sleep(5)
   if (!process$is_alive()) {
     stop(paste(readLines(output_log), collapse = "\n"))
   }
 
-  on.exit(expr = process$signal(signal = 2), add = TRUE)
+  on.exit(expr = {
+    process$signal(signal = 2)
+    Sys.sleep(2)
+  }, add = TRUE)
 
   url <- paste0(
     paste("http://127.0.0.1:", port_numer, "/", sep = ""),
@@ -81,28 +84,4 @@ serve_savedmodel_async <- function(
   wait_for_server(url, output_log)
 
   operation()
-}
-
-predict_savedmodel.serve_test_prediction <- function(
-  instances,
-  model,
-  signature_name = "serving_default",
-  ...) {
-
-  serve_savedmodel_async(
-    model,
-    function() {
-      url <- paste0(
-        "http://127.0.0.1:9000/",
-        signature_name,
-        "/predict/"
-      )
-
-      predict_savedmodel(
-        instances,
-        model = url,
-        type = "webapi")
-    },
-    signature_name
-  )
 }

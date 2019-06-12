@@ -1,7 +1,7 @@
 Package: tfdeploy
 Type: Package
 Title: Deploy 'TensorFlow' Models
-Version: 0.6.0
+Version: 0.6.1
 Authors@R: c(
     person("Javier", "Luraschi", email = "javier@rstudio.com", role = c("aut", "cre")),
     person(family = "RStudio", role = c("cph"))
@@ -27,7 +27,8 @@ Suggests:
   pixels,
   processx,
   testthat,
-  yaml
+  yaml,
+  stringr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 VignetteBuilder: knitr

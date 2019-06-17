@@ -3,8 +3,8 @@ Type: Package
 Title: Deploy 'TensorFlow' Models
 Version: 0.6.1
 Authors@R: c(
-    person("Javier", "Luraschi", email = "javier@rstudio.com", role = c("aut", "cre")),
-    person("Daniel", "Falbel", email = "daniel@rstudio.com", role = c("ctb")),
+    person("Javier", "Luraschi", email = "javier@rstudio.com", role = c("aut", "ctb")),
+    person("Daniel", "Falbel", email = "daniel@rstudio.com", role = c("cre", "ctb")),
     person(family = "RStudio", role = c("cph"))
   )
 Maintainer: Daniel Falbel <daniel@rstudio.com>

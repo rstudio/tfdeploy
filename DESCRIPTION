@@ -1,12 +1,13 @@
 Package: tfdeploy
 Type: Package
 Title: Deploy 'TensorFlow' Models
-Version: 0.6.0
+Version: 0.6.1
 Authors@R: c(
-    person("Javier", "Luraschi", email = "javier@rstudio.com", role = c("aut", "cre")),
+    person("Javier", "Luraschi", email = "javier@rstudio.com", role = c("aut", "ctb")),
+    person("Daniel", "Falbel", email = "daniel@rstudio.com", role = c("cre", "ctb")),
     person(family = "RStudio", role = c("cph"))
   )
-Maintainer: Javier Luraschi <javier@rstudio.com>
+Maintainer: Daniel Falbel <daniel@rstudio.com>
 Description: Tools to deploy 'TensorFlow' <https://www.tensorflow.org/> models across 
   multiple services. Currently, it provides a local server for testing 'cloudml' 
   compatible services.
@@ -27,7 +28,8 @@ Suggests:
   pixels,
   processx,
   testthat,
-  yaml
+  yaml,
+  stringr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 VignetteBuilder: knitr

@@ -4,8 +4,13 @@
 \alias{predict_savedmodel.graph_prediction}
 \title{Predict using a Loaded SavedModel}
 \usage{
-\method{predict_savedmodel}{graph_prediction}(instances, model, sess,
-  signature_name = "serving_default", ...)
+\method{predict_savedmodel}{graph_prediction}(
+  instances,
+  model,
+  sess,
+  signature_name = "serving_default",
+  ...
+)
 }
 \arguments{
 \item{instances}{A list of prediction instances to be passed as input tensors

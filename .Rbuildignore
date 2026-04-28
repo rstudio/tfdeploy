@@ -5,7 +5,7 @@
 ^_pkgdown\.yml$
 ^.travis.yml$
 ^README.Rmd$
-^.*\MNIST-data$
+^.*MNIST-data$
 ^.travis.R$
 ^images$
 ^pkgdown$

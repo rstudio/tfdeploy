@@ -4,8 +4,13 @@
 \alias{serve_savedmodel}
 \title{Serve a SavedModel}
 \usage{
-serve_savedmodel(model_dir, host = "127.0.0.1", port = 8089,
-  daemonized = FALSE, browse = !daemonized)
+serve_savedmodel(
+  model_dir,
+  host = "127.0.0.1",
+  port = 8089,
+  daemonized = FALSE,
+  browse = !daemonized
+)
 }
 \arguments{
 \item{model_dir}{The path to the exported model, as a string.}

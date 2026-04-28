@@ -4,8 +4,7 @@
 \alias{predict_savedmodel.export_prediction}
 \title{Predict using an Exported SavedModel}
 \usage{
-\method{predict_savedmodel}{export_prediction}(instances, model,
-  signature_name = "serving_default", ...)
+\method{predict_savedmodel}{export_prediction}(instances, model, signature_name = "serving_default", ...)
 }
 \arguments{
 \item{instances}{A list of prediction instances to be passed as input tensors

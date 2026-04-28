@@ -27,6 +27,7 @@ Suggests:
   knitr,
   pixels,
   processx,
+  rmarkdown,
   testthat,
   yaml,
   stringr

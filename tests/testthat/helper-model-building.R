@@ -22,7 +22,7 @@ for (model in models) {
   message("Running ", model)
 
   p <- processx::process$new(
-    command = "Rscript",
+    command = file.path(R.home("bin"), "Rscript"),
     args = paste0("model-building/", model, ".R"), stderr = "|", stdout = "|",
     wd = getwd()
     )

@@ -28,19 +28,19 @@ While TensorFlow models are typically defined and trained using R or Python code
 
 - [TensorFlow Serving](https://www.tensorflow.org/serving/) is an open-source software library for serving TensorFlow models using a [gRPC](https://grpc.io/) interface.
 
-- [CloudML](https://tensorflow.rstudio.com/tools/cloudml/) is a managed cloud service that serves TensorFlow models using a [REST](https://cloud.google.com/ml-engine/reference/rest/v1/projects/predict) interface.
+- [CloudML](https://cloud.google.com/vertex-ai) is a managed cloud service that serves TensorFlow models using a [REST](https://cloud.google.com/vertex-ai/docs/reference/rest/v1/projects.locations.endpoints/predict) interface.
 
-- [RStudio Connect](https://www.rstudio.com/products/connect/) provides support for serving models using the same REST API as CloudML, but on a server within your own organization.
+- [RStudio Connect](https://posit.co/products/enterprise/connect/) provides support for serving models using the same REST API as CloudML, but on a server within your own organization.
 
-TensorFlow models can also be deployed to [mobile](https://www.tensorflow.org/mobile/tflite/) and [embedded](https://aws.amazon.com/blogs/machine-learning/how-to-deploy-deep-learning-models-with-aws-lambda-and-tensorflow/) devices including iOS and Android mobile phones and Raspberry Pi computers. 
+TensorFlow models can also be deployed to [mobile](https://ai.google.dev/edge/litert/) and [embedded](https://aws.amazon.com/blogs/machine-learning/how-to-deploy-deep-learning-models-with-aws-lambda-and-tensorflow/) devices including iOS and Android mobile phones and Raspberry Pi computers. 
 
 The R interface to TensorFlow includes a variety of tools designed to make exporting and serving TensorFlow models straightforward. The basic process for deploying TensorFlow models from R is as follows:
 
-- Train a model using the [keras](https://tensorflow.rstudio.com/keras/), [tfestimators](https://tensorflow.rstudio.com/tfestimators/), or [tensorflow](https://tensorflow.rstudio.com/tensorflow/) R packages.
+- Train a model using the [keras](https://tensorflow.rstudio.com/keras/), [tfestimators](https://tensorflow.rstudio.com/), or [tensorflow](https://tensorflow.rstudio.com/) R packages.
 
 - Call the `export_savedmodel()` function on your trained model to write it to disk as a TensorFlow SavedModel.
 
-- Use the `serve_savedmodel()` function from the [tfdeploy](https://tensorflow.rstudio.com/tools/tfdeploy/) package to run a local test server that supports the same REST API as CloudML and RStudio Connect.
+- Use the `serve_savedmodel()` function from the [tfdeploy](https://cran.r-project.org/package=tfdeploy) package to run a local test server that supports the same REST API as CloudML and RStudio Connect.
 
 - Deploy your model using TensorFlow Serving, CloudML, or RStudio Connect.
 
@@ -146,7 +146,7 @@ serve_savedmodel('savedmodel', browse = TRUE)
 
 ![](images/swagger.png){width=80% .illustration}
 
-The REST API for the model is served under localhost with port 8989. Because we specified the `browse = TRUE` parameter, a webpage that describes the REST interface to the model is also displayed. The REST interface is based on the [CloudML predict request API](https://cloud.google.com/ml-engine/docs/v1/predict-request).
+The REST API for the model is served under localhost with port 8989. Because we specified the `browse = TRUE` parameter, a webpage that describes the REST interface to the model is also displayed. The REST interface is based on the [CloudML predict request API](https://cloud.google.com/vertex-ai/docs/reference/rest/v1/projects.locations.endpoints/predict).
 
 The model can be used for prediction by making HTTP POST requests. The body of the request should contain instances of data to generate predictions for. The HTTP response will provide the model's predictions. **The data in the request body should be pre-processed and formatted in the same way as the original training data** (e.g. feature scaling and normalization, pixel transformations for images, etc.). 
 
@@ -296,7 +296,7 @@ The response is the predicted MPG:
 
 ### tensorflow
 
-The [tensorflow](https://tensorflow.rstudio.com/tensorflow) package provides a lower-level interface to the TensorFlow API. You can also use the `export_savedmodel()` function to export models created with this API, however you need to provide some additional parmaeters indicating which tensors represent the inputs and outputs for your model.
+The [tensorflow](https://tensorflow.rstudio.com/) package provides a lower-level interface to the TensorFlow API. You can also use the `export_savedmodel()` function to export models created with this API, however you need to provide some additional parmaeters indicating which tensors represent the inputs and outputs for your model.
 
 For example, here's an MNIST model using the core TensorFlow API along with the requisite call to `export_savedmodel()`:
 
@@ -345,12 +345,12 @@ Once the model is exported, the same process of using `serve_savedmodel` can be 
 
 ## Model Deployment
 
-There are a variety of ways to deploy a TensorFlow SavedModel, each of which are described below. Of the 3 methods described, 2 of them (CloudML and RStudio Connect) share the same REST interface that we have been using with `serve_savedmodel` to test locally. The REST interface is described in detail here: <https://cloud.google.com/ml-engine/docs/v1/predict-request>.
+There are a variety of ways to deploy a TensorFlow SavedModel, each of which are described below. Of the 3 methods described, 2 of them (CloudML and RStudio Connect) share the same REST interface that we have been using with `serve_savedmodel` to test locally. The REST interface is described in detail here: <https://cloud.google.com/vertex-ai/docs/reference/rest/v1/projects.locations.endpoints/predict>.
 
 
 ### CloudML
 
-You can deploy TensorFlow SavedModels to Google's [CloudML](https://cloud.google.com/ml-engine/) service using functions from the [cloudml](https://tensorflow.rstudio.com/tools/cloudml/) package. For example:
+You can deploy TensorFlow SavedModels to Google's [CloudML](https://cloud.google.com/vertex-ai/) service using functions from the [cloudml](https://cloud.google.com/vertex-ai) package. For example:
 
 ```{r}
 library(cloudml)
@@ -360,11 +360,11 @@ cloudml_deploy("savedmodel", name = "keras_mnist")
 
 Once deployed to CloudML, predictions can be made using the same REST interace we previously used locally. The HTTP POST requests will be similar to the sample requests, but CloudML additiobnally requires proper authorization.
 
-See the [Deploying Models](https://tensorflow.rstudio.com/tools/cloudml/articles/deployment.html) article on the CloudML package website for additional details.
+See the [Deploying Models](https://cloud.google.com/vertex-aiarticles/deployment.html) article on the CloudML package website for additional details.
 
 ### RStudio Connect
 
-[RStudio Connect](https://www.rstudio.com/products/connect/) is a publishing platform for applications, reports, and APIs created with R. Connect runs on-premise or in your own cloud infrastructure, giving you full control of the deployment environment. Connect can also integrate with your own security services and user management tools.
+[RStudio Connect](https://posit.co/products/enterprise/connect/) is a publishing platform for applications, reports, and APIs created with R. Connect runs on-premise or in your own cloud infrastructure, giving you full control of the deployment environment. Connect can also integrate with your own security services and user management tools.
 
 An upcoming version of RStudio Connect will include support for hosting TensorFlow SavedModels, using the same REST interface as is supported by the local server and CloudML.
 

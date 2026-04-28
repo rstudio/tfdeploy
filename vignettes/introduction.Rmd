@@ -28,9 +28,9 @@ While TensorFlow models are typically defined and trained using R or Python code
 
 - [TensorFlow Serving](https://www.tensorflow.org/serving/) is an open-source software library for serving TensorFlow models using a [gRPC](https://grpc.io/) interface.
 
-- [CloudML](https://cloud.google.com/vertex-ai) is a managed cloud service that serves TensorFlow models using a [REST](https://cloud.google.com/vertex-ai/docs/reference/rest/v1/projects.locations.endpoints/predict) interface.
+- [CloudML](https://cloud.google.com/products/gemini-enterprise-agent-platform) is a managed cloud service that serves TensorFlow models using a [REST](https://docs.cloud.google.com/vertex-ai/docs/reference/rest/v1/projects.locations.endpoints/predict) interface.
 
-- [RStudio Connect](https://posit.co/products/enterprise/connect/) provides support for serving models using the same REST API as CloudML, but on a server within your own organization.
+- [RStudio Connect](https://posit.co/products/enterprise/connect) provides support for serving models using the same REST API as CloudML, but on a server within your own organization.
 
 TensorFlow models can also be deployed to [mobile](https://ai.google.dev/edge/litert/) and [embedded](https://aws.amazon.com/blogs/machine-learning/how-to-deploy-deep-learning-models-with-aws-lambda-and-tensorflow/) devices including iOS and Android mobile phones and Raspberry Pi computers. 
 
@@ -146,7 +146,7 @@ serve_savedmodel('savedmodel', browse = TRUE)
 
 ![](images/swagger.png){width=80% .illustration}
 
-The REST API for the model is served under localhost with port 8989. Because we specified the `browse = TRUE` parameter, a webpage that describes the REST interface to the model is also displayed. The REST interface is based on the [CloudML predict request API](https://cloud.google.com/vertex-ai/docs/reference/rest/v1/projects.locations.endpoints/predict).
+The REST API for the model is served under localhost with port 8989. Because we specified the `browse = TRUE` parameter, a webpage that describes the REST interface to the model is also displayed. The REST interface is based on the [CloudML predict request API](https://docs.cloud.google.com/vertex-ai/docs/reference/rest/v1/projects.locations.endpoints/predict).
 
 The model can be used for prediction by making HTTP POST requests. The body of the request should contain instances of data to generate predictions for. The HTTP response will provide the model's predictions. **The data in the request body should be pre-processed and formatted in the same way as the original training data** (e.g. feature scaling and normalization, pixel transformations for images, etc.). 
 
@@ -345,12 +345,12 @@ Once the model is exported, the same process of using `serve_savedmodel` can be 
 
 ## Model Deployment
 
-There are a variety of ways to deploy a TensorFlow SavedModel, each of which are described below. Of the 3 methods described, 2 of them (CloudML and RStudio Connect) share the same REST interface that we have been using with `serve_savedmodel` to test locally. The REST interface is described in detail here: <https://cloud.google.com/vertex-ai/docs/reference/rest/v1/projects.locations.endpoints/predict>.
+There are a variety of ways to deploy a TensorFlow SavedModel, each of which are described below. Of the 3 methods described, 2 of them (CloudML and RStudio Connect) share the same REST interface that we have been using with `serve_savedmodel` to test locally. The REST interface is described in detail here: <https://docs.cloud.google.com/vertex-ai/docs/reference/rest/v1/projects.locations.endpoints/predict>.
 
 
 ### CloudML
 
-You can deploy TensorFlow SavedModels to Google's [CloudML](https://cloud.google.com/vertex-ai/) service using functions from the [cloudml](https://cloud.google.com/vertex-ai) package. For example:
+You can deploy TensorFlow SavedModels to Google's [CloudML](https://cloud.google.com/products/gemini-enterprise-agent-platform) service using functions from the [cloudml](https://cloud.google.com/products/gemini-enterprise-agent-platform) package. For example:
 
 ```{r}
 library(cloudml)
@@ -360,11 +360,11 @@ cloudml_deploy("savedmodel", name = "keras_mnist")
 
 Once deployed to CloudML, predictions can be made using the same REST interace we previously used locally. The HTTP POST requests will be similar to the sample requests, but CloudML additiobnally requires proper authorization.
 
-See the [Deploying Models](https://cloud.google.com/vertex-aiarticles/deployment.html) article on the CloudML package website for additional details.
+See the [Deploying Models](https://cloud.google.com/products/gemini-enterprise-agent-platform) article on the CloudML package website for additional details.
 
 ### RStudio Connect
 
-[RStudio Connect](https://posit.co/products/enterprise/connect/) is a publishing platform for applications, reports, and APIs created with R. Connect runs on-premise or in your own cloud infrastructure, giving you full control of the deployment environment. Connect can also integrate with your own security services and user management tools.
+[RStudio Connect](https://posit.co/products/enterprise/connect) is a publishing platform for applications, reports, and APIs created with R. Connect runs on-premise or in your own cloud infrastructure, giving you full control of the deployment environment. Connect can also integrate with your own security services and user management tools.
 
 An upcoming version of RStudio Connect will include support for hosting TensorFlow SavedModels, using the same REST interface as is supported by the local server and CloudML.
 

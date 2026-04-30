@@ -2,8 +2,6 @@
 #'
 #' Runs a prediction over a saved model file, web API or graph object.
 #'
-#' @inheritParams predict_savedmodel
-#'
 #' @param instances A list of prediction instances to be passed as input tensors
 #'   to the service. Even for single predictions, a list with one entry is expected.
 #'

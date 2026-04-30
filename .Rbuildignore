@@ -5,7 +5,7 @@
 ^_pkgdown\.yml$
 ^.travis.yml$
 ^README.Rmd$
-^.*\MNIST-data$
+^.*MNIST-data$
 ^.travis.R$
 ^images$
 ^pkgdown$
@@ -16,3 +16,4 @@ runs$
 ^.inst/models/.*-mnist$
 ^savedmodel$
 ^tests/testthat/data/mnist.rds$
+^CRAN-SUBMISSION$

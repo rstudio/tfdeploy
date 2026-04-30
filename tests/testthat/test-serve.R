@@ -5,6 +5,7 @@ test_can_serve_model <- function(model) {
 
   test_that(paste0("can serve model:", model), {
 
+    skip_on_cran()
     skip_if_no_tensorflow()
     serve_savedmodel_async(paste0(model, "/"), function() {
 

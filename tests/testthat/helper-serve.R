@@ -43,9 +43,7 @@ serve_savedmodel_async <- function(
 
   port_numer <- 9000
 
-  rscript <- system2("which", "Rscript", stdout = TRUE)
-  if (length(rscript) == 0)
-    stop("Failed to find Rscript")
+  rscript <- file.path(R.home("bin"), "Rscript")
 
   process <- processx::process$new(
     command = rscript,

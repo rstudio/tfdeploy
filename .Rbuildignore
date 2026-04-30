@@ -16,3 +16,4 @@ runs$
 ^.inst/models/.*-mnist$
 ^savedmodel$
 ^tests/testthat/data/mnist.rds$
+^CRAN-SUBMISSION$
